@@ -1,0 +1,100 @@
+.side_Background {
+    background-color: rgb(8, 0, 62);
+    transition: all 0.8s ease-in-out;
+    font-family: 'Arial', sans-serif;
+}
+
+.logo_SideBar {
+    max-width: 60px;
+    max-height: 60px;
+    margin-left: 5px;
+    z-index: 100;
+    animation: bounce 2.5s none;
+    transition: all 0.5s;
+}
+
+.app_2 {
+    left: 140px;
+    top: 58px;
+    animation: aparecer ease-in-out 1.5s;
+}
+
+.content-container {
+    animation: aparecer ease-in-out 1.5s;
+}
+
+@keyframes aparecer {
+    0% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.letter {
+    letter-spacing: 0.7px;
+}
+
+
+.nav-pills .nav-link {
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(8, 0, 62) !important;
+    color: white !important;
+}
+
+.nav-pills .nav-link.active, 
+.nav-pills .nav-link:hover,
+.dropdown-item.active {
+    background-color: white !important;
+    color: rgb(8, 0, 62) !important;
+}
+
+a.dropdown-item:hover {
+    font-weight: bold !important;
+    background-color: aliceblue;
+    color: rgb(8, 0, 62);
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.activeF {
+    background-color: white !important;
+    color: rgb(8, 0, 62) !important;
+    border-top-right-radius: -0% !important;
+    border-bottom-right-radius: -0% !important;
+    position: relative;
+}
+
+.activeF:hover::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 100%;
+    /* Posicionar justo después del elemento .active */
+    width: 20%;
+    /* Ancho relativo al elemento .active */
+    height: 100%;
+    background-color: white;
+    transition: 1.5s ease-in-out;
+}
+
+@media (max-width: 400px) {
+
+    /* Ajusta el valor según tus necesidades */
+    .logo_SideBar {
+        max-width: 50px;
+        max-height: 50px;
+        margin-left: 5px;
+        z-index: 100;
+        animation: bounce 2.5s none;
+    }
+}

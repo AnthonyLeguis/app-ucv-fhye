@@ -1,0 +1,80 @@
+.carousel-item::before {
+    /* Aplicar a .carousel-item */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 850px;
+    min-height: 400px;
+    background-color: rgba(0, 0, 0, 0.400);
+    /* Capa oscura semi-transparente */
+}
+
+.carousel-item img {
+    height: 750px;
+    min-height: 400px;
+    max-width: 1000px;
+    object-fit: cover;
+}
+
+.carousel-caption {
+    top: 150px;
+    bottom: auto;
+    text-align: center;
+}
+
+.carousel-caption h5 {
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+    font-size: 3rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px black, 1.5px 1.5px 4px white;
+
+}
+
+.blur_Efect {
+    backdrop-filter: blur(3.5px);
+}
+
+.carousel-caption h6 {
+    margin-top: 40px;
+    font-family: 'Arial', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 1.5px 1.5px 3px black, 2px 2px 4px white;
+    color: rgb(255, 222, 170);
+}
+
+
+
+
+@media (min-width: 1200px) {
+
+    .carousel-item::before {
+        background-color: rgba(0, 0, 0, 0.308);
+        margin: 0 auto;
+    }
+
+    /* Breakpoint para xl en Bootstrap 5 */
+    .carousel-item img {
+        max-width: 100%;
+        /* Ancho máximo de 1080px en pantallas xl */
+        margin: 0 auto;
+        /* Centrar horizontalmente */
+    }
+
+    .carousel-caption h5 {
+        font-size: 3.5rem;
+    }
+    
+    .carousel-caption h6 {
+        font-size: 1.5rem;
+    }
+
+    .carousel-inner {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+}

@@ -1,0 +1,6 @@
+.env
+*.env
+*env.*
+.env.local
+node_modules/
+run_project.bat

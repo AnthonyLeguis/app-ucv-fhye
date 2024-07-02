@@ -1,0 +1,5 @@
+.thead_bg th {
+    background-color: rgb(8, 0, 62);
+    color: #fff;
+    white-space: nowrap;
+}

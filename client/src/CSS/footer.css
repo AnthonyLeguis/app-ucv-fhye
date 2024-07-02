@@ -1,0 +1,17 @@
+footer {
+    background-image: linear-gradient(to bottom, rgb(8, 0, 62), rgba(5, 0, 38, 0.855));
+    height: 118px;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+
+}
+
+footer div h5{
+    bottom: -50px;
+    right: 145px;;
+}
+
+.img_logoFooter {
+    width: 40px;
+    animation: none;
+}
