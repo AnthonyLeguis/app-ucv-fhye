@@ -1,6 +1,6 @@
 [build]
   publish = "client/dist" # Directorio de publicación (ajusta si es diferente)
-  command = "cd client && npm run build" # Comando de construcción (ajusta si es diferente)
+  command = "cd client && npm install && npm run build" # Comando de construcción (ajusta si es diferente)
 
 [functions]
   directory = "client/netlify/functions" # Directorio de funciones (ajusta si es diferente)
