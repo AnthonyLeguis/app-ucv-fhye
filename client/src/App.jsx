@@ -47,7 +47,7 @@ export const App = () => {
 
             <Routes>
                 <Route path="/" element={
-                    isLoading ? null : isAuthenticated ? <Navigate to={`/app/profile/${userId}`} /> : <Home />
+                    isLoading ? null : isAuthenticated ? <Navigate to={`/app/profile/${userId} || /app`} /> : <Home />
                 } />
                 <Route path="/login" element={<Login />} />
 
