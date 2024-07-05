@@ -35,7 +35,9 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(cors({
-  origin: process.env.ORIGIN_FRONTEND
+  origin: [process.env.ORIGIN_FRONTEND_LOCAL, process.env.ORIGIN_FRONTEND_DEPLOYMENT],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));          
 app.use(express.json());  
 app.use(express.urlencoded({ extended: true })); 
