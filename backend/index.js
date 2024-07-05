@@ -35,7 +35,17 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(cors({
-  origin: [process.env.ORIGIN_FRONTEND_LOCAL, process.env.ORIGIN_FRONTEND_DEPLOYMENT],
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      process.env.ORIGIN_FRONTEND_LOCAL, // Origen de desarrollo local
+      process.env.ORIGIN_FRONTEND_DEPLOYMENT, // Origen de producción
+    ];
+    if (allowedOrigins.includes(origin) || !origin) { // Permitir origen nulo (para solicitudes desde el mismo origen)
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));          
