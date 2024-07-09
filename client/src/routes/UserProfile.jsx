@@ -22,13 +22,13 @@ export const UserProfile = () => {
                         <div className="col container-fluid mt-5 col-12 col-md-10 d-flex flex-column justify-content-center align-items-center">
 
                             <div className="container-fluid d-flex flex-column flex-lg-row mx-auto">
-                                <div className='container profile_image col-4'>
-                                    <img src={userData.image ? userData.image : (userData.gender === 'M' ? img_male : img_female)} alt="Imagen de perfil" />
+                                <div className='container profile_image col-4 m-2 mx-auto'>
+                                    <img className='profile_image' src={userData.image ? userData.image : (userData.gender === 'M' ? img_male : img_female)} alt="Imagen de perfil" />
                                 </div>
 
                                 <div className='container-fluid col-8'>
 
-                                    <table className='container-fluid table table-responsive table-striped table-hover'>
+                                    <table className='container-fluid table table-responsive table-striped table-hover mx-auto'>
                                         <thead>
                                             <tr >
                                                 <th colSpan="2" scope="col" className='text-start fw-bold thead_bg'>Información Personal</th>

@@ -1,5 +1,34 @@
+:root {
+    --primary-color: rgb(78, 152, 255);
+    --secundary-color: aliceblue;
+    --tertiary-color: rgb(8, 0, 62);
+    --quaternary-color: rgb(15, 0, 114);
+    --quinary-color: rgb(24, 0, 178);
+}
+
 .navbar_color {
-    background-image: linear-gradient(to bottom, rgb(8, 0, 62), rgba(5, 0, 38, 0.855));
+    background-image: linear-gradient(to bottom, var(--primary-color), rgb(78, 152, 255, 0.855));
+}
+
+.text-primary {
+    color: var(--tertiary-color) !important;
+}
+
+.btn-primary {
+    background-color: var(--quaternary-color) !important;
+    border-color: var(--quaternary-color) !important;
+    transition: transform 0.1s ease-in-out;
+}
+
+.btn-primary:active {
+    background-color: var(--quinary-color) !important;
+    border-color: var(--quinary-color) !important;
+    transform: scale(0.9);
+}
+
+.btn-primary:hover {
+    background-color: var(--quinary-color) !important;
+    border-color: var(--quinary-color) !important;
 }
 
 .img_logo {
@@ -7,6 +36,7 @@
     height: 65px;
     margin-left: 5px;
     z-index: 100;
+    filter: invert(100%) sepia(100%) saturate(100%) hue-rotate(285deg) brightness(100%);
     animation: bounce 2.5s infinite;
 }
 

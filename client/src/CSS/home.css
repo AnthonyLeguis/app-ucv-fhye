@@ -1,3 +1,7 @@
+section{
+    min-height: 800px;
+}
+
 .carousel-item::before {
     /* Aplicar a .carousel-item */
     content: '';

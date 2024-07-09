@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './CSS/login.css'
 import { App } from './App.jsx'
+import './CSS/login.css'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './hooks/AuthContext.jsx'
 
