@@ -188,7 +188,7 @@ const profileUsers = (req, res) => {
 
     // Query to fetch user data
     User.findById(id)
-        .select({ password: 0, role: 0, __v: 0, hire_date: 0, address: 0, phone: 0, school: 0, department: 0, professorship: 0, current_dedication: 0 })
+        .select({ password: 0 })
         .exec()
         .then(userProfile => {
             if (!userProfile) {
@@ -201,7 +201,6 @@ const profileUsers = (req, res) => {
             // Return user data
             return res.status(200).send({
                 status: 'success',
-                message: 'Hola mundo desde controllers/users.js',
                 users: userProfile
             });
         })

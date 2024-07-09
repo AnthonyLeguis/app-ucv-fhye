@@ -49,7 +49,7 @@ function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, userId, userData, tokenVerified, isLoading, token, login, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, userId, userData, tokenVerified, isLoading, token, login, logout, setUserData }}>
             {children}
         </AuthContext.Provider>
     );
