@@ -24,8 +24,17 @@ const userSchema = new mongoose.Schema({
         default: 'role_user',
         required: true
     },
+    ci_tipo: {
+        type: String,
+        required: true,
+        enum: ['V', 'E'],
+    },
     ci: {
         type: Number,
+        required: true
+    },
+    gender: {
+        type: String,
         required: true
     },
     idac: {

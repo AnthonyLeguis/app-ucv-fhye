@@ -35,9 +35,9 @@ export const UserProfile = () => {
                             'Content-Type': 'application/json',
                             'Authorization': `${token}`,
                         },
-                     }
+                    }
                 );
-                 
+
                 if (!response.ok) {
                     throw new Error("Error al obtener los datos del usuario");
                 }
@@ -57,9 +57,9 @@ export const UserProfile = () => {
     return (
         <>
             <div className="container-fluid contain">
-                <div className="row h-100 sm-flex-column">
+                <div className="row h-100 sm-flex-column scroll">
                     <div className="col mt-4 mb-5 rounded-1 col-md-8 mx-auto d-flex flex-row align-content-center justify-content-center">
-                        <h1 className="text-center text-center m-0">Perfil</h1>
+                        <h1 className="text-center text-center m-0">Escuela: {userData?.users?.school}</h1>
                     </div>
                     {console.log('userData:', userData)}
 
@@ -100,6 +100,18 @@ export const UserProfile = () => {
                                                 <th scope="row">Correo:</th>
                                                 <td>{userData.users.email}</td>
                                             </tr>
+                                            <tr>
+                                                <th scope="row">Genero:</th>
+                                                <td>{userData.users.gender}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Edad:</th>
+                                                <td>{userData.users.age}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Teléfono:</th>
+                                                <td>{userData.users.phone}</td>
+                                            </tr>
                                         </tbody>
                                     </table>
 
@@ -117,11 +129,39 @@ export const UserProfile = () => {
                                     <tbody>
                                         <tr>
                                             <th scope="row">Rol:</th>
-                                            <td>{userData.role}</td>
+                                            <td>{userData.users.role}</td>
                                         </tr>
                                         <tr>
-                                            <th scope="row">ID:</th>
-                                            <td>{userData.id}</td>
+                                            <th scope="row">Idac:</th>
+                                            <td>{userData.users.idac}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Usuario creado:</th>
+                                            <td>{new Date(userData.users.created_at).toLocaleString(undefined,
+                                                {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    hour: 'numeric',
+                                                    minute: 'numeric',
+                                                    hour12: true
+                                                }
+                                            )}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Fecha de ingreso:</th>
+                                            <td>{new Date(userData.users.hire_date).toLocaleString(undefined,
+                                                {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric',
+                                                    hour: 'numeric',
+                                                    minute: 'numeric',
+                                                    hour12: true
+                                                }
+                                            )}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
