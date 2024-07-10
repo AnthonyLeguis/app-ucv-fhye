@@ -14,11 +14,16 @@ import { SheetsForm } from "./routes/components/SheetsForm"
 import { SetupUser } from "./routes/SetupUser"
 import { AuthContext } from "./hooks/AuthContext"
 import { NotFound } from "./routes/components/NotFound"
+import { ExpiredTime } from "./routes/components/ExpiredTime"
+import { useCheckTokenExp } from "./hooks/useCheckTokenExp"
+import Swal from 'sweetalert2';
 import './CSS/App.css'
 
 export const App = () => {
     const { isAuthenticated, userId, isLoading } = useContext(AuthContext);
+    const [tokenExpired, setTokenExpired] = useState(false);
     const location = useLocation();
+    const isExpired = useCheckTokenExp();
 
     const [shouldRedirect, setShouldRedirect] = useState(false);
 
@@ -38,8 +43,38 @@ export const App = () => {
         }
     }, [shouldRedirect, userId]);
 
+    useEffect(() => {
+
+        const chekExpirationInterval = setInterval(() => {
+            setTokenExpired(isExpired);
+
+            if (isExpired && isAuthenticated) {
+                localStorage.removeItem('token');
+                sessionStorage.removeItem('token');
+                setShouldRedirect(true);
+
+                try {
+                    <Navigate to="/login" replace={true} />
+                } catch (error) {
+                    console.error("Error al redirigir:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Hubo un problema al redirigir al inicio de sesión. Por favor, inténtalo de nuevo.',
+                    });
+                }
+            }
+        }, 10000);
+
+        return () => clearInterval(chekExpirationInterval);
+    }, [isAuthenticated, isExpired]);
+
+
+
     return (
         <>
+            {tokenExpired && <ExpiredTime />}
+
             {/* Renderiza NavBar solo si la ruta es / o /login */}
             {location.pathname === '/' || location.pathname === '/login' ? (
                 <NavBar isAuthenticated={isAuthenticated} />
