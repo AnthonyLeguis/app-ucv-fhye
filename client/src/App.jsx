@@ -16,7 +16,6 @@ import { AuthContext } from "./hooks/AuthContext"
 import { NotFound } from "./routes/components/NotFound"
 import { ExpiredTime } from "./routes/components/ExpiredTime"
 import { useCheckTokenExp } from "./hooks/useCheckTokenExp"
-import Swal from 'sweetalert2';
 import './CSS/App.css'
 
 export const App = () => {
@@ -45,30 +44,27 @@ export const App = () => {
 
     useEffect(() => {
 
-        const chekExpirationInterval = setInterval(() => {
-            setTokenExpired(isExpired);
+        if (isAuthenticated) {
+            const checkExpirationInterval = setInterval(() => {
+                setTokenExpired(isExpired);
+                console.log("Token expirado:", isExpired);
 
-            if (isExpired && isAuthenticated) {
-                localStorage.removeItem('token');
-                sessionStorage.removeItem('token');
-                setShouldRedirect(true);
-
-                try {
-                    <Navigate to="/login" replace={true} />
-                } catch (error) {
-                    console.error("Error al redirigir:", error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Hubo un problema al redirigir al inicio de sesión. Por favor, inténtalo de nuevo.',
-                    });
+                if (isExpired) {
+                    localStorage.removeItem("token");
+                    sessionStorage.removeItem("token");
                 }
-            }
-        }, 10000);
+            }, 3600);
 
-        return () => clearInterval(chekExpirationInterval);
+            return () => clearInterval(checkExpirationInterval);
+        }
     }, [isAuthenticated, isExpired]);
 
+    useEffect(() => {
+        if (shouldRedirect) {
+            Navigate('/login');
+            setShouldRedirect(false);
+        }
+    }, [shouldRedirect, Navigate]);
 
 
     return (

@@ -24,6 +24,7 @@ export const SideBar = () => {
     if (token) {
         try {
             const decodedToken = jwtDecode(token);
+            console.log(decodedToken);
             const names = decodedToken.names; // Asumiendo que el nombre está en el campo "names" del token
             const surnames = decodedToken.surnames; // Asumiendo que el apellido está en el campo "surnames" del token
 

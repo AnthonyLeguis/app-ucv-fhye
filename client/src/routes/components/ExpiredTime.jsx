@@ -1,35 +1,25 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
 
 export const ExpiredTime = () => {
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        navigate('/login');
-    }
+    useEffect(() => {
+        Swal.fire({
+            title: 'Su sesión ha expirado',
+            text: 'Inicie sesión nuevamente.',
+            icon: 'warning',
+            showCancelButton: false,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Login'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                navigate('/login')
+            }
+        })
+    }, [])
 
-    return (
-        <>
-            <div className="modal fade" id="modal" tabIndex="-1">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Tiempo de sesión expirado</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <p>Por favor inicie sesión nuevamente.</p>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" onClick={handleLogout}
-                                className="btn btn-secondary"
-                                data-bs-dismiss="modal"
-                            >Aceptar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
-    )
+    return null;
 }
