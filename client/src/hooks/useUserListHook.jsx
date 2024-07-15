@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from './AuthContext';
+import { jwtDecode } from 'jwt-decode';
 
 export const useUserListHook = () => {
   const { token, isLoading } = useContext(AuthContext);
@@ -9,12 +10,21 @@ export const useUserListHook = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
+      const token = sessionStorage.getItem('token');
+
+      if (!token) {
+        return;
+      }
+
       if (isLoading) {
         return;
       }
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/list/${currentPage}`, { // <-- Actualiza la URL con la página
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.id;
+
+        const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/list/${currentPage}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -29,6 +39,7 @@ export const useUserListHook = () => {
 
         const data = await response.json();
         setUsers(data);
+        console.log(data);
       } catch (error) {
         setError(error.message);
       }

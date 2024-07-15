@@ -42,7 +42,7 @@ export const UserList = () => {
 
   return (
     <>
-      <div className="container-fluid mt-4 mb-5 d-flex flex-column justify-content-center align-items-center">
+      <div className="container-fluid mt-4 mb-5 d-flex flex-column justify-content-center align-items-centers">
         <h1>Lista de usuarios</h1>
 
         <div className="row col col-sm-8 col-lg-6 my-3 d-flex flex-column flex-md-row justify-content-center align-items-center mx-auto my-4">
@@ -64,9 +64,9 @@ export const UserList = () => {
         </div>
 
         {showList && (
-          <div className="col col-md-10 d-flex flex-column justify-content-center align-content-center">
+          <div className="col col-md-10 d-flex flex-column justify-content-center align-content-center shadow-lg">
 
-            <table className="table table-striped table-responsive-sm" >
+            <table className="table table-striped table-responsive-sm " >
               <thead>
                 <tr className="thead_bg">
                   <th>Nombre</th>
