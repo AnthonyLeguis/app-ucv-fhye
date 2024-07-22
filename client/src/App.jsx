@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate, useLocation, Outlet } from "react-router-dom"
+import { Route, Routes, Navigate, useLocation, Outlet, useNavigate } from "react-router-dom"
 import { useContext, useEffect, useState } from "react"
 import { NavBar } from "./routes/components/NavBar"
 import { Home } from "./routes/Home"
@@ -16,15 +16,16 @@ import { AuthContext } from "./hooks/AuthContext"
 import { NotFound } from "./routes/components/NotFound"
 import { ExpiredTime } from "./routes/components/ExpiredTime"
 import { useCheckTokenExp } from "./hooks/useCheckTokenExp"
+import { ProtectedRoute } from "./routes/components/ProtectedRoute"
 import './CSS/App.css'
+import Swal from "sweetalert2"
 
 export const App = () => {
-    const { isAuthenticated, userId, isLoading } = useContext(AuthContext);
+    const { isAuthenticated, userId, isLoading, logout } = useContext(AuthContext);
     const [tokenExpired, setTokenExpired] = useState(false);
     const location = useLocation();
     const isExpired = useCheckTokenExp();
-
-    const [shouldRedirect, setShouldRedirect] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isAuthenticated && !userId) {
@@ -37,14 +38,9 @@ export const App = () => {
     }, [isAuthenticated, userId, location.pathname]);
 
     useEffect(() => {
-        if (shouldRedirect && userId) {
-            <Navigate to={`/app/profile/${userId}`} replace={true} />;
-        }
-    }, [shouldRedirect, userId]);
-
-    useEffect(() => {
-
         if (isAuthenticated) {
+            setTokenExpired(false); 
+
             const checkExpirationInterval = setInterval(() => {
                 setTokenExpired(isExpired);
                 console.log("Token expirado:", isExpired);
@@ -60,11 +56,20 @@ export const App = () => {
     }, [isAuthenticated, isExpired]);
 
     useEffect(() => {
-        if (shouldRedirect) {
-            Navigate('/login');
-            setShouldRedirect(false);
+        if (tokenExpired && isAuthenticated) {
+            Swal.fire({
+                icon: "error",
+                title: "Por favor ingrese nuevamente",
+                text: "Su sesión ha expirado",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Llama a la función logout del contexto para actualizar isAuthenticated
+                    logout(); // Asegúrate de tener esta función en tu AuthContext
+                    navigate("/login");
+                }
+            });
         }
-    }, [shouldRedirect, Navigate]);
+    }, [tokenExpired, isAuthenticated, logout, navigate]);
 
 
     return (
@@ -76,39 +81,72 @@ export const App = () => {
                 <NavBar isAuthenticated={isAuthenticated} />
             ) : null}
 
-            <Routes>
-                <Route path="/" element={
-                    isLoading ? null : isAuthenticated ? <Navigate to={`/app/profile/${userId} || /app`} /> : <Home />
-                } />
+            <Routes> {/* Mueve Routes aquí, antes de todas las rutas */}
+                <Route
+                    path="/"
+                    element={
+                        isLoading
+                            ? null
+                            : isAuthenticated
+                                ? <Navigate to={`/app/profile/${userId} || /app`} />
+                                : <Home />
+                    }
+                />
                 <Route path="/login" element={<Login />} />
 
                 {/* Rutas privadas (con SideBar) */}
-                <Route path="/app" element={
-                    <div className="d-flex flex-nowrap vh-100 content-scroll">
-                        <div className="col-auto">
-                            {isAuthenticated ? <SideBar isAuthenticated={isAuthenticated} /> : null}
+                <Route
+                    path="/app"
+                    element={
+                        <div className="d-flex flex-nowrap vh-100 content-scroll">
+                            <div className="col-auto">
+                                {isAuthenticated ? (
+                                    <SideBar isAuthenticated={isAuthenticated} />
+                                ) : null}
+                            </div>
+                            <div className="col mx-auto d-flex flex-column align-content-center">
+                                <Outlet />
+                            </div>
                         </div>
-                        <div className="col mx-auto d-flex flex-column align-content-center">
-                            <Outlet />
-                        </div>
-                    </div>
-                }>
-                    {/* Solo renderizar rutas privadas si está autenticado */}
+                    }
+                >
+                    {/* Aquí van todas tus rutas protegidas, envueltas por ProtectedRoute */}
                     {isAuthenticated && (
                         <>
                             <Route path={`profile/${userId}`} element={<UserProfile />} />
                             <Route path="users" element={<Users />} />
-                            <Route path="users/register" element={<UserForm />} />
+                            <Route
+                                path="users/register"
+                                element={
+                                    <ProtectedRoute redirectTo="/app">
+                                        <UserForm />
+                                    </ProtectedRoute>
+                                }
+                            />
                             <Route path="dashboard" element={<Dashboard />} />
                             <Route path="data" element={<Data />} />
                             <Route path="sheets" element={<Sheets />} />
-                            <Route path="sheets/register" element={<SheetsForm />} />
+                            <Route
+                                path="sheets/register"
+                                element={
+                                    <ProtectedRoute redirectTo="/app">
+                                        <SheetsForm />
+                                    </ProtectedRoute>
+                                }
+                            />
                             <Route path="setup-user" element={<SetupUser />} />
                         </>
                     )}
-                    <Route index element={
-                        isAuthenticated ? <Navigate to={`profile/${userId}`} /> : <Navigate to="/login" />
-                    } />
+                    <Route
+                        index
+                        element={
+                            isAuthenticated ? (
+                                <Navigate to={`profile/${userId}`} />
+                            ) : (
+                                <Navigate to="/login" />
+                            )
+                        }
+                    />
                 </Route>
 
                 {/* Ruta catch-all */}

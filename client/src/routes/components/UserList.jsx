@@ -57,7 +57,7 @@ export const UserList = () => {
             ))}
           </select>
           <button
-            className="col btn btn-sm btn-primary mx-2"
+            className="col btn btn-sm btn-primary mt-2 mt-md-0 mx-2"
             onClick={handleShowList}>
             {showList ? 'Ocultar lista' : 'Mostrar lista'}
           </button>

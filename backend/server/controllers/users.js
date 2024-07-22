@@ -12,6 +12,21 @@ import axios from 'axios';
 // Carga de variables de entorno
 dotenv.config();
 
+async function uploadToImgBB(options) {
+    try {
+        const response = await imgbbUploader(options);
+        return response;
+    } catch (error) {
+        if (error.response && error.response.data) {
+            // Manejo de error si la respuesta es JSON
+            throw new Error(error.response.data.error.message);
+        } else {
+            // Manejo de error si la respuesta es texto plano
+            throw new Error(error.message);
+        }
+    }
+}
+
 //acciones de prueba
 const pruebaUsers = async (req, res) => {
 
@@ -19,10 +34,10 @@ const pruebaUsers = async (req, res) => {
         const users = await User.find({}); // Usar el modelo User importado
         console.log(users);
         res.status(200).json({ message: 'Datos obtenidos correctamente', users });
-      } catch (error) {
+    } catch (error) {
         console.error('Error al obtener los datos:', error);
         res.status(500).json({ message: 'Error en el servidor' });
-      }
+    }
 };
 
 //Registro de usuarios
@@ -378,24 +393,13 @@ const uploadImg = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error al subir la imagen a ImgBB:', error);
-
-        if (error.response) {
-            // El error viene de Axios (petición HTTP)
-            return res.status(error.response.status).json({
-                status: "error",
-                message: error.response.data.error || "Error en la comunicación con ImgBB"
-            });
-        } else {
-            // Otro tipo de error
-            return res.status(500).json({
-                status: "error",
-                message: "Error al subir la imagen a ImgBB",
-            });
-        }
+        console.error('Error al subir la imagen a ImgBB:', error.message); // Captura el mensaje del error de ImgBB
+        // El error viene de Axios (petición HTTP) o otro tipo
+        return res.status(error.response?.status || 500).json({ // Maneja el status de la respuesta 
+            status: "error",
+            message: error.response?.data?.error?.message || error.message || "Error en la comunicación con ImgBB" // Envía el mensaje de error
+        });
     }
-
-
 
 };
 

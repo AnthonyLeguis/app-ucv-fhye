@@ -5,6 +5,7 @@ import '../CSS/userprofile.css'
 import img_male from '../assets/perfil_male.png'
 import img_female from '../assets/perfil_female.png'
 import { Spinner } from './components/Spinner';
+import { ChangeImagen } from './components/ChangeImagen';
 
 
 export const UserProfile = () => {
@@ -56,10 +57,10 @@ export const UserProfile = () => {
 
     return (
         <>
-            <div className="container-fluid contain">
-                <div className="row h-100 sm-flex-column scroll">
-                    <div className="col mt-4 mb-5 rounded-1 col-md-8 mx-auto d-flex flex-row align-content-center justify-content-center">
-                        <h1 className="text-center text-center m-0">Escuela: {userData?.users?.school}</h1>
+            <div className="container-fluid contain overflow-auto">
+                <div className="row h-100 sm-flex-column">
+                    <div className="col mt-4 mb-2 rounded-1 col-md-8 mx-auto d-flex flex-row justify-content-center justify-content-md-right">
+                        <h1 className="SchoolName text-center text-center m-0">Escuela: {userData?.users?.school}</h1>
                     </div>
                     {console.log('userData:', userData)}
 
@@ -71,8 +72,9 @@ export const UserProfile = () => {
                         <div className="col container-fluid mt-5 col-12 col-md-10 d-flex flex-column justify-content-center align-items-center">
 
                             <div className="container-fluid d-flex flex-column flex-lg-row mx-auto">
-                                <div className='container profile_image col-4 m-2 mx-auto'>
+                                <div className='container profile_image mb-5 mt-0 col-4 m-2 mx-auto my-md-auto'>
                                     <img className='profile_image' src={userData.users.image ? userData.users.image : (userData.gender === 'M' ? img_male : img_female)} alt="Imagen de perfil" />
+                                    <ChangeImagen />
                                 </div>
 
                                 <div className='container-fluid col-8'>

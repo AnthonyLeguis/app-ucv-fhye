@@ -1,5 +1,6 @@
 :root {
     --primary-color: rgb(78, 152, 255);
+    --secundary-c: rgb(0, 14, 205);
 }
 
 .contain {
@@ -10,7 +11,7 @@ h1 {
     text-align: center;
     font-size: 2rem;
     font-weight: bold;
-    text-transform:capitalize;
+    text-transform: capitalize;
     color: #333;
 }
 
@@ -26,6 +27,13 @@ h3 {
     font-size: 1.1rem;
     font-weight: bolder;
     color: #333;
+}
+
+.SchoolName {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-radius: 8px;
+    border: 5px solid var(--primary-color);
 }
 
 .thead_bg {
@@ -51,3 +59,31 @@ h3 {
     box-shadow: 0 0 5px 5px rgba(68, 118, 247, 0.549);
 }
 
+.bi-pencil-square {
+    position: relative;
+    bottom: 35px;
+    left: 130px;
+}
+
+/* Estilos personalizados para el scroll vertical */
+.overflow-auto::-webkit-scrollbar {
+    width: 8px;
+    /* Ancho del scroll */
+}
+
+.overflow-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Color de fondo del track */
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+    background: #888;
+    /* Color del thumb (la barra que se arrastra) */
+    border-radius: 4px;
+    /* Borde redondeado del thumb */
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+    /* Color del thumb al pasar el mouse por encima */
+}
