@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useNotification } from './components/Notifications';
 import { AuthContext } from '../hooks/AuthContext';
 import { useScreenTransition } from '../hooks/useScreenTransition';
@@ -19,6 +19,7 @@ export const Login = () => {
   const { login } = useContext(AuthContext);
   const { startTransition, isTransitioning } = useScreenTransition();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -43,7 +44,7 @@ export const Login = () => {
         console.log("ID del usuario:", id);
         login(data.token, id);
         startTransition();
-        
+
         navigate('/app/');
       }
 
@@ -161,6 +162,10 @@ export const Login = () => {
             </div>
           </div>
         </div>
+
+        {location.state?.from && (
+          <p>Debes iniciar sesión para acceder a {location.state.from.pathname}</p>
+        )}
 
         <footer className='container-fluid d-flex flex-column flex-md-row text-white flex-wrap justify-content-around '>
           <div className='fs-6 text-center fw-bold'>
