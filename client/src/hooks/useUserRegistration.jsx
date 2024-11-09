@@ -9,12 +9,16 @@ export const useUserRegistration = () => {
         password: '',
         ci: '',
         idac: '',
+        address: '',
+        phone: '',
         school: '',
         department: '',
         professorship: '',
         current_dedication: '',
         executing_unit: '',
         hire_date: '',
+        gender: '',
+        ci_tipo: '',
     });
 
     const [isLoading, setIsLoading] = useState(false);

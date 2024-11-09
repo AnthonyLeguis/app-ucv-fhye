@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import PhoneNumberInput from './PhoneNumberInput.jsx';
 import { useUserRegistration } from "../../hooks/useUserRegistration"
 
 export const UserForm = () => {
@@ -19,13 +20,17 @@ export const UserForm = () => {
           password: '',
           ci: '',
           idac: '',
+          address: '',
+          phone: '',
           school: '',
           department: '',
           professorship: '',
           current_dedication: '',
           executing_unit: '',
           hire_date: '',
-        }); 
+          gender: '',
+          ci_tipo: '',
+        });
 
         setSuccess(false);
       }, 3000);
@@ -37,45 +42,83 @@ export const UserForm = () => {
 
   return (
     <>
-      <div className="container mt-5">
+      <div className="container h-100 overflow-y-scroll">
         {success && <div className="alert alert-success">Usuario registrado correctamente</div>}
         {error && <div className="alert alert-danger">{error}</div>}
 
-        <form ref={formRef} onSubmit={handleSubmit}>
+        <h1>Registro de usuario</h1>
+
+        <form ref={formRef} onSubmit={handleSubmit} className="needs-validation col-12 col-md-8 mx-auto p-2 shadow-sm ">
           <div className="row">
             <div className="col-md-6 mb-3">
               <label htmlFor="names" className="form-label">Nombres:</label>
-              <input type="text" className="form-control" id="names" name="names" value={formData.names} onChange={handleChange} required />
+              <input type="text" className="form-control form-control-sm" id="names" name="names" value={formData.names} onChange={handleChange} required />
             </div>
             <div className="col-md-6 mb-3">
               <label htmlFor="surnames" className="form-label">Apellidos:</label>
-              <input type="text" className="form-control" id="surnames" name="surnames" value={formData.surnames} onChange={handleChange} required />
+              <input type="text" className="form-control form-control-sm" id="surnames" name="surnames" value={formData.surnames} onChange={handleChange} required />
             </div>
           </div>
 
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Correo electrónico:</label>
-            <input type="email" className="form-control" id="email" name="email" value={formData.email} onChange={handleChange} required />
+            <input type="email" className="form-control form-control-sm" id="email" name="email" autoComplete="on" value={formData.email} onChange={handleChange} required />
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">Contraseña:</label>
-            <input type="password" className="form-control" id="password" name="password" value={formData.password} onChange={handleChange} required />
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label htmlFor="gender" className="form-label">Genero:</label>
+              <select className="form-select form-select-sm" id="gender" name="gender" value={formData.gender} onChange={handleChange} required>
+                <option value="">Seleccionar...</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+              </select>
+            </div>
+
+            <div className="col-md-6 mb-3">
+              <label htmlFor="password" className="form-label">Contraseña:</label>
+              <input type="password" className="form-control form-control-sm" id="password" name="password" value={formData.password} onChange={handleChange} required />
+            </div>
+
           </div>
+
 
           <div className="row">
             <div className="col-md-4 mb-3">
               <label htmlFor="ci" className="form-label">Cédula de Identidad:</label>
-              <input type="text" className="form-control" id="ci" name="ci" value={formData.ci} onChange={handleChange} required />
+              <input type="text" className="form-control form-control-sm" id="ci" name="ci" value={formData.ci} onChange={handleChange} required />
+            </div>
+            <div className="col-md-4 mb-3">
+              <label htmlFor="ci_tipo" className="form-label">Tipo de Cédula:</label>
+              <select className="form-select form-select-sm" id="ci_tipo" name="ci_tipo" value={formData.ci_tipo} onChange={handleChange} required>
+                <option value="">-- Seleccione --</option>
+                <option value="V">V</option>
+                <option value="E">E</option>
+              </select>
             </div>
             <div className="col-md-4 mb-3">
               <label htmlFor="idac" className="form-label">IDAC:</label>
-              <input type="text" className="form-control" id="idac" name="idac" value={formData.idac} onChange={handleChange} required />
+              <input type="text" className="form-control form-control-sm" id="idac" name="idac" value={formData.idac} onChange={handleChange} required />
             </div>
+          </div>
+
+          <div className="row">
+
             <div className="col-md-4 mb-3">
               <label htmlFor="school" className="form-label">Escuela:</label>
-              <input type="text" className="form-control" id="school" name="school" value={formData.school} onChange={handleChange} required />
+              <input type="text" className="form-control form-control-sm" id="school" name="school" value={formData.school} onChange={handleChange} required />
             </div>
+
+            <div className="col-md-4 mb-3">
+              <label htmlFor="address" className="form-label">Dirección:</label>
+              <input type="text" className="form-control form-control-sm" autoComplete="on" id="address" name="address" value={formData.address} onChange={handleChange} required />
+            </div>
+
+            <div className="col-md-4 mb-3">
+                <label htmlFor="phone" className="form-label">Teléfono:</label>
+                <PhoneNumberInput />
+            </div>
+
           </div>
 
           {/* ... (otros campos del formulario: department, professorship, etc.) ... */}

@@ -8,14 +8,18 @@ import uploads from "../middlewares/multerConfig.js";
 const router = express.Router();
 
 router.get("/prueba-usuario",auth, UserController.pruebaUsers);
-router.post("/register", UserController.registerUsers);
+router.post("/register",auth, UserController.registerUsers);
 router.post("/login", UserController.loginUsers);
+router.post("/recover-password", UserController.passRecoveryUsers.recoveryByEmail);
+router.post("/reset-password/:id", auth, UserController.passRecoveryUsers.resetByAdmin);
+router.put("/reset-passwordToken", UserController.passRecoveryUsers.resetPassword);
+router.delete("/delete/:id", auth, UserController.deleteUsers);
 router.get("/profile/:id", auth, UserController.profileUsers);
 router.get("/list/:page?", auth, UserController.listUsers);
 router.put("/update", auth, UserController.updateUsers);
-router.post("/upload-image", [auth, uploads], UserController.uploadImg);
-router.get("/avatar/:file", auth, UserController.avatarUser);
-router.delete("/delete-img/:id", auth, UserController.deleteImg);
+router.post("/upload-image", [auth, uploads], UserController.uploadProfileImage);
+router.get("/avatar", auth, UserController.avatarUser);
+router.delete("/delete-img", auth, UserController.deleteImg);
 
 
 export default router

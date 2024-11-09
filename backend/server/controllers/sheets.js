@@ -1,10 +1,11 @@
 //Importar modelo
 import Sheet from "../models/sheet.js";
-import User from "../models/user.js";
-import reqPropSheets from "../helpers/reqPropSheets.js";
+import { getSheetColumns, getSheetRowData } from "../helpers/reqPropSheets.js";
 import userHelpers from "../helpers/getUserByIdAndSchool.js";
 import ExcelJS from 'exceljs';
 import moment from "moment";
+import Activity from "../models/userActivity.js";
+import Employee from "../models/employee.js";
 
 //acciones de prueba
 const pruebaSheets = (req, res) => {
@@ -14,83 +15,146 @@ const pruebaSheets = (req, res) => {
 }
 
 //accion de crear una planilla
-const createSheet = async (req, res) => {
-
-    // Sacar id del usuario identificado
-    const identity = req.users;
-    //console.log(identity);
-
-    //recoger datos de la peticion
-    const userSheet = req.body;
-
-    // Validacion de datos requeridos
-    if (!reqPropSheets.every(property => userSheet[property])) {
-        return res.status(400).json({
-            status: "error",
-            message: 'Faltan datos por agregar a la planilla',
-        })
-    }
-
-    //Encontrar el usuario para la planilla
-    const matchUser = await userHelpers.getUserByIdAndSchool(userSheet.id, userSheet.school);
-
-    // Validar que el usuario exista
-    if (!matchUser) {
-        return res.status(400).json({
-            status: "error",
-            message: 'El usuario con el ID y escuela ingresada no existe',
-        })
-    }
-
-    console.log(matchUser);
-
-    // Crear objeto de la nueva planilla
+const registerSheet = async (req, res) => {
     try {
 
-        //comprobar que existen los datos (validar datos)
-        if (!reqPropSheets.every(property => userSheet[property])) {
+        //Obtener los datos de la planilla del cuerpo de la solicitud
+        const sheetData = req.body;
+        //Obtener el Id del usuario del cuerpo del token
+        const userId = req.users.id;
+        //Obtener el rol del usuario del cuerpo del token
+        const userRole = req.users.role;
+        //Obtener el area del usuario del cuerpo del token
+        const userArea = req.users.area;
+        const userName = req.users.names + ' ' + req.users.surnames;
 
-            return res.status(400).json({
+        // Verificar si el usuario tiene el permiso para crear una planilla
+        if (userRole !== 'role_analyst') {
+            return res.status(403).json({
                 status: "error",
-                message: 'Faltan datos por agregar a la planilla',
-            })
+                message: 'No posee la permisologia para crear una planilla'
+            });
         }
 
-        //Tranformar la data a un objeto de mongoose
+        //Verificar si el area de la planilla coincide con el area del usuario
+        if (sheetData.area !== userArea) {
+            return res.status(403).json({
+                status: "error",
+                message: 'No puede crear una planilla para un area diferente a la suya'
+            });
+        }
+
+        //Obtener el Id del empleado de la planilla
+        const findEmployeeId = async (nationalId) => {
+            const employee = await Employee.findOne({ nationalId: nationalId });
+            if (employee) {
+                return {
+                    _id: employee._id,
+                    area: employee.area,
+                    names: employee.names,
+                    surnames: employee.surnames,
+                    idType: employee.idType,
+                    nationalId: employee.nationalId,
+                    rif: employee.rif,
+                    birthdate: employee.birthdate,
+                    countryOfBirth: employee.countryOfBirth,
+                    cityOfBirth: employee.cityOfBirth,
+                    maritalStatus: employee.maritalStatus,
+                    gender: employee.gender,
+                    familyDependents: employee.familyDependents,
+                    educationLevel: employee.educationLevel,
+                    email: employee.email,
+                    phoneNumber: employee.phoneNumber,
+                    address: employee.address,
+                    bank: employee.bank,
+                    payrollAccount: employee.payrollAccount
+                };
+            } else {
+                return null;
+            }
+        }
+
+        //Asignar el valor del documento completo del empleado al campo employeeId a la planilla
+        sheetData.employeeId = await findEmployeeId(sheetData.nationalId);
+
+        //Validar los datos de la planilla
+        if (
+            !sheetData.sheetNumber ||
+            !sheetData.area ||
+            !sheetData.introducedDate ||
+            !sheetData.sentDate ||
+            !sheetData.observations_general ||
+            !sheetData.facultyOrDependency ||
+            !sheetData.entryDate ||
+            !sheetData.effectiveDate ||
+            !sheetData.contractEndDate ||
+            !sheetData.executingUnit ||
+            !sheetData.dedication ||
+            !sheetData.teachingCategory ||
+            !sheetData.movementType ||
+            !sheetData.sheetNumber ||
+            !sheetData.ubication ||
+            !sheetData.employeeId ||
+            !sheetData.idac ||
+            !sheetData.position ||
+            !sheetData.currentPosition ||
+            !sheetData.grade ||
+            !sheetData.opsuTable ||
+            !sheetData.personnelType ||
+            !sheetData.workingDay ||
+            !sheetData.typeContract ||
+            !sheetData.typeContract ||
+            !sheetData.valueSalary ||
+            !sheetData.mounthlySalary ||
+            !sheetData.ReasonForMovement
+        ) {
+            return res.status(400).json({
+                status: "error",
+                message: 'Faltan datos por registrar en la planilla'
+            });
+        }
+
+        //Crear una nueva planilla
         const newsheet = new Sheet({
-            user: matchUser.id,
-            sheet_number: userSheet.sheet_number,
-            school: userSheet.school,
-            movement_type: userSheet.movement_type,
-            proposed_dedication: userSheet.proposed_dedication,
-            period: userSheet.period,
-            category: userSheet.category,
-            arguments: userSheet.arguments,
-            income: userSheet.income,
-            income_type: userSheet.income_type,
-            income_date: userSheet.income_date ? new Date(userSheet.income_date) : null,
-            attachments: userSheet.attachments,
-            program_code: userSheet.program_code,
-            accounting_code: userSheet.accounting_code,
-            effective_date: userSheet.effective_date,
-            created_by: identity.id,
+            ...sheetData,
+            createdBy: userId,
+            user: [userId],
         });
 
         //Guardar planilla en la bd
-        await newsheet.save();
+        const sheetStored = await newsheet.save();
+
+        //Registrar la actividad del usuario en la bd
+        const newActivity = new Activity({
+            user: userId,
+            action: "Planilla creada por: " + userName + " del area: " + userArea,
+            details: `Se ha creado una nueva planilla con ID: ${sheetStored._id}`
+        });
+        await newActivity.save();
 
         res.status(201).json({
             status: "success",
             message: 'Planilla creada correctamente',
-            sheet: newsheet
+            sheet: sheetStored
         })
 
 
     } catch (error) {
+        console.error("Error al registrar la planilla:", error);
+
+        if (error.name === 'MongoServerError' && error.code === 11000) {
+            // Error de clave duplicada (sheetNumber o idac)
+            let duplicateField = Object.keys(error.keyPattern)[0];
+            let message = `El valor de ${duplicateField} ya está en uso.`;
+            return res.status(400).json({
+                status: "error",
+                message: message
+            });
+        }
 
         return res.status(500).json({
             status: "error",
-            message: 'Error al crear la planilla: ' + error.message,
+            message: 'Error al registrar la planilla: ' + error.message,
         });
 
     }
@@ -187,10 +251,10 @@ const deleteSheet = async (req, res) => {
 
         if (!sheetRemoved) {
             return res.status(404).send({ // Volvemos al estado 404
-              status: 'error',
-              message: 'Planilla no encontrada', // Mensaje claro y conciso
+                status: 'error',
+                message: 'Planilla no encontrada', // Mensaje claro y conciso
             });
-          }
+        }
 
         return res.status(200).send({
             message: 'Planilla eliminada exitosamente',
@@ -209,62 +273,95 @@ const deleteSheet = async (req, res) => {
 //accion de listado de planillas
 const listSheets = async (req, res) => {
     try {
-        let page = parseInt(req.query.page) || 1; // Obtener página de query parameters
-        let itemsPerPage = parseInt(req.query.limit) || 5; // Limite de planillas por petición
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const role = req.users.role;
+        const area = req.users.area;
 
-        // Validar parámetros
-        if (isNaN(page) || page < 1 || isNaN(itemsPerPage) || itemsPerPage < 1) {
-            return res.status(400).send({
-                status: 'error',
-                message: 'Parámetros de paginación inválidos',
-            });
+        let query = {};
+
+        if (role === 'role_budget') {
+            query = {
+                // Puede ver planillas creadas, pendientes o aprobadas por RRHH
+                status: { $in: ['created', 'pending', 'approvedRRHH'] }
+            };
+            if (req.query.area) {
+                // Filtrar por área si se proporciona en la solicitud
+                query.area = req.query.area;
+            }
+        } else if (role === 'role_rrhh') {
+            query = {
+                // Puede ver planillas creadas, pendientes o aprobadas por Budget
+                status: { $in: ['created', 'pending', 'approvedBudget'] }
+            };
+            if (req.query.area) {
+                // Filtrar por área si se proporciona en la solicitud
+                query.area = req.query.area;
+            }
+        } else if (role === 'role_master') {
+            query = {
+                // Puede ver planillas creadas, pendientes o aprobadas por Budget
+                status: { $in: ['created', 'pending', 'approvedRRHH', 'approvedBudget', 'rejectedRRHH', 'rejectedBudget'] }
+            };
+            if (req.query.area) {
+                // Filtrar por área si se proporciona en la solicitud
+                query.area = req.query.area;
+            }
+        }
+        else if (role === 'role_analyst') {
+            // Mostrar planillas según el tipo de listado solicitado
+            const listType = req.query.status; // 'approved', 'rejected_budget' o 'rejected_rrhh'
+            // Solo listar planillas de su área
+            query.area = area;
+            if (listType === 'approved') {
+                query = {
+                    area: area, // Solo planillas de su área
+                    status: 'approved', // Solo planillas aprobadas
+                    printPermission: true // Con permiso de impresión
+                };
+            } else if (listType === 'rejectedBudget') {
+                query = {
+                    area: area, // Solo planillas de su área
+                    status: 'rejectedBudget' // Solo planillas rechazadas por Budget
+                };
+            } else if (listType === 'rejectedRRHH') {
+                query = {
+                    area: area, // Solo planillas de su área
+                    status: 'rejectedRRHH' // Solo planillas rechazadas por RRHH
+                };
+            } else {
+                return res.status(400).json({ message: 'Tipo de listado inválido' });
+            }
+        } else {
+            return res.status(403).json({ message: 'No tienes permiso para listar planillas' });
         }
 
+        // Obtener el listado de planillas con paginación
         const options = {
-            page,
-            limit: itemsPerPage,
-            sort: { _id: -1 },
+            page: page,
+            limit: limit,
+            sort: { _id: -1 }, // Ordenar por ID descendente
             collation: {
                 locale: "es",
             },
         };
+        const sheets = await Sheet.paginate(query, options);
 
-        const sheets = await Sheet.paginate({}, options);
-
+        // Devolver el listado de planillas
         return res.status(200).send({
             status: 'success',
             sheets: sheets.docs,
             page,
-            itemsPerPage,
+            itemsPerPage: limit,
             total: sheets.totalDocs,
             pages: sheets.totalPages,
         });
+
     } catch (error) {
-        console.error(error); // Registrar el error en consola
+        console.error(error);
         return res.status(500).send({
             status: 'error',
-            message: 'Error al obtener la lista de planillas: ' + error.message, // Detalle del error
-        });
-    }
-};
-
-//accion de buscar informacion de un usuario para la planilla
-const getUserInfo = async (req, res) => {
-    try {
-        const userInfo = req.body; // Asumimos que CI y school vienen en la query string
-
-        const user = await userHelpers.getUserByIdAndSchool(userInfo.id, userInfo.school);
-
-        res.status(200).json({
-            status: "success",
-            user: user
-        });
-
-    } catch (error) {
-        // Manejo de errores
-        res.status(error.status || 500).json({
-            status: "error",
-            message: error.message
+            message: 'Obtuvo el siguiente error en la solicitud: ' + error.message,
         });
     }
 };
@@ -273,7 +370,7 @@ const getUserInfo = async (req, res) => {
 const exportsSheets = async (req, res) => {
 
     const identity = req.users; // Asumiendo que usas middleware de autenticación
-    const allowedRoles = ['role_admin', 'role_analista']; // Roles permitidos para borrar una planilla
+    const allowedRoles = ['role_master', 'role_rrhh', 'role_budget']; // Roles permitidos para exportar una planilla
 
     if (!identity || !allowedRoles.includes(identity.role)) {
         return res.status(401).send({
@@ -283,67 +380,58 @@ const exportsSheets = async (req, res) => {
     }
 
     try {
-        const { school } = req.body;
-        const now = new Date();
-        const timestamp = moment(now).format('DD-MM-YY')
+        const { idac, nationalId } = req.body; // Obtener idac o nationalId de la solicitud
 
-        // Obtener los datos de los usuarios que pertenezcan a la escuela indicada
-        const sheets = await Sheet.find({ school }).populate('user', 'school')
+        let query = {};
 
-        if (sheets.length === 0) {
+        if (idac) {
+            query.idac = parseInt(idac); // Buscar por idac si se proporciona
+        } else if (nationalId) {
+            // Buscar por nationalId si se proporciona
+            const employee = await Employee.findOne({ nationalId });
+            if (employee) {
+                query.employeeId = employee._id;
+            } else {
+                return res.status(404).send({
+                    status: 'error',
+                    message: 'No se encontró ningún empleado con ese nationalId',
+                });
+            }
+        } else {
+            return res.status(400).send({
+                status: 'error',
+                message: 'Debes proporcionar un idac o un nationalId',
+            });
+        }
+
+        const sheet = await Sheet.findOne(query)
+            .populate('employeeId')
+            .lean();
+            //console.log(sheet.employeeId)//
+
+        if (!sheet) {
             return res.status(404).send({
                 status: 'error',
-                message: 'No se encontraron planillas para la escuela especificada',
+                message: 'No se encontró ninguna planilla con ese idac o nationalId',
             });
         }
 
         const workbook = new ExcelJS.Workbook();
-        const schoolWords = school.split(' ');
-        const firstSchoolWord = schoolWords[0];
-        const worksheetName = `Planillas_${firstSchoolWord}_${timestamp.replace(/[:.]/g, '')}`;
+        const areaWords = sheet.area.split(' ');
+        const firstAreaWord = areaWords[0];
+        const timestamp = moment().format('DD-MM-YY');
+        const worksheetName = `Planilla_${firstAreaWord}_${timestamp.replace(/[:.]/g, '')}`;
         const worksheet = workbook.addWorksheet(worksheetName);
 
-        worksheet.columns = [
-            { header: 'Número de Planilla', key: 'sheet_number', width: 15 },
-            { header: 'Tipo de Movimiento', key: 'movement_type', width: 20 },
-            { header: 'Dedicación Propuesta', key: 'proposed_dedication', width: 20 },
-            { header: 'Periodo', key: 'period', width: 10 },
-            { header: 'Categoría', key: 'category', width: 15 },
-            { header: 'Argumentos', key: 'arguments', width: 30 },
-            { header: 'Ingreso', key: 'income', width: 15 },
-            { header: 'Tipo de Ingreso', key: 'income_type', width: 15 },
-            { header: 'Fecha de Ingreso', key: 'income_date', width: 15 },
-            { header: 'Adjuntos', key: 'attachments', width: 20 },
-            { header: 'Código de Programa', key: 'program_code', width: 15 },
-            { header: 'Código Contable', key: 'accounting_code', width: 15 },
-            { header: 'Fecha Efectiva', key: 'effective_date', width: 15 },
-            { header: 'Creado Por', key: 'created_by', width: 20 },
-            { header: 'Creado En', key: 'created_at', width: 20 },
-        ];
+        // Ajustar las columnas del excel según el modelo de datos (sin incluir historiales ni status)
+        worksheet.columns = getSheetColumns();
 
-        sheets.forEach(sheet => {
-            worksheet.addRow({
-                sheet_number: sheet.sheet_number,
-                movement_type: sheet.movement_type,
-                proposed_dedication: sheet.proposed_dedication,
-                period: sheet.period,
-                category: sheet.category,
-                arguments: sheet.arguments,
-                income: sheet.income,
-                income_type: sheet.income_type,
-                income_date: sheet.income_date,
-                attachments: sheet.attachments,
-                program_code: sheet.program_code,
-                accounting_code: sheet.accounting_code,
-                effective_date: sheet.effective_date,
-                created_by: sheet.created_by,
-                created_at: sheet.created_at
-            });
-        });
+        worksheet.addRow(getSheetRowData(sheet));
 
-        // Configuracion de las cabeceras de las respuestas
+        // Configuración de las cabeceras de las respuestas
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', `attachment; filename=Planillas_${firstSchoolWord}_${timestamp.replace(/[:.]/g, '')}.xlsx`);
+        res.setHeader('Content-Disposition', `attachment; filename=Planilla_${firstAreaWord}_${timestamp.replace(/[:.]/g,
+            '')}.xlsx`);
 
         await workbook.xlsx.write(res);
         res.end();
@@ -362,8 +450,7 @@ const exportsSheets = async (req, res) => {
 //Exportar acciones
 export default {
     pruebaSheets,
-    createSheet,
-    getUserInfo,
+    registerSheet,
     deleteSheet,
     listSheets,
     updateSheet,

@@ -3,3 +3,15 @@
     color: #fff;
     white-space: nowrap;
 }
+
+@media (max-width: 767px) {
+    .scroll-container {
+        overflow-y: auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .scroll-container {
+        overflow-y: hidden; /* Oculta el scroll */
+    }
+}

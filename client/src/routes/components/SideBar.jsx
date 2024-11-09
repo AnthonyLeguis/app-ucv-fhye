@@ -104,23 +104,20 @@ export const SideBar = () => {
                                         aria-expanded="false"
                                     >
                                         <i className='bi bi-file-earmark-spreadsheet'></i>
-                                        <span className='ms-3 d-none d-sm-inline pointer'>Planillas</span>
+                                        <span className='ms-3 d-none d-sm-inline pointer'>Planillas de <br></br> movimiento</span>
                                     </a>
                                     <ul className="dropdown-menu mx-1 ">
                                         <li>
-                                            <NavLink
-                                                className={({ isActive }) => `dropdown-item ${isActive ? 'active' : ''}`}
-                                                to="/app/sheets"
-                                            >
-                                                Lista de Planillas
+                                            <NavLink className={({ isActive }) => `dropdown-item ${isActive ? 'active' : ''}`}
+                                                to="/app/sheets" >
+                                                Ingreso de prorrogas 
                                             </NavLink></li>
                                         <li>
-                                            <NavLink
-                                                className={({ isActive }) => `dropdown-item ${isActive ? 'active' : ''}`}
-                                                to="/app/sheets/register"
-                                            >
+                                            <NavLink className={({ isActive }) => `dropdown-item ${isActive ? 'active' : ''}`}
+                                                to="/app/sheets/register" >
                                                 Crear Planilla
-                                            </NavLink></li>
+                                            </NavLink>
+                                        </li>
                                         {/* ... (otros elementos del dropdown planillas) ... */}
                                     </ul>
                                 </li>
@@ -140,7 +137,7 @@ export const SideBar = () => {
                                             </NavLink>
                                         </li>
                                         <li>
-                                            <NavLink className="dropdown-item" to="/app/users/register">
+                                            <NavLink className="dropdown-item" to="users/register">
                                                 Registrar Usuarios
                                             </NavLink>
                                         </li>

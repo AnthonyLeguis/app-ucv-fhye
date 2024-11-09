@@ -118,9 +118,7 @@ export const App = () => {
                             <Route
                                 path="users/register"
                                 element={
-                                    <ProtectedRoute redirectTo="/app">
                                         <UserForm />
-                                    </ProtectedRoute>
                                 }
                             />
                             <Route path="dashboard" element={<Dashboard />} />
@@ -129,9 +127,7 @@ export const App = () => {
                             <Route
                                 path="sheets/register"
                                 element={
-                                    <ProtectedRoute redirectTo="/app">
                                         <SheetsForm />
-                                    </ProtectedRoute>
                                 }
                             />
                             <Route path="setup-user" element={<SetupUser />} />

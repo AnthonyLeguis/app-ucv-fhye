@@ -16,11 +16,11 @@ const createToken = (users) => {
         names: users.names,
         surnames: users.surnames,
         email: users.email,
-        ci: users.ci,
-        idac: users.idac,
+        nationalId: users.nationalId,
         email: users.email,
         role: users.role,
-        image: users.image
+        image: users.image,
+        area: users.area
     };
 
     // Devolver jwt token cofificado
@@ -31,5 +31,6 @@ const createToken = (users) => {
 //Exportar acciones
 export default {
     secret, 
-    createToken
+    createToken,
+    decode: jwt.decode
 }

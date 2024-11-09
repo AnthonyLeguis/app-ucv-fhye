@@ -65,7 +65,7 @@ export const Login = () => {
         setPassword(savedPassword);
         setRecuerdame(true);
       }
-      //console.log('Credenciales recuperadas de localStorage', savedCI, savedPassword);
+      console.log('Credenciales recuperadas de localStorage', savedCI, savedPassword);
     }
 
     setIsFirstRender(true);

@@ -4,40 +4,28 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 const userSchema = new mongoose.Schema({
     names: {
         type: String,
-        required: true
+        required: true,
     },
     surnames: {
         type: String,
-        required: true
+        required: true,
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     password: {
         type: String,
         required: true
     },
-    role: {
+    confirmPassword: {
         type: String,
-        default: 'role_user',
-        required: true
     },
-    ci_tipo: {
-        type: String,
-        required: true,
-        enum: ['V', 'E'],
+    tokenValidation: {
+        type: String    
     },
-    ci: {
-        type: Number,
-        required: true
-    },
-    gender: {
-        type: String,
-        required: true
-    },
-    idac: {
+    nationalId: {
         type: Number,
         required: true
     },
@@ -45,47 +33,38 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "default.png"
     },
-    delete_url: { 
-        type: String
+    phone: { 
+        type: String,
+        required: true
     },
-    address: String,
-    phone: String,
+    area: {
+        type: String,
+        required: true,
+    },
+    role: {
+        type: String,
+        enum: ['role_master', 'role_analyst', 'role_budget', 'role_rrhh'],
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ['active', 'inactive'],
+        default: 'active'
+    },
     created_at: {
         type: Date,
         default: Date.now
     },
-    school: {
-        type: String,
-        required: true,
-    },
-    department: {
-        type: String,
-        required: true,
-    },
-    professorship: {
-        type: String,
-        required: true,
-    },
-    current_dedication: {
-        type: String,
-        required: true,
-    },
-    executing_unit: {
-        type: Number,
-        required: true,
-    },
-    hire_date: {
-        type: Date,
-        required: true,
-    }
 });
 
-// Indice de búsqueda por school
-userSchema.index({ school: 1 });
-// Indice de búsqueda por ci
-userSchema.index({ ci: 1 });
-//indice de busqueda por idac
-userSchema.index({ idac: 1 });
+// Indice de búsqueda por nationalId
+userSchema.index({ nationalId: 1 });
+// Indice de búsqueda por email
+userSchema.index({ email: 1 });
+// Indice de búsqueda por area
+userSchema.index({ area: 1 });
+// Indice de búsqueda por role
+userSchema.index({ role: 1 });
 
 userSchema.plugin(mongoosePaginate);
 

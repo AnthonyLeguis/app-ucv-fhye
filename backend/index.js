@@ -1,11 +1,14 @@
 import express from "express";
 import dotenv from "dotenv";
+import morgan from "morgan";
 import cors from "cors";
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import connection from "./server/database/connection.js";
 import userRouter from "./server/routes/user.js";
+import userActivityRouter from "./server/routes/userActivity.js";
+import employeeRouter from "./server/routes/employee.js";
 import sheetRouter from "./server/routes/sheet.js";
 
 // 2. Configuración de variables de entorno
@@ -32,8 +35,10 @@ connection()
 
 // 4. Configuración del servidor Express
 const app = express();
+app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT;
 
+app.use(morgan("dev"));
 app.use(cors({
   origin: function (origin, callback) {
     const allowedOrigins = [
@@ -55,11 +60,19 @@ app.use(express.urlencoded({ extended: true }));
 // 5. Rutas de la API
 const API_ROUTES = {
   USER: userRouter,
+  USER_ACTIVITY: userActivityRouter,
+  EMPLOYEE: employeeRouter,
   SHEET: sheetRouter,
 };
 
 // Ruta para gestionar usuarios
 app.use("/api/user", API_ROUTES.USER);
+
+// Ruta para gestionar actividades de usuario
+app.use("/api/user-activity", API_ROUTES.USER_ACTIVITY);
+
+// Ruta para gestionar empleados
+app.use("/api/employee", API_ROUTES.EMPLOYEE);
 
 // Ruta para gestionar las planillas
 app.use("/api/sheet", API_ROUTES.SHEET);

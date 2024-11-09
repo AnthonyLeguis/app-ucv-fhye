@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useUserListHook } from "../../hooks/useUserListHook";
+import '../../CSS/userlist.css';
 
 export const UserList = () => {
   const { users, error, isLoading, currentPage, setCurrentPage } = useUserListHook()
@@ -42,7 +43,7 @@ export const UserList = () => {
 
   return (
     <>
-      <div className="container-fluid mt-4 mb-5 d-flex flex-column justify-content-center align-items-centers">
+      <div className="vh-100 container-fluid mt-4 mb-5 d-flex flex-column justify-content-center align-items-center scroll-container">
         <h1>Lista de usuarios</h1>
 
         <div className="row col col-sm-8 col-lg-6 my-3 d-flex flex-column flex-md-row justify-content-center align-items-center mx-auto my-4">
@@ -64,9 +65,9 @@ export const UserList = () => {
         </div>
 
         {showList && (
-          <div className="col col-md-10 d-flex flex-column justify-content-center align-content-center shadow-lg">
+          <div className="col-sm-12 col-md-10 d-flex flex-column justify-content-center align-content-center shadow-lg  mx-auto">
 
-            <table className="table table-striped table-responsive-sm " >
+            <table className="table table-striped table-responsive-sm" >
               <thead>
                 <tr className="thead_bg">
                   <th>Nombre</th>
@@ -90,8 +91,8 @@ export const UserList = () => {
             </table>
 
             {showList && (
-              <nav aria-label="col col-sm-12 Page navigation example d-flex justify-content-end align-items-center">
-                <ul className="pagination justify-content-end"> {/* Cambiamos 'class' por 'className' y agregamos justify-content-end */}
+              <nav aria-label="w-100 min-w-100 Page navigation example d-flex justify-content-end align-items-center">
+                <ul className="pagination justify-content-end col col-md-12 px-1"> {/* Cambiamos 'class' por 'className' y agregamos justify-content-end */}
                   {/* Botón "Anterior" */}
                   <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                     <button
