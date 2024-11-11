@@ -14,26 +14,27 @@ export const useCheckTokenExp = () => {
 
             const token = localStorage.getItem('token');
 
-          if (token) {
-            try {
-                const decodedToken = jwtDecode(token);
-                const currentTime = Date.now() / 1000;
-
-                setIsTokenExpired(decodedToken.exp < currentTime);
-
-                if (decodedToken.exp < currentTime) {
+            if (token) { // Agregar esta condición
+                try {
+                  const decodedToken = jwtDecode(token);
+                  const currentTime = Date.now() / 1000;
+        
+                  setIsTokenExpired(decodedToken.exp < currentTime);
+        
+                  if (decodedToken.exp < currentTime) {
+                    localStorage.removeItem('token');
+                    console.log("Token expirado");
+                    navigate('/login', { state: { message: "Su sesión ha culminado" } });
+                  }
+                } catch (error) {
+                    console.error("Error al decodificar el token:", error);
                     localStorage.removeItem('token');
                     navigate('/login', { state: { message: "Su sesión ha culminado" } });
+
                 }
-            } catch (error) {
-                console.error("Error al decodificar el token:", error);
-                localStorage.removeItem('token');
-                navigate('/login', { state: { message: "Su sesión ha culminado" } });
-                
+            } else {
+                setIsTokenExpired(true);
             }
-          }  else {
-            setIsTokenExpired(true);
-          }
         };
 
         // Verificar al inicio
@@ -50,4 +51,3 @@ export const useCheckTokenExp = () => {
 
 };
 
-export default useCheckTokenExp;

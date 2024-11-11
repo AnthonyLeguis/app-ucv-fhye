@@ -64,7 +64,7 @@ export const Login = () => {
       const savedNationalId = localStorage.getItem('nationalId');
       const savedPassword = localStorage.getItem('password');
       if (savedNationalId && savedPassword) {
-        setCI(savedNationalId);
+        setNationalId(savedNationalId);
         setPassword(savedPassword);
         setRecuerdame(true);
       }

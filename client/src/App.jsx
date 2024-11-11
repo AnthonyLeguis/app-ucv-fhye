@@ -37,40 +37,23 @@ export const App = () => {
     }, [isAuthenticated, userId, location.pathname]);
 
     useEffect(() => {
-        if (isAuthenticated) {
-            setTokenExpired(false); 
-
-            const checkExpirationInterval = setInterval(() => {
-                setTokenExpired(isExpired);
-                console.log("Token expirado:", isExpired);
-
-                if (isExpired) {
-                    localStorage.removeItem("token");
-                    sessionStorage.removeItem("token");
+        if (isExpired && isAuthenticated) {
+            console.log("Token expirado");
+            
+            Swal.fire({
+                icon: "error",
+                title: "Por favor ingrese nuevamente",
+                text: "Su sesión ha expirado",
+                showCancelButton: true,
+                confirmButtonText: 'Volver a autenticarse',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    logout();
+                    navigate("/login");
                 }
-            }, 3600);
-
-            return () => clearInterval(checkExpirationInterval);
+            });
         }
-    }, [isAuthenticated, isExpired]);
-
-    useEffect(() => {
-        if (isExpired) {
-          Swal.fire({
-            icon: "error",
-            title: "Por favor ingrese nuevamente",
-            text: "Su sesión ha expirado",
-            // Agrega un botón para redirigir al login
-            showCancelButton: true,
-            confirmButtonText: 'Volver a autenticarse',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              logout(); // Llama a la función logout del contexto
-              navigate("/login");
-            }
-          });
-        }
-      }, [isExpired, logout, navigate]);
+    }, [isAuthenticated,isExpired, logout, navigate]);
 
 
     return (
@@ -119,7 +102,7 @@ export const App = () => {
                             <Route
                                 path="users/register"
                                 element={
-                                        <UserForm />
+                                    <UserForm />
                                 }
                             />
                             <Route path="dashboard" element={<Dashboard />} />
@@ -128,7 +111,7 @@ export const App = () => {
                             <Route
                                 path="sheets/register"
                                 element={
-                                        <SheetsForm />
+                                    <SheetsForm />
                                 }
                             />
                             <Route path="setup-user" element={<SetupUser />} />
