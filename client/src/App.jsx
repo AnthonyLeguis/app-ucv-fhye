@@ -16,7 +16,6 @@ import { AuthContext } from "./hooks/AuthContext"
 import { NotFound } from "./routes/components/NotFound"
 import { ExpiredTime } from "./routes/components/ExpiredTime"
 import { useCheckTokenExp } from "./hooks/useCheckTokenExp"
-import { ProtectedRoute } from "./routes/components/ProtectedRoute"
 import './CSS/App.css'
 import Swal from "sweetalert2"
 
@@ -56,20 +55,22 @@ export const App = () => {
     }, [isAuthenticated, isExpired]);
 
     useEffect(() => {
-        if (tokenExpired && isAuthenticated) {
-            Swal.fire({
-                icon: "error",
-                title: "Por favor ingrese nuevamente",
-                text: "Su sesión ha expirado",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Llama a la función logout del contexto para actualizar isAuthenticated
-                    logout(); // Asegúrate de tener esta función en tu AuthContext
-                    navigate("/login");
-                }
-            });
+        if (isExpired) {
+          Swal.fire({
+            icon: "error",
+            title: "Por favor ingrese nuevamente",
+            text: "Su sesión ha expirado",
+            // Agrega un botón para redirigir al login
+            showCancelButton: true,
+            confirmButtonText: 'Volver a autenticarse',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              logout(); // Llama a la función logout del contexto
+              navigate("/login");
+            }
+          });
         }
-    }, [tokenExpired, isAuthenticated, logout, navigate]);
+      }, [isExpired, logout, navigate]);
 
 
     return (

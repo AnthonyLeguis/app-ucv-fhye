@@ -9,7 +9,7 @@ import '../CSS/transition.css'
 
 export const Login = () => {
 
-  const [ci, setCI] = useState('');
+  const [nationalId, setNationalId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [recuerdame, setRecuerdame] = useState(false);
@@ -30,8 +30,8 @@ export const Login = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ci, password }),
-      });
+        body: JSON.stringify({ nationalId, password }),
+      });      
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -39,8 +39,11 @@ export const Login = () => {
 
       } else {
         const data = await response.json();
+
+        console.log(data);
+        login(data.token, data.user.id);
         sessionStorage.setItem('token', data.token);
-        const id = data.users.id;
+        const id = data.user.id;
         console.log("ID del usuario:", id);
         login(data.token, id);
         startTransition();
@@ -58,14 +61,14 @@ export const Login = () => {
 
   useEffect(() => {
     if (!error && isFirstRender) {
-      const savedCI = localStorage.getItem('ci');
+      const savedNationalId = localStorage.getItem('nationalId');
       const savedPassword = localStorage.getItem('password');
-      if (savedCI && savedPassword) {
-        setCI(savedCI);
+      if (savedNationalId && savedPassword) {
+        setCI(savedNationalId);
         setPassword(savedPassword);
         setRecuerdame(true);
       }
-      console.log('Credenciales recuperadas de localStorage', savedCI, savedPassword);
+      console.log('Credenciales recuperadas de localStorage', savedNationalId, savedPassword);
     }
 
     setIsFirstRender(true);
@@ -73,7 +76,7 @@ export const Login = () => {
     if (error) {
       showNotification(error, 'error')
         .then(() => {
-          setCI('');
+          setNationalId('');
           setPassword('');
           setError(null);
         })
@@ -110,8 +113,8 @@ export const Login = () => {
                     id="form3Example3"
                     className="form-control form-control-lg"
                     placeholder="Ingrese su número de Cédula"
-                    value={ci}
-                    onChange={(e) => setCI(e.target.value)}
+                    value={nationalId}
+                    onChange={(e) => setNationalId(e.target.value)}
                   />
                 </div>
 

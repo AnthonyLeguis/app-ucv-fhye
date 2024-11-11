@@ -1,27 +1,53 @@
 import { jwtDecode } from "jwt-decode";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const useCheckTokenExp = () => {
-    const token = localStorage.getItem('token');
-    const [isExpired, setIsExpired] = useState(false);
+
+    const navigate = useNavigate();
+    const [isTokenExpired, setIsTokenExpired] = useState(false);
 
     useEffect(() => {
-        if (token) {
+        let intervalId;
+
+        const checkTokenExpiration = () => {
+
+            const token = localStorage.getItem('token');
+
+          if (token) {
             try {
                 const decodedToken = jwtDecode(token);
                 const currentTime = Date.now() / 1000;
-                console.log("Token decodificado:", decodedToken);
-                console.log("Fecha de expiración:", decodedToken.exp);
-                console.log("Tiempo actual:", currentTime);
-                
-                setIsExpired(decodedToken.exp < currentTime);
+
+                setIsTokenExpired(decodedToken.exp < currentTime);
+
+                if (decodedToken.exp < currentTime) {
+                    localStorage.removeItem('token');
+                    navigate('/login', { state: { message: "Su sesión ha culminado" } });
+                }
             } catch (error) {
-                console.error('Error al decodificar el token:', error);
-                setIsExpired(true);
+                console.error("Error al decodificar el token:", error);
+                localStorage.removeItem('token');
+                navigate('/login', { state: { message: "Su sesión ha culminado" } });
+                
             }
-        }
-    }, [token]);
+          }  else {
+            setIsTokenExpired(true);
+          }
+        };
 
-    return isExpired;
+        // Verificar al inicio
+        checkTokenExpiration();
 
-}
+        // Verificar cada minuto
+        intervalId = setInterval(checkTokenExpiration, 60000);
+
+        // Limpiar el intervalo al desmontar el componente
+        return () => clearInterval(intervalId);
+    }, [navigate]);
+
+    return isTokenExpired;
+
+};
+
+export default useCheckTokenExp;
