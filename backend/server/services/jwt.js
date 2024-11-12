@@ -12,7 +12,7 @@ const createToken = (users) => {
     const payload = {
         id: users._id,
         iat: moment().unix(),
-        exp: moment().add(5, "minutes").unix(),
+        exp: moment().add(2, "hours").unix(),
         names: users.names,
         surnames: users.surnames,
         email: users.email,

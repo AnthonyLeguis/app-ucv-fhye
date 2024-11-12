@@ -60,7 +60,7 @@ export const UserProfile = () => {
             <div className="container-fluid contain overflow-auto">
                 <div className="row h-100 sm-flex-column">
                     <div className="col mt-4 mb-2 rounded-1 col-md-8 mx-auto d-flex flex-row justify-content-center justify-content-md-right">
-                        <h1 className="SchoolName text-center text-center m-0">Escuela: {userData?.users?.school}</h1>
+                        <h1 className="SchoolName text-center text-center m-0">Escuela: {userData?.users?.area}</h1>
                     </div>
                     {console.log('userData:', userData)}
 
@@ -73,7 +73,7 @@ export const UserProfile = () => {
 
                             <div className="container-fluid d-flex flex-column flex-lg-row mx-auto">
                                 <div className='container profile_image mb-5 mt-0 col-4 m-2 mx-auto my-md-auto'>
-                                    <img className='profile_image' src={userData.users.image ? userData.users.image : (userData.gender === 'M' ? img_male : img_female)} alt="Imagen de perfil" />
+                                    <img className='profile_image text-center my-auto' src={userData.users.image} alt="Imagen de perfil" />
                                     <ChangeImagen />
                                 </div>
 
@@ -96,20 +96,13 @@ export const UserProfile = () => {
                                             </tr>
                                             <tr>
                                                 <th scope="row">Cedula:</th>
-                                                <td>{userData.users.ci}</td>
+                                                <td>{userData.users.nationalId}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">Correo:</th>
                                                 <td>{userData.users.email}</td>
                                             </tr>
-                                            <tr>
-                                                <th scope="row">Genero:</th>
-                                                <td>{userData.users.gender}</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">Edad:</th>
-                                                <td>{userData.users.age}</td>
-                                            </tr>
+
                                             <tr>
                                                 <th scope="row">Teléfono:</th>
                                                 <td>{userData.users.phone}</td>
