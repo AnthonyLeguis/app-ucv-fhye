@@ -19,7 +19,7 @@ export const usePasswordRecovery = () => {
                 body: JSON.stringify({ email }),
             });
 
-            console.log(response);
+            //console.log(response);
             
 
             if (!response.ok) {

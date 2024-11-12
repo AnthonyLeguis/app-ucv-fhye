@@ -15,6 +15,7 @@ import { SetupUser } from "./routes/SetupUser"
 import { AuthContext } from "./hooks/AuthContext"
 import { NotFound } from "./routes/components/NotFound"
 import { useCheckTokenExp } from "./hooks/useCheckTokenExp"
+import { PassRecovery } from "./routes/PassRecovery"
 import './CSS/App.css'
 import Swal from "sweetalert2"
 
@@ -72,6 +73,7 @@ export const App = () => {
                     }
                 />
                 <Route path="/login" element={<Login />} />
+                <Route path="/reset-passwordToken" element={<PassRecovery />} />
 
                 {/* Rutas privadas (con SideBar) */}
                 <Route
