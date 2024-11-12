@@ -19,7 +19,7 @@ export const UserProfile = () => {
         }
 
         const fetchData = async () => {
-            const token = sessionStorage.getItem('token');
+            const token = localStorage.getItem('token');
 
             if (!token) {
                 return;
@@ -29,9 +29,9 @@ export const UserProfile = () => {
                 const decodedToken = jwtDecode(token);
                 const userId = decodedToken.id;
 
-                const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/profile/${userId}`,
+                const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/profile`,
                     {
-                        method: 'GET',
+                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `${token}`,

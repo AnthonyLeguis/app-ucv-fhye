@@ -1,11 +1,9 @@
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import '../../CSS/sidebar.css'
-import '../../CSS/transition.css'
 import logo from '../../assets/LogoCentral.svg'
 import { jwtDecode } from "jwt-decode"
 import { useNavigate, NavLink } from "react-router-dom";
 import { AuthContext } from '../../hooks/AuthContext';
-import { useScreenTransition } from '../../hooks/useScreenTransition';
 import { useContext, useEffect, useState } from 'react';
 import { useNotification } from '../components/Notifications';
 
@@ -14,10 +12,9 @@ export const SideBar = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(true);
     const navigate = useNavigate();
     const { logout } = useContext(AuthContext);
-    const { startTransition, isTransitioning } = useScreenTransition();
     const { showConfirmNotification } = useNotification();
 
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     let userName = 'Cargando...'; // Valor por defecto
     let userLastNameInitial = '';
 
@@ -38,9 +35,8 @@ export const SideBar = () => {
     }
 
     const handleLogout = () => {
-        sessionStorage.removeItem('token');
+        localStorage.removeItem('token');
         setIsAuthenticated(false);
-        startTransition();
         setTimeout(() => {
             logout(); // Llamar a la función logout del contexto
             navigate('/login'); // Redirigir a la página de login
@@ -56,12 +52,6 @@ export const SideBar = () => {
 
     return (
         <>
-            {isTransitioning && (
-                <div
-                    className="transitioning"
-                    id='transitioning'
-                ></div>
-            )}
             <div className="container">
                 <div className="row">
                     <div className='col col-md-12 side_Background vh-100 col-auto col-sm-10 d-flex flex-column justify-content-between'>

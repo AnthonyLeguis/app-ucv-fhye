@@ -14,7 +14,7 @@ router.post("/recover-password", UserController.passRecoveryUsers.recoveryByEmai
 router.post("/reset-password/:id", auth, UserController.passRecoveryUsers.resetByAdmin);
 router.put("/reset-passwordToken", UserController.passRecoveryUsers.resetPassword);
 router.delete("/delete/:id", auth, UserController.deleteUsers);
-router.get("/profile/:id", auth, UserController.profileUsers);
+router.post("/profile", auth, UserController.profileUsers);
 router.get("/list/:page?", auth, UserController.listUsers);
 router.put("/update", auth, UserController.updateUsers);
 router.post("/upload-image", [auth, uploads], UserController.uploadProfileImage);

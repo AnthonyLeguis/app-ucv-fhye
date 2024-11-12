@@ -1,4 +1,4 @@
-import { jwtDecode } from "jwt-decode";
+import  { jwtDecode }  from "jwt-decode";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,21 +11,22 @@ export const useCheckTokenExp = () => {
         let intervalId;
 
         const checkTokenExpiration = () => {
-
             const token = localStorage.getItem('token');
-
-            if (token) { // Agregar esta condición
+            if (token) {
                 try {
-                  const decodedToken = jwtDecode(token);
-                  const currentTime = Date.now() / 1000;
-        
-                  setIsTokenExpired(decodedToken.exp < currentTime);
-        
-                  if (decodedToken.exp < currentTime) {
-                    localStorage.removeItem('token');
-                    console.log("Token expirado");
-                    navigate('/login', { state: { message: "Su sesión ha culminado" } });
-                  }
+                    const decodedToken = jwtDecode(token);
+                    const currentTime = Math.floor(Date.now() / 1000);
+
+                    console.log("Tiempo de expiración del token:", decodedToken.exp);
+                    console.log("Tiempo actual:", currentTime);
+
+                    if (decodedToken.exp < currentTime) {
+                        localStorage.removeItem('token');
+                        setIsTokenExpired(true);
+                        navigate('/login', { state: { message: "Su sesión ha culminado" } });
+                    } else {
+                        setIsTokenExpired(false);
+                    }
                 } catch (error) {
                     console.error("Error al decodificar el token:", error);
                     localStorage.removeItem('token');
@@ -48,6 +49,5 @@ export const useCheckTokenExp = () => {
     }, [navigate]);
 
     return isTokenExpired;
-
 };
 

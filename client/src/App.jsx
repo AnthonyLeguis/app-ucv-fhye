@@ -14,7 +14,6 @@ import { SheetsForm } from "./routes/components/SheetsForm"
 import { SetupUser } from "./routes/SetupUser"
 import { AuthContext } from "./hooks/AuthContext"
 import { NotFound } from "./routes/components/NotFound"
-import { ExpiredTime } from "./routes/components/ExpiredTime"
 import { useCheckTokenExp } from "./hooks/useCheckTokenExp"
 import './CSS/App.css'
 import Swal from "sweetalert2"
@@ -27,29 +26,25 @@ export const App = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isAuthenticated && !userId) {
-            // Esperar a que userId tenga un valor antes de redirigir
-            setShouldRedirect(true);
-        } else if (isAuthenticated && userId && location.pathname === '/') {
-            // Redirigir a la ruta del perfil si el usuario está autenticado y en la ruta raíz
-            <Navigate to={`/app/profile/${userId}`} />
-        }
-    }, [isAuthenticated, userId, location.pathname]);
+        if (isAuthenticated) {
+            navigate(userId ? `/app/profile` : '/app');
+          }
+    }, [isAuthenticated, userId, location.pathname, navigate]);
 
     useEffect(() => {
         if (isExpired && isAuthenticated) {
-            console.log("Token expirado");
             
             Swal.fire({
                 icon: "error",
                 title: "Por favor ingrese nuevamente",
                 text: "Su sesión ha expirado",
-                showCancelButton: true,
-                confirmButtonText: 'Volver a autenticarse',
+                showCancelButton: false,
+                confirmButtonText: 'Aceptar',
             }).then((result) => {
                 if (result.isConfirmed) {
                     logout();
                     navigate("/login");
+                    setTokenExpired(false);
                 }
             });
         }
@@ -58,7 +53,7 @@ export const App = () => {
 
     return (
         <>
-            {tokenExpired && <ExpiredTime />}
+            {tokenExpired}
 
             {/* Renderiza NavBar solo si la ruta es / o /login */}
             {location.pathname === '/' || location.pathname === '/login' ? (
@@ -72,7 +67,7 @@ export const App = () => {
                         isLoading
                             ? null
                             : isAuthenticated
-                                ? <Navigate to={`/app/profile/${userId} || /app`} />
+                                ? <Navigate to={"/app/profile" || "/app"} />
                                 : <Home />
                     }
                 />
@@ -97,7 +92,7 @@ export const App = () => {
                     {/* Aquí van todas tus rutas protegidas, envueltas por ProtectedRoute */}
                     {isAuthenticated && (
                         <>
-                            <Route path={`profile/${userId}`} element={<UserProfile />} />
+                            <Route path={`profile`} element={<UserProfile />} />
                             <Route path="users" element={<Users />} />
                             <Route
                                 path="users/register"
@@ -121,7 +116,7 @@ export const App = () => {
                         index
                         element={
                             isAuthenticated ? (
-                                <Navigate to={`profile/${userId}`} />
+                                <Navigate to={`profile`} />
                             ) : (
                                 <Navigate to="/login" />
                             )

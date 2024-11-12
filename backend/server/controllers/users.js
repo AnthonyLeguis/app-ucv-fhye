@@ -471,34 +471,40 @@ const passRecoveryUsers = {
 
 const profileUsers = (req, res) => {
 
-    // Receive user ID parameter from the URL
-    const id = req.params.id;
+    try {
+        const id = req.users.id;
+        // console.log(id);//
 
-    // Query to fetch user data
-    User.findById(id)
-        .select({ password: 0 })
-        .exec()
-        .then(userProfile => {
-            if (!userProfile) {
-                return res.status(404).send({
-                    status: 'error',
-                    message: 'El usuario no existe'
+        User.findById(id)
+            .select({ password: 0 })
+            .exec()
+            .then(userProfile => {
+                if (!userProfile) {
+                    return res.status(404).send({
+                        status: 'error',
+                        message: 'El usuario no existe'
+                    });
+                }
+
+                // Return user data
+                return res.status(200).send({
+                    status: 'success',
+                    users: userProfile
                 });
-            }
-
-            // Return user data
-            return res.status(200).send({
-                status: 'success',
-                users: userProfile
+            })
+            .catch(error => {
+                console.error(error);
+                return res.status(500).send({
+                    status: 'error',
+                    message: 'Error en la petición'
+                });
             });
-        })
-        .catch(error => {
-            console.error(error); // Log the error for debugging
-            return res.status(500).send({
-                status: 'error',
-                message: 'Error en la petición'
-            });
+    } catch (error) {
+        return res.status(401).send({
+            status: 'error',
+            message: 'Token inválido'
         });
+    }
 };
 
 const listUsers = async (req, res) => {

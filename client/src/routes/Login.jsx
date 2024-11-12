@@ -2,10 +2,8 @@ import { useEffect, useState, useContext } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useNotification } from './components/Notifications';
 import { AuthContext } from '../hooks/AuthContext';
-import { useScreenTransition } from '../hooks/useScreenTransition';
 import logo from '../assets/LogoCentral.svg'
 import '../CSS/login.css'
-import '../CSS/transition.css'
 
 export const Login = () => {
 
@@ -13,17 +11,16 @@ export const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [recuerdame, setRecuerdame] = useState(false);
-  const [isFirstRender, setIsFirstRender] = useState(false);
 
   const { showNotification } = useNotification();
   const { login } = useContext(AuthContext);
-  const { startTransition, isTransitioning } = useScreenTransition();
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/login`, {
         method: 'POST',
@@ -31,22 +28,16 @@ export const Login = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ nationalId, password }),
-      });      
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
         setError(errorData.message || 'Error al iniciar sesión');
-
       } else {
         const data = await response.json();
-
         console.log(data);
+        localStorage.setItem('token', data.token);
         login(data.token, data.user.id);
-        sessionStorage.setItem('token', data.token);
-        const id = data.user.id;
-        console.log("ID del usuario:", id);
-        login(data.token, id);
-        startTransition();
 
         navigate('/app/');
       }
@@ -59,39 +50,8 @@ export const Login = () => {
 
   };
 
-  useEffect(() => {
-    if (!error && isFirstRender) {
-      const savedNationalId = localStorage.getItem('nationalId');
-      const savedPassword = localStorage.getItem('password');
-      if (savedNationalId && savedPassword) {
-        setNationalId(savedNationalId);
-        setPassword(savedPassword);
-        setRecuerdame(true);
-      }
-      console.log('Credenciales recuperadas de localStorage', savedNationalId, savedPassword);
-    }
-
-    setIsFirstRender(true);
-
-    if (error) {
-      showNotification(error, 'error')
-        .then(() => {
-          setNationalId('');
-          setPassword('');
-          setError(null);
-        })
-    }
-  }, [error, isFirstRender]);
-
-
   return (
     <>
-      {isTransitioning && (
-        <div
-          className="transitioning"
-          id='transitioning'
-        ></div>
-      )}
       <section className="section vh-100 d-flex flex-column justify-content-between bg-body">
 
         <div className="container-fluid d-flex flex-column justify-content-center align-content-center my-auto flex-grow-1">
@@ -114,6 +74,7 @@ export const Login = () => {
                     className="form-control form-control-lg"
                     placeholder="Ingrese su número de Cédula"
                     value={nationalId}
+                    autoComplete='on'
                     onChange={(e) => setNationalId(e.target.value)}
                   />
                 </div>
@@ -126,6 +87,7 @@ export const Login = () => {
                     className="form-control form-control-lg"
                     placeholder="Enter password"
                     value={password}
+                    autoComplete='current-password'
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
