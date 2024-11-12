@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { showNotification } from '../routes/components/Notifications';
+import { useNotification } from './components/Notifications';
 
 export const PassRecovery = () => {
     const [newPassword, setNewPassword] = useState('');
@@ -9,6 +9,7 @@ export const PassRecovery = () => {
     const [success, setSuccess] = useState(false);
 
     const navigate = useNavigate();
+    const { showNotification } = useNotification();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
