@@ -17,6 +17,18 @@ const transporter = nodemailer.createTransport({
 async function sendPasswordRecoveryEmail(email, token) {
     try {
 
+        let frontendUrl;
+
+        if (process.env.NODE_ENV === 'production') {
+            // Obtener la URL de `ORIGIN_FRONTEND_DEPLOYMENT` (corregida)
+            const deploymentUrls = process.env.ORIGIN_FRONTEND_DEPLOYMENT.split(', ');
+            frontendUrl = deploymentUrls[0]; // O la URL que corresponda
+        } else {
+            // Obtener la URL de `ORIGIN_FRONTEND_LOCAL`
+            const localUrls = process.env.ORIGIN_FRONTEND_LOCAL.split(',');
+            frontendUrl = localUrls[0]; // http://localhost:5173
+        }
+
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to: email,
@@ -55,7 +67,7 @@ async function sendPasswordRecoveryEmail(email, token) {
                 <h2 class="titulo">Siga los pasos para reestablecer su contraseña</h2>
 
                 <p class="resaltado">Por favor, haga clic en el boton de abajo para reestablecer su contraseña: </p>
-                    <a href="http://localhost:3900/api/user/reset-passwordToken?token=${token}" class="button">Restablecer contraseña</a>
+                    <a href="${frontendUrl}/reset-password?token=${token}" class="button">Restablecer contraseña</a>
 
                     <br>
                 <h4 class="advertencia">Tendra 1 HORA para reestablecer su contraseña, de lo contrario el enlace expirará</h4>
