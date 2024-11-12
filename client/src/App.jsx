@@ -73,7 +73,7 @@ export const App = () => {
                     }
                 />
                 <Route path="/login" element={<Login />} />
-                <Route path="/reset-passwordToken" element={<PassRecovery />} />
+                <Route path="/reset-password" element={<PassRecovery />} />
 
                 {/* Rutas privadas (con SideBar) */}
                 <Route
