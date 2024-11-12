@@ -38,14 +38,24 @@ export const useCheckTokenExp = () => {
             }
         };
 
-        // Verificar al inicio
-        checkTokenExpiration();
+        const delay = (ms) => new Promise (
+            resolve => setTimeout(resolve, ms)
+        )
 
-        // Verificar cada minuto
-        intervalId = setInterval(checkTokenExpiration, 60000);
+        //Ejecutar el retraso inicial de 10 segundos
+        delay(10000).then(() => {
+            checkTokenExpiration();
+
+            // Verificar cada minuto
+            intervalId = setInterval(checkTokenExpiration, 60000);
+        });
 
         // Limpiar el intervalo al desmontar el componente
-        return () => clearInterval(intervalId);
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        };
     }, [navigate]);
 
     return isTokenExpired;

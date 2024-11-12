@@ -1,20 +1,21 @@
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../hooks/AuthContext';
 import { jwtDecode } from 'jwt-decode';
-import '../CSS/userprofile.css'
-import img_male from '../assets/perfil_male.png'
-import img_female from '../assets/perfil_female.png'
 import { Spinner } from './components/Spinner';
 import { ChangeImagen } from './components/ChangeImagen';
+import { useUserRole } from '../hooks/useUserRole';
+import '../CSS/userprofile.css'
 
 
 export const UserProfile = () => {
-    const { userData, setUserData, isLoading: authLoading } = useContext(AuthContext);
+    const { userData, setUserData, isLoading: authLoading, logout } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [fetched, setFetched] = useState(false);
+    const mapUserRole = useUserRole();
 
     useEffect(() => {
-        if (authLoading) {
+        if (authLoading || fetched) {
             return;
         }
 
@@ -27,7 +28,6 @@ export const UserProfile = () => {
 
             try {
                 const decodedToken = jwtDecode(token);
-                const userId = decodedToken.id;
 
                 const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/profile`,
                     {
@@ -40,11 +40,21 @@ export const UserProfile = () => {
                 );
 
                 if (!response.ok) {
+                    // Verifica si el error es debido a un token expirado
+                    const errorData = await response.json();
+
+                    if (errorData.message === 'Token inválido' || response.status === 401) {
+                        logout(); // Cierra la sesión si el token es inválido
+                        return; // Sale de la función
+                    }
                     throw new Error("Error al obtener los datos del usuario");
                 }
+
+
                 const data = await response.json();
                 setUserData(data); // Actualiza el estado userData en el AuthContext
                 setIsLoading(false);
+                setFetched(true);
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 setError(error.message); // Almacena el mensaje de error
@@ -53,7 +63,7 @@ export const UserProfile = () => {
         };
 
         fetchData();
-    }, [authLoading, setUserData]);
+    }, [authLoading, logout, fetched]);
 
     return (
         <>
@@ -124,12 +134,9 @@ export const UserProfile = () => {
                                     <tbody>
                                         <tr>
                                             <th scope="row">Rol:</th>
-                                            <td>{userData.users.role}</td>
+                                            <td>{mapUserRole(userData.users.role)}</td>
                                         </tr>
-                                        <tr>
-                                            <th scope="row">Idac:</th>
-                                            <td>{userData.users.idac}</td>
-                                        </tr>
+
                                         <tr>
                                             <th scope="row">Usuario creado:</th>
                                             <td>{new Date(userData.users.created_at).toLocaleString(undefined,
