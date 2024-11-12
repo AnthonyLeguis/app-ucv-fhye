@@ -67,7 +67,7 @@ async function sendPasswordRecoveryEmail(email, token) {
                 <h2 class="titulo">Siga los pasos para reestablecer su contraseña</h2>
 
                 <p class="resaltado">Por favor, haga clic en el boton de abajo para reestablecer su contraseña: </p>
-                    <a href="${frontendUrl}/reset-password?token=${token}" class="button">Restablecer contraseña</a>
+                    <a href="${frontendUrl}reset-password?token=${token}" class="button">Restablecer contraseña</a>
 
                     <br>
                 <h4 class="advertencia">Tendra 1 HORA para reestablecer su contraseña, de lo contrario el enlace expirará</h4>
