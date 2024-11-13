@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { AuthContext } from '../../hooks/AuthContext';
 import { useNotification } from './Notifications';
 import '../../CSS/imageForm.css'
-export const ChangeImagen = ({ buttonClassName = 'btn btn-primary m-auto bi bi-pencil-square', setReload  }) => {
+export const ChangeImagen = ({ buttonClassName = 'btn btn-primary m-auto bi bi-pencil-square', setReload }) => {
 
     const { userData, setUserData } = useContext(AuthContext);
     const [file, setFile] = useState(null);
@@ -14,6 +14,22 @@ export const ChangeImagen = ({ buttonClassName = 'btn btn-primary m-auto bi bi-p
 
     const handleFileChange = (event) => {
         const selectedFile = (event.target.files[0]);
+
+        // Validar el formato y el tamaño de la imagen ANTES de previsualizarla
+        const allowedExtensions = ['jpg', 'png', 'jpeg', 'webp'];
+        const fileExtension = selectedFile.name.split('.').pop().toLowerCase();
+        const maxSize = 2 * 1024 * 1024; // 2MB
+
+        if (!allowedExtensions.includes(fileExtension)) {
+            showNotification('Extensión de archivo no permitida.', 'error');
+            return;
+        }
+
+        if (selectedFile.size > maxSize) {
+            showNotification(`El tamaño de la imagen excede el límite de ${maxSize / 1024 / 1024}MB.`, 'error');
+            return;
+        }
+
         setFile(selectedFile);
 
         // Crear la URL de previsualización
