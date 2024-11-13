@@ -17,8 +17,8 @@ export const useCheckTokenExp = () => {
                     const decodedToken = jwtDecode(token);
                     const currentTime = Math.floor(Date.now() / 1000);
 
-                    console.log("Tiempo de expiración del token:", decodedToken.exp);
-                    console.log("Tiempo actual:", currentTime);
+                    //console.log("Tiempo de expiración del token:", decodedToken.exp);
+                    //console.log("Tiempo actual:", currentTime);
 
                     if (decodedToken.exp < currentTime) {
                         localStorage.removeItem('token');

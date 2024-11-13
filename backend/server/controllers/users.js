@@ -6,11 +6,8 @@ import jwt from "../services/jwt.js";
 import moment from "moment";
 import secret from "../services/jwt.js";
 import sendPasswordResetEmail from "../middlewares/recoverByEmail.js";
-import fs from 'fs';
-import path from "path";
 import imgbbUploader from 'imgbb-uploader';
 import dotenv from 'dotenv';
-import mongoose from "mongoose";
 import axios from 'axios';
 
 const secretPass = secret.secret;

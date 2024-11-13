@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../hooks/AuthContext';
-import { jwtDecode } from 'jwt-decode';
 import { Spinner } from './components/Spinner';
 import { ChangeImagen } from './components/ChangeImagen';
 import { useUserRole } from '../hooks/useUserRole';
+import { useNotification } from './components/Notifications';
 import '../CSS/userprofile.css'
 
 
@@ -12,6 +12,8 @@ export const UserProfile = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [fetched, setFetched] = useState(false);
+    const [reload, setReload] = useState(false);
+    const { showNotification } = useNotification();
     const mapUserRole = useUserRole();
 
     useEffect(() => {
@@ -27,7 +29,6 @@ export const UserProfile = () => {
             }
 
             try {
-                const decodedToken = jwtDecode(token);
 
                 const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/profile`,
                     {
@@ -58,12 +59,13 @@ export const UserProfile = () => {
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 setError(error.message); // Almacena el mensaje de error
+                showNotification("NO se logra obtener la data","error")
                 setIsLoading(false); // Desactiva el spinner incluso en caso de error
             }
         };
 
         fetchData();
-    }, [authLoading, logout, fetched]);
+    }, [authLoading, logout, reload]);
 
     return (
         <>
@@ -84,7 +86,7 @@ export const UserProfile = () => {
                             <div className="container-fluid d-flex flex-column flex-lg-row mx-auto">
                                 <div className='container profile_image mb-5 mt-0 col-4 m-2 mx-auto my-md-auto'>
                                     <img className='profile_image text-center my-auto' src={userData.users.image} alt="Imagen de perfil" />
-                                    <ChangeImagen />
+                                    <ChangeImagen setReload={setReload}/>
                                 </div>
 
                                 <div className='container-fluid col-8'>
