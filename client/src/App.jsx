@@ -27,14 +27,8 @@ export const App = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isAuthenticated) {
-            navigate(userId ? `/app/profile` : '/app');
-          }
-    }, [isAuthenticated, userId, location.pathname, navigate]);
-
-    useEffect(() => {
         if (isExpired && isAuthenticated) {
-            
+
             Swal.fire({
                 icon: "error",
                 title: "Por favor ingrese nuevamente",
@@ -49,7 +43,7 @@ export const App = () => {
                 }
             });
         }
-    }, [isAuthenticated,isExpired, logout, navigate]);
+    }, [isAuthenticated, isExpired, logout, navigate]);
 
 
     return (
@@ -67,9 +61,11 @@ export const App = () => {
                     element={
                         isLoading
                             ? null
-                            : isAuthenticated
-                                ? <Navigate to={"/app/profile" || "/app"} />
-                                : <Home />
+                            : isAuthenticated ? (
+                                <Navigate to={"/app"} />
+                            ) : (
+                                <Home />
+                            )
                     }
                 />
                 <Route path="/login" element={<Login />} />
@@ -79,51 +75,43 @@ export const App = () => {
                 <Route
                     path="/app"
                     element={
-                        <div className="d-flex flex-nowrap vh-100 content-scroll">
-                            <div className="col-auto">
-                                {isAuthenticated ? (
-                                    <SideBar isAuthenticated={isAuthenticated} />
-                                ) : null}
+                        isAuthenticated ? (
+                            <div className="d-flex flex-nowrap vh-100 content-scroll">
+                                <div className="col-auto">
+                                    {isAuthenticated ? (
+                                        <SideBar isAuthenticated={isAuthenticated} />
+                                    ) : null}
+                                </div>
+                                <div className="col mx-auto d-flex flex-column align-content-center">
+                                    <Outlet />
+                                </div>
                             </div>
-                            <div className="col mx-auto d-flex flex-column align-content-center">
-                                <Outlet />
-                            </div>
-                        </div>
+                        ) : (
+                            <Navigate to="/login" />
+                        )
                     }
                 >
+                    {/* Redirección condicional en la ruta /app */}
+                    <Route
+                        index // Ruta por defecto para /app
+                        element={
+                            userId ? <Navigate to="profile" /> : <Navigate to="/" />
+                        }
+                    />
+
                     {/* Aquí van todas tus rutas protegidas, envueltas por ProtectedRoute */}
                     {isAuthenticated && (
                         <>
-                            <Route path={`profile`} element={<UserProfile />} />
+                            <Route path="profile" element={<UserProfile />} />
                             <Route path="users" element={<Users />} />
-                            <Route
-                                path="users/register"
-                                element={
-                                    <UserForm />
-                                }
-                            />
+                            <Route path="users/register" element={<UserForm />} />
                             <Route path="dashboard" element={<Dashboard />} />
                             <Route path="data" element={<Data />} />
                             <Route path="sheets" element={<Sheets />} />
-                            <Route
-                                path="sheets/register"
-                                element={
-                                    <SheetsForm />
-                                }
-                            />
+                            <Route path="sheets/register" element={<SheetsForm />} />
                             <Route path="setup-user" element={<SetupUser />} />
                         </>
                     )}
-                    <Route
-                        index
-                        element={
-                            isAuthenticated ? (
-                                <Navigate to={`profile`} />
-                            ) : (
-                                <Navigate to="/login" />
-                            )
-                        }
-                    />
                 </Route>
 
                 {/* Ruta catch-all */}

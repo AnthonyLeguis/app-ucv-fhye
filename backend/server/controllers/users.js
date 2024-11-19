@@ -508,9 +508,8 @@ const listUsers = async (req, res) => {
 
     try {
 
-        // Obtener la pagina de la solicitud
-        const page = parseInt(req.query.page) || 1;
-        // Obtener el limite de la solicitud
+        // Obtener la página de la solicitud desde los parámetros de consulta 
+        const page = parseInt(req.query.page) || 1; 
         const limit = parseInt(req.query.limit) || 10;
 
         // Obtener el role y area del usuario actual

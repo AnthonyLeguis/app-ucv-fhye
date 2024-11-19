@@ -42,32 +42,32 @@ h3 {
 }
 
 .profile_image {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     min-width: 150px;
     min-height: 150px;
 }
 
 .profile_image img {
-    max-width: 180px;
-    max-height: 180px;
+    max-width: 150px;
+    max-height: 150px;
     min-width: 150px;
     min-height: 150px;
     object-fit: cover;
-    border-radius: 100%;
+    border-radius: 50%;
     margin: 0 auto;
-    box-shadow: 0 0 5px 5px rgba(68, 118, 247, 0.549);
+    box-shadow: 0 0 5px 5px rgba(92, 138, 255, 0.549);
 }
 
 .bi-pencil-square {
     position: relative;
     bottom: 35px;
-    left: 130px;
+    left: 115px;
 }
 
 /* Estilos personalizados para el scroll vertical */
 .overflow-auto::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
     /* Ancho del scroll */
 }
 

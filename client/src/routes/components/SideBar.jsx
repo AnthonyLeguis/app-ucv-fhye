@@ -2,32 +2,33 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import '../../CSS/sidebar.css'
 import logo from '../../assets/LogoCentral.svg'
 import { jwtDecode } from "jwt-decode"
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, useLocation } from "react-router-dom";
 import { AuthContext } from '../../hooks/AuthContext';
 import { useContext, useEffect, useState } from 'react';
 import { useNotification } from '../components/Notifications';
 
 export const SideBar = () => {
-
     const [isAuthenticated, setIsAuthenticated] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
     const { logout } = useContext(AuthContext);
     const { showConfirmNotification } = useNotification();
 
     const token = localStorage.getItem('token');
-    let userName = 'Cargando...'; // Valor por defecto
+    let userName = 'Cargando...';
     let userLastNameInitial = '';
+    let userRole = '';
 
     if (token) {
         try {
             const decodedToken = jwtDecode(token);
-            console.log(decodedToken);
-            const names = decodedToken.names; // Asumiendo que el nombre está en el campo "names" del token
-            const surnames = decodedToken.surnames; // Asumiendo que el apellido está en el campo "surnames" del token
+            const names = decodedToken.names;
+            const surnames = decodedToken.surnames;
+            userRole = decodedToken.role; // Obtener el rol del usuario del token
 
             if (names && surnames) {
-                userName = names.split(' ')[0]; // Obtener la primera palabra del nombre
-                userLastNameInitial = surnames.charAt(0); // Obtener la primera letra del apellido
+                userName = names.split(' ')[0];
+                userLastNameInitial = surnames.charAt(0);
             }
         } catch (error) {
             console.error('Error al decodificar el token:', error);
@@ -63,77 +64,118 @@ export const SideBar = () => {
                             </NavLink>
                             <hr className='text-secondary' />
                             <ul className="nav nav-pills flex-column">
-
+                                {/* Opciones del SideBar */}
                                 <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
-                                    <NavLink to="/app/" end className={({ isActive }) => `nav-link text-white fs-5 ${isActive ? 'active' : ''}`} aria-current="page">
-                                        <i className='bi bi-people-fill'></i>
-                                        <span className='ms-3 d-none d-sm-inline'>Perfil</span>
-
+                                    <NavLink
+                                        to="/app/"
+                                        end
+                                        className={({ isActive }) =>
+                                            `nav-link text-white fs-5 ${isActive ? "active" : ""}`
+                                        }
+                                        aria-current="page"
+                                    >
+                                        <i className="bi bi-people-fill"></i>
+                                        <span className="ms-3 d-none d-sm-inline">Perfil</span>
                                     </NavLink>
                                 </li>
 
-                                <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0 ">
-                                    <NavLink to="/app/dashboard" className="nav-link text-white fs-5" aria-current="page">
-                                        <i className='bi bi-speedometer2'></i>
-                                        <span className='ms-3 d-none d-sm-inline'>Estadísticas</span>
+                                {/* Mostrar la opción "Estadísticas" solo si el rol es "role_master" */}
+                                {userRole === "role_master" && (
+                                    <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0 ">
+                                        <NavLink
+                                            to="/app/dashboard"
+                                            className={({ isActive }) =>
+                                                `nav-link text-white fs-5 ${isActive ? "active" : ""}`
+                                            }
+                                            aria-current="page"
+                                        >
+                                            <i className="bi bi-speedometer2"></i>
+                                            <span className="ms-3 d-none d-sm-inline">Estadísticas</span>
+                                        </NavLink>
+                                    </li>
+                                )}
 
-                                    </NavLink>
-                                </li>
+                                {/* Mostrar la opción "Datos" */}
                                 <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
-                                    <NavLink to="/app/data" className="nav-link text-white fs-5" aria-current="page">
-                                        <i className='bi bi-person-vcard-fill'></i>
-                                        <span className='ms-3 d-none d-sm-inline'>Datos</span>
-
+                                    <NavLink
+                                        to="/app/data"
+                                        className={({ isActive }) =>
+                                            `nav-link text-white fs-5 ${isActive ? "active" : ""}`
+                                        }
+                                        aria-current="page"
+                                    >
+                                        <i className="bi bi-person-vcard-fill"></i>
+                                        <span className="ms-3 d-none d-sm-inline">Datos</span>
                                     </NavLink>
                                 </li>
 
+                                {/* Mostrar la opción "Planillas de movimiento" */}
                                 <li className="nav-item dropend text-white fs-4 my-1 py-2 py-sm-0">
                                     <a
                                         className="nav-link dropdown-toggle text-white fs-5 text-center d-flex flex-row justify-content-start align-items-center open"
                                         data-bs-toggle="dropdown"
                                         aria-expanded="false"
                                     >
-                                        <i className='bi bi-file-earmark-spreadsheet'></i>
-                                        <span className='ms-3 d-none d-sm-inline pointer'>Planillas de <br></br> movimiento</span>
+                                        <i className="bi bi-file-earmark-spreadsheet"></i>
+                                        <span className="ms-3 d-none d-sm-inline pointer">
+                                            Planillas de
+                                            <br></br> movimiento
+                                        </span>
                                     </a>
                                     <ul className="dropdown-menu mx-1 ">
                                         <li>
-                                            <NavLink className={({ isActive }) => `dropdown-item ${isActive ? 'active' : ''}`}
-                                                to="/app/sheets" >
-                                                Ingreso de prorrogas 
-                                            </NavLink></li>
-                                        <li>
-                                            <NavLink className={({ isActive }) => `dropdown-item ${isActive ? 'active' : ''}`}
-                                                to="/app/sheets/register" >
-                                                Crear Planilla
+                                            <NavLink
+                                                className={({ isActive }) =>
+                                                    `dropdown-item ${isActive ? "active" : ""}`
+                                                }
+                                                to="/app/sheets"
+                                            >
+                                                Ingreso de prorrogas
                                             </NavLink>
                                         </li>
+                                        {/* Mostrar la opción "Crear Planilla" solo si el rol es "role_analyst" */}
+                                        {userRole === "role_analyst" && (
+                                            <li>
+                                                <NavLink
+                                                    className={({ isActive }) =>
+                                                        `dropdown-item ${isActive ? "active" : ""}`
+                                                    }
+                                                    to="/app/sheets/register"
+                                                >
+                                                    Crear Planilla
+                                                </NavLink>
+                                            </li>
+                                        )}
                                         {/* ... (otros elementos del dropdown planillas) ... */}
                                     </ul>
                                 </li>
-                                <li className="nav-item dropend text-white fs-4 my-1 py-2 py-sm-0">
-                                    <a
-                                        className="nav-link dropdown-toggle text-white fs-5 text-center d-flex flex-row justify-content-start align-items-center"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="true"
-                                    >
-                                        <i className='bi bi-people-fill'></i>
-                                        <span className='ms-3 d-none d-sm-inline pointer'>Usuarios</span>
-                                    </a>
-                                    <ul className="dropdown-menu dropdown-menu-start mx-1">
-                                        <li>
-                                            <NavLink className="dropdown-item" to="users">
-                                                Lista de Usuarios
-                                            </NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink className="dropdown-item" to="users/register">
-                                                Registrar Usuarios
-                                            </NavLink>
-                                        </li>
-                                        {/* ... (otros elementos del dropdown) ... */}
-                                    </ul>
-                                </li>
+
+                                {/* Mostrar la opción "Usuarios" solo si el rol es "role_master" */}
+                                {userRole === "role_master" && (
+                                    <li className="nav-item dropend text-white fs-4 my-1 py-2 py-sm-0">
+                                        <a
+                                            className="nav-link dropdown-toggle text-white fs-5 text-center d-flex flex-row justify-content-start align-items-center"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="true"
+                                        >
+                                            <i className="bi bi-people-fill"></i>
+                                            <span className="ms-3 d-none d-sm-inline pointer">Usuarios</span>
+                                        </a>
+                                        <ul className="dropdown-menu dropdown-menu-start mx-1">
+                                            <li>
+                                                <NavLink className="dropdown-item" to="users">
+                                                    Lista de Usuarios
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink className="dropdown-item" to="users/register">
+                                                    Registrar Usuarios
+                                                </NavLink>
+                                            </li>
+                                            {/* ... (otros elementos del dropdown) ... */}
+                                        </ul>
+                                    </li>
+                                )}
                             </ul>
                         </div>
                         <div className="dropup open mb-5">

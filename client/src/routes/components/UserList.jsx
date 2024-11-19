@@ -1,139 +1,102 @@
-import { useState, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useUserListHook } from "../../hooks/useUserListHook";
+import { useDeleteUser } from "../../hooks/useDeleteUser";
+import { Spinner } from "./Spinner";
+import { Pagination } from "react-bootstrap";
 import '../../CSS/userlist.css';
 
 export const UserList = () => {
-  const { users, error, isLoading, currentPage, setCurrentPage } = useUserListHook()
-  const [showList, setShowList] = useState(false);
-  const [selectedSchool, setSelectedSchool] = useState('');
+  const { users, loading, error, page, totalPages, handlePageChange } = useUserListHook();
+  const { deleteUser } = useDeleteUser();
 
-  const uniqueSchools = useMemo(() => Array.from(new Set(users?.users?.map(user => user.school) || [])), [users]);
+  useEffect(() => { console.log(`Fetching users for page: ${page}`); }, [page]);
 
-  const filteredUsers = useMemo(() => {
-    if (!users || !users.users) return [];
-
-    return selectedSchool
-      ? users.users.filter(user => user.school === selectedSchool)
-      : users.users;
-  }, [selectedSchool, users]);
-
-  const handleShowList = () => {
-    setShowList(!showList);
-  };
-
-  const handleSchoolChange = (event) => {
-    setSelectedSchool(event.target.value);
-  };
-
-  if (isLoading) {
-    return <div>Cargando listado de usuarios...</div>;
+  if (loading) {
+    return (<div> <Spinner /> </div>);
   }
 
   if (error) {
-    return <div>Error al cargar listado de usuarios: {console.log(error)}</div>;
+    return <p>Error al obtener la lista de usuarios: {error}</p>;
   }
-
-  const totalPages = Math.ceil(users?.total / users?.itemsPerPage);
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
-  console.log(filteredUsers);
 
   return (
     <>
-      <div className="vh-100 container-fluid mt-4 mb-5 d-flex flex-column justify-content-center align-items-center scroll-container">
-        <h1>Lista de usuarios</h1>
-
-        <div className="row col col-sm-8 col-lg-6 my-3 d-flex flex-column flex-md-row justify-content-center align-items-center mx-auto my-4">
-          <select
-            className="col form-select mx-2"
-            aria-label="Small select example"
-            value={selectedSchool}
-            onChange={handleSchoolChange}>
-            <option value="">Todas las escuelas</option>
-            {uniqueSchools.map((school, index) => (
-              <option key={index} value={school}>{school}</option>
-            ))}
-          </select>
-          <button
-            className="col btn btn-sm btn-primary mt-2 mt-md-0 mx-2"
-            onClick={handleShowList}>
-            {showList ? 'Ocultar lista' : 'Mostrar lista'}
-          </button>
+      <div
+        className="container-fluid contain overflow-auto h-100">
+        <div className="row d-flex align-items-center justify-content-between">
+          <div className="col-12 col-md-8 mx-auto d-flex flex-row mt-5 mb-5">
+            <h1 className="TitleName text-center mx-auto ">Lista de usuarios</h1>
+          </div>
         </div>
 
-        {showList && (
-          <div className="col-sm-12 col-md-10 d-flex flex-column justify-content-center align-content-center shadow-lg  mx-auto">
+        <div>
 
-            <table className="table table-striped table-responsive-sm" >
+        </div>
+
+        <div className="row d-flex align-items-top justify-content-top">
+          <div className="table-responsive col-12 col-md-10 col-lg-8 mx-auto p-2 shadow rounded-4">
+            <table className="table table-striped table-hover table-responsive-sm">
               <thead>
-                <tr className="thead_bg">
-                  <th>Nombre</th>
-                  <th>Apellido</th>
-                  <th>Correo</th>
-                  <th>Escuela</th>
-                  <th>Idac</th>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Apellido</th>
+                  <th scope="col">Área</th>
+                  <th scope="col">Estatus</th>
+                  <th scope="col">Modificar</th>
+                  <th scope="col">Eliminar</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map((user, index) => (
-                  <tr key={index}>
-                    <td>{user.names.split(' ').slice(0, -1).join(' ')}</td>
-                    <td>{user.surnames.split(' ').slice(0, -1).join(' ')}</td>
-                    <td>{user.email}</td>
-                    <td>{user.school}</td>
-                    <td>{user.idac}</td>
+                {users.map((user, index) => (
+                  <tr key={user._id}>
+                    <th scope="row" className="align-middle">{index + 1}</th>
+                    <td className="align-middle">{user.names.split(" ")[0].toUpperCase()}</td>
+                    <td className="align-middle">{user.surnames.split(" ")[0].toUpperCase()}</td>
+                    <td className="align-middle">{user.area}</td>
+                    <td className="text-center align-middle">
+                      <span className={user.status ? 'user_status_true' : 'user_status_false'}>
+                        {/* Mostrar el estado en español */}
+                        {user.status ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </td>
+                    <td className="text-center align-middle">
+                      <button className="btn btn-sm btn-primary mx-auto">
+                        <i className="bi bi-pencil-fill mx-auto"></i>
+                      </button>
+                    </td>
+                    <td className="text-center align-middle">
+                      <button className="btn btn-sm btn-danger mx-auto" onClick={() => deleteUser(user._id)}>
+                        <i className="bi bi-trash3-fill mx-auto"></i>
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-
-            {showList && (
-              <nav aria-label="w-100 min-w-100 Page navigation example d-flex justify-content-end align-items-center">
-                <ul className="pagination justify-content-end col col-md-12 px-1"> {/* Cambiamos 'class' por 'className' y agregamos justify-content-end */}
-                  {/* Botón "Anterior" */}
-                  <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      aria-label="Previous"
-                    >
-                      <span aria-hidden="true">&laquo;</span>
-                    </button>
-                  </li>
-                  {/* Números de página */}
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <li key={index + 1} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-                      <button className="page-link" onClick={() => handlePageChange(index + 1)}>
-                        {index + 1}
-                      </button>
-                    </li>
-                  ))}
-                  {/* Botón "Siguiente" */}
-                  <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      aria-label="Next"
-                    >
-                      <span aria-hidden="true">&raquo;</span>
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-            )}
-
-
-
+            {/* Paginación */}
+            <Pagination>
+              <Pagination.Prev
+                disabled={page === 1}
+                onClick={(e) => { e.preventDefault(); handlePageChange(page - 1); }}
+              />
+              {Array.from({ length: totalPages }, (_, i) => (
+                <Pagination.Item
+                  key={i + 1}
+                  active={i + 1 === page}
+                  onClick={(e) => { e.preventDefault(); handlePageChange(i + 1); }}
+                >
+                  {i + 1}
+                </Pagination.Item>
+              ))}
+              <Pagination.Next
+                disabled={page === totalPages}
+                onClick={(e) => { e.preventDefault(); handlePageChange(page + 1); }}
+              />
+            </Pagination>
           </div>
-        )}
-
-
+        </div>
       </div>
     </>
-  )
+  );
 }

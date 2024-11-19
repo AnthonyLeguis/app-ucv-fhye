@@ -42,8 +42,8 @@ export const useCheckTokenExp = () => {
             resolve => setTimeout(resolve, ms)
         )
 
-        //Ejecutar el retraso inicial de 10 segundos
-        delay(10000).then(() => {
+        //Ejecutar el retraso inicial de 30 segundos
+        delay(30000).then(() => {
             checkTokenExpiration();
 
             // Verificar cada minuto

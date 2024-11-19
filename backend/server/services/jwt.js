@@ -20,7 +20,8 @@ const createToken = (users) => {
         email: users.email,
         role: users.role,
         image: users.image,
-        area: users.area
+        area: users.area,
+        status: users.status
     };
 
     // Devolver jwt token cofificado

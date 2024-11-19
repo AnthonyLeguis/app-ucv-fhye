@@ -1,32 +1,35 @@
 import { useState } from 'react'
+import { useNotification } from "../routes/components/Notifications";
+
 
 export const useUserRegistration = () => {
+    const { showNotification } = useNotification();
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
+
 
     const [formData, setFormData] = useState({
         names: '',
         surnames: '',
         email: '',
-        password: '',
-        ci: '',
-        idac: '',
-        address: '',
+        nationalId: '',
         phone: '',
-        school: '',
-        department: '',
-        professorship: '',
-        current_dedication: '',
-        executing_unit: '',
-        hire_date: '',
-        gender: '',
-        ci_tipo: '',
+        area: '',
+        role: '',
     });
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
-
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        let transformedValue = value
+
+        if (name === 'names' || name === 'surnames') {
+            transformedValue = value.toUpperCase();
+        } else if (name === 'email') {
+            transformedValue = value.toLowerCase();
+        }
+
+        setFormData({ ...formData, [name]: transformedValue });
     };
 
     const handleSubmit = async (e) => {
@@ -36,31 +39,17 @@ export const useUserRegistration = () => {
 
         // Validaciones con expresiones regulares
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/;
         const numericRegex = /^\d+$/;
 
         if (!emailRegex.test(formData.email)) {
             setError('El correo electrónico no es válido');
+            setIsLoading(false);
             return;
         }
 
-        if (!passwordRegex.test(formData.password)) {
-            setError('La contraseña debe tener entre 8 y 16 caracteres y contener letras y números');
-            return;
-        }
-
-        if (!numericRegex.test(formData.ci)) {
+        if (!numericRegex.test(formData.nationalId)) {
             setError('La cédula de identidad debe ser numérica');
-            return;
-        }
-
-        if (!numericRegex.test(formData.idac)) {
-            setError('El IDAC debe ser numérico');
-            return;
-        }
-
-        if (!numericRegex.test(formData.executing_unit)) {
-            setError('La unidad ejecutora debe ser numérica');
+            setIsLoading(false);
             return;
         }
 
@@ -84,9 +73,21 @@ export const useUserRegistration = () => {
                 throw new Error(errorData.message || 'Error al registrar usuario');
             }
 
+            // Procesar la respuesta exitosa
+            const data = await response.json();
+            // Obtener la primera palabra del nombre
+            const firstName = data.names.split(" ")[0];
+            // Obtener la primera palabra del apellido
+            const firstSurname = data.surnames.split(" ")[0];
+            const area = data.area;
+
+            // Mostrar la notificación con la primera palabra del nombre y apellido
+            showNotification(`Se ha registrado el usuario: ${firstName} ${firstSurname} en el area: ${area}`, "success");
             setSuccess(true);
 
         } catch (error) {
+            // Mostrar notificación de error
+            showNotification(error.message, "error");
             setError(error.message);
         } finally {
             setIsLoading(false);
@@ -95,15 +96,10 @@ export const useUserRegistration = () => {
                 names: '',
                 surnames: '',
                 email: '',
-                password: '',
-                ci: '',
-                idac: '',
-                school: '',
-                department: '',
-                professorship: '',
-                current_dedication: '',
-                executing_unit: '',
-                hire_date: '',
+                nationalId: '', // ci
+                phone: '',
+                area: '', // school
+                role: '',
             });
         }
     };

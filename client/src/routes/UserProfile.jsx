@@ -84,7 +84,7 @@ export const UserProfile = () => {
                         <div className="col container-fluid mt-5 col-12 col-md-10 d-flex flex-column justify-content-center align-items-center">
 
                             <div className="container-fluid d-flex flex-column flex-lg-row mx-auto">
-                                <div className='container profile_image mb-5 mt-0 col-4 m-2 mx-auto my-md-auto'>
+                                <div className='container profile_image col-4 mb-4 m-2 mx-auto my-md-auto'>
                                     <img className='profile_image text-center my-auto' src={userData.users.image} alt="Imagen de perfil" />
                                     <ChangeImagen setReload={setReload}/>
                                 </div>
@@ -107,7 +107,7 @@ export const UserProfile = () => {
                                                 <td>{userData.users.surnames.split(' ')[0]} {userData.users.surnames.split(' ')[1]?.charAt(0)}.</td>
                                             </tr>
                                             <tr>
-                                                <th scope="row">Cedula:</th>
+                                                <th scope="row">Cédula:</th>
                                                 <td>{userData.users.nationalId}</td>
                                             </tr>
                                             <tr>
@@ -135,7 +135,7 @@ export const UserProfile = () => {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <th scope="row">Rol:</th>
+                                            <th scope="row">Tipo de usuario:</th>
                                             <td>{mapUserRole(userData.users.role)}</td>
                                         </tr>
 
@@ -153,7 +153,7 @@ export const UserProfile = () => {
                                             )}
                                             </td>
                                         </tr>
-                                        <tr>
+                                        {/* <tr>
                                             <th scope="row">Fecha de ingreso:</th>
                                             <td>{new Date(userData.users.hire_date).toLocaleString(undefined,
                                                 {
@@ -166,7 +166,7 @@ export const UserProfile = () => {
                                                 }
                                             )}
                                             </td>
-                                        </tr>
+                                        </tr> */}
                                     </tbody>
                                 </table>
                             </div>

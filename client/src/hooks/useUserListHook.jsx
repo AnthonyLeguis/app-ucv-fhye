@@ -1,53 +1,69 @@
-import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from './AuthContext';
-import { jwtDecode } from 'jwt-decode';
+import { useState, useEffect } from 'react';
+import { useNotification } from "../routes/components/Notifications";
 
 export const useUserListHook = () => {
-  const { token, isLoading } = useContext(AuthContext);
-  const [users, setUsers] = useState(null);
+  const { showNotification } = useNotification();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const token = sessionStorage.getItem('token');
-
-      if (!token) {
-        return;
-      }
-
-      if (isLoading) {
-        return;
-      }
-
       try {
-        const decodedToken = jwtDecode(token);
-        const userId = decodedToken.id;
+        setLoading(true);
+        const token = localStorage.getItem('token');
 
-        const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/list/${currentPage}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/list?page=${page}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `${token}`
-          }
+            'Authorization': `${token}`,
+          },
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'Error al obtener usuarios');
+          throw new Error(errorData.message || 'Error al obtener la lista de usuarios');
         }
 
         const data = await response.json();
-        setUsers(data);
         console.log(data);
+        
+        setUsers(data.users);
+        setTotalPages(data.pages);
+
       } catch (error) {
         setError(error.message);
+        showNotification(error.message, 'error');
+
+      } finally {
+        setLoading(false);
+
       }
     };
 
     fetchUsers();
-  }, [token, isLoading, currentPage]); // <-- Agrega currentPage como dependencia
+  }, [page]);
 
-  return { users, error, isLoading, currentPage, setCurrentPage };
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const updateUsers = () => {
+    // Lógica para actualizar la lista de usuarios
+    fetchUsers();
+  }
+
+  return {
+    users,
+    loading,
+    error,
+    page,
+    totalPages,
+    handlePageChange
+  };
+
 };
 

@@ -1,17 +1,17 @@
-.thead_bg th {
-    background-color: rgb(8, 0, 62);
-    color: #fff;
-    white-space: nowrap;
+.user_status_true {
+    color: white;
+    background-color: green;
+    border-radius: 5px;
+    padding: 4px;
+    margin: auto;
+    font-size:small; 
 }
 
-@media (max-width: 767px) {
-    .scroll-container {
-        overflow-y: auto;
-    }
-}
-
-@media (min-width: 768px) {
-    .scroll-container {
-        overflow-y: hidden; /* Oculta el scroll */
-    }
+.user_status_false {
+    color: white;
+    background-color: red;
+    border-radius: 5px;
+    padding: 4px;
+    margin: auto;
+    font-size:small; 
 }
