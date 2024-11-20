@@ -8,7 +8,7 @@ import '../CSS/userprofile.css'
 
 
 export const UserProfile = () => {
-    const { userData, setUserData, isLoading: authLoading, logout } = useContext(AuthContext);
+    const { userData, setUserData, isLoading: authLoading, logout, token } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [fetched, setFetched] = useState(false);
@@ -21,12 +21,10 @@ export const UserProfile = () => {
             return;
         }
 
-        const token = localStorage.getItem('token');
-
         if (!token) {
             return;
         }
-        
+
         const fetchData = async () => {
 
             try {
@@ -36,7 +34,7 @@ export const UserProfile = () => {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            Authorization: `${token}`,
+                            "Authorization": `${token}`,
                         },
 
                     }
@@ -55,6 +53,8 @@ export const UserProfile = () => {
 
 
                 const data = await response.json();
+                console.log(data);
+                
 
                 setUserData(data);
                 setIsLoading(false);
