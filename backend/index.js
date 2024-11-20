@@ -75,6 +75,15 @@ app.get("/ruta-prueba", (req, res) => {
   });
 });
 
+
+// 1. Sirve los archivos estáticos desde la carpeta 'dist'
+app.use(express.static(path.join(__dirname, 'dist'))); // Asegúrate de que la carpeta 'dist' esté en la raíz de tu backend
+
+// 2. Redirige todas las rutas que no coincidan con una API al index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 // 7. Inicio del servidor
 app.listen(port, () => {
   console.log("Servidor corriendo en el puerto:", port);
