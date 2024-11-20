@@ -8,6 +8,7 @@ import '../CSS/userprofile.css'
 
 
 export const UserProfile = () => {
+    console.log("userData en UserProfile:", userData);
     const { userData, setUserData, isLoading: authLoading, logout } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -53,15 +54,16 @@ export const UserProfile = () => {
 
 
                 const data = await response.json();
-                console.log(data);
-                
-                setUserData(data); 
+                console.log("Datos del usuario:", data.users); // Imprimir los datos del usuario
+                console.log("Respuesta:", { user }); // Imprimir la respuesta
+
+                setUserData(data);
                 setIsLoading(false);
                 setFetched(true);
             } catch (error) {
                 console.error("Error fetching user data:", error);
                 setError(error.message); // Almacena el mensaje de error
-                showNotification("NO se logra obtener la data","error")
+                showNotification("NO se logra obtener la data", "error")
                 setIsLoading(false); // Desactiva el spinner incluso en caso de error
             }
         };
@@ -88,7 +90,7 @@ export const UserProfile = () => {
                             <div className="container-fluid d-flex flex-column flex-md-row mx-auto">
                                 <div className='container profile_image col-4 mb-4 m-2 mx-auto my-md-auto'>
                                     <img className='profile_image text-center my-auto' src={userData.users.image} alt="Imagen de perfil" />
-                                    <ChangeImagen setReload={setReload}/>
+                                    <ChangeImagen setReload={setReload} />
                                 </div>
 
                                 <div className='container-fluid col-8'>

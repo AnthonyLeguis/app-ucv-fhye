@@ -14,10 +14,7 @@ router.post("/recover-password", UserController.passRecoveryUsers.recoveryByEmai
 router.post("/reset-password/:id", auth, UserController.passRecoveryUsers.resetByAdmin);
 router.put("/reset-passwordToken", UserController.passRecoveryUsers.resetPassword);
 router.delete("/delete/:id", auth, UserController.deleteUsers);
-router.post("/profile", auth, (req, res) => {
-    console.log("Solicitud del perfil:", req.headers); // Imprimir las cabeceras de la solicitud
-    UserController.profileUsers(req, res);
-  });
+router.post("/profile", auth, UserController.profileUsers);
 router.get("/list/:page?", auth, UserController.listUsers);
 router.put("/update", auth, UserController.updateUsers);
 router.post("/upload-image", [auth, uploads], UserController.uploadProfileImage);
