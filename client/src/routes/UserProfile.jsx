@@ -68,7 +68,7 @@ export const UserProfile = () => {
         };
 
         fetchData();
-    }, [authLoading, logout, reload]);
+    }, [authLoading, logout, reload, isAuthenticated]);
 
     return (
         <>

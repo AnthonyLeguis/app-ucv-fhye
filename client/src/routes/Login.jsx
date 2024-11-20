@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom';
+import {  useLocation } from 'react-router-dom';
 import { useNotification } from './components/Notifications';
 import { AuthContext } from '../hooks/AuthContext';
 import { useRememberMe } from '../hooks/useRememberMe';
@@ -29,7 +29,6 @@ export const Login = () => {
 
   const { showNotification } = useNotification();
   const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -71,7 +70,6 @@ export const Login = () => {
         localStorage.setItem('token', data.token);
         login(data.token, data.user.id);
 
-        navigate('/app/');
       }
 
     } catch (error) {

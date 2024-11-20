@@ -99,9 +99,6 @@ export const App = () => {
                 {/* Rutas privadas (con SideBar) */}
                 <Route path="/app" element={<PrivateRoute />}>
 
-                    {/* Redirección condicional en la ruta /app */}
-                    <Route index element={<Navigate to={userId ? "profile" : "/"} />} />
-
                     {/* Aquí van todas tus rutas protegidas, envueltas por Route => ProtectedRoute */}
                     <Route element={<ProtectedRoute />}>
                         <Route path="profile" element={<UserProfile />} />
