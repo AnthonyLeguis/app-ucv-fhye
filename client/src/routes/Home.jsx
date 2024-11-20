@@ -9,7 +9,7 @@ export const Home = () => {
 
   return (
     <>
-      <section className="d-flex flex-column bg-primary-subtle m-0 p-0 overflow-hidden">
+      <section className="d-flex flex-column bg-primary-subtle m-0 p-0 overflow-hidden h-100">
         <div>
           <div id="carouselExampleInterval" className="carousel slide" data-bs-ride="carousel">
             <div className="carousel-inner ">

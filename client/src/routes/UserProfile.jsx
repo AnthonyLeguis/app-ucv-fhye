@@ -8,7 +8,6 @@ import '../CSS/userprofile.css'
 
 
 export const UserProfile = () => {
-    console.log("userData en UserProfile:", userData);
     const { userData, setUserData, isLoading: authLoading, logout } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -22,12 +21,13 @@ export const UserProfile = () => {
             return;
         }
 
-        const fetchData = async () => {
-            const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');
 
-            if (!token) {
-                return;
-            }
+        if (!token) {
+            return;
+        }
+        
+        const fetchData = async () => {
 
             try {
 
@@ -36,8 +36,9 @@ export const UserProfile = () => {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `${token}`,
+                            Authorization: `${token}`,
                         },
+
                     }
                 );
 
@@ -54,8 +55,6 @@ export const UserProfile = () => {
 
 
                 const data = await response.json();
-                console.log("Datos del usuario:", data.users); // Imprimir los datos del usuario
-                console.log("Respuesta:", { user }); // Imprimir la respuesta
 
                 setUserData(data);
                 setIsLoading(false);

@@ -53,7 +53,7 @@ export const App = () => {
         return (
             <div className="d-flex flex-nowrap vh-100 content-scroll">
                 <div className="col-auto">
-                    {<SideBar/>}
+                    <SideBar isAuthenticated={isAuthenticated} />
                 </div>
                 <div className="col mx-auto d-flex flex-column align-content-center">
                     <Outlet />
@@ -64,7 +64,7 @@ export const App = () => {
 
     // Define el componente ProtectedRoute
     const ProtectedRoute = ({ children }) => {
-        console.log("ProtectedRoute - isAuthenticated:", isAuthenticated);
+
         if (!isAuthenticated) {
             return <Navigate to="/login" />;
         }
@@ -87,7 +87,7 @@ export const App = () => {
                         isLoading
                             ? null
                             : isAuthenticated ? (
-                                <Navigate to={"/app"} />
+                                <Navigate to="/app" />
                             ) : (
                                 <Home />
                             )
