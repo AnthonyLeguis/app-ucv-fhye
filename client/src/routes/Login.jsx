@@ -4,10 +4,16 @@ import { useNotification } from './components/Notifications';
 import { AuthContext } from '../hooks/AuthContext';
 import { useRememberMe } from '../hooks/useRememberMe';
 import { usePasswordRecovery } from '../hooks/usePasswordRecovery';
+import { Modal, Button, Form } from 'react-bootstrap';
 import logo from '../assets/LogoCentral.svg'
 import '../CSS/login.css'
 
 export const Login = () => {
+  // Estado para controlar la visibilidad de la contraseña
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+  const handleOpenRecoveryModal = () => setShowRecoveryModal(true);
+  const handleCloseRecoveryModal = () => setShowRecoveryModal(false);
 
   // hook de autentificación
   const { nationalId: rememberedNationalId,
@@ -18,10 +24,8 @@ export const Login = () => {
   } = useRememberMe();
   const [error, setError] = useState(null);
 
-
   //hook de recuperación de  contraseña
   const { email, handleEmailChange, handlePasswordRecovery } = usePasswordRecovery();
-  const [showRecoveryForm, setShowRecoveryForm] = useState(false);
 
   const { showNotification } = useNotification();
   const { login } = useContext(AuthContext);
@@ -79,11 +83,6 @@ export const Login = () => {
 
   };
 
-  const handleToggleRecoveryForm = () => {
-    setShowRecoveryForm(!showRecoveryForm); // Cambia el estado para mostrar/ocultar el formulario de recuperación
-  };
-
-
   return (
     <>
       <section className="section vh-100 d-flex flex-column justify-content-between bg-body">
@@ -96,110 +95,109 @@ export const Login = () => {
             </div>
             <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
 
-              {/* Mostrar el título condicionalmente */}
               <div className="divider d-flex align-items-center my-4">
-                <p className="text-center fw-bold mx-3 mb-0">
-                  {showRecoveryForm
-                    ? "Ingrese su correo para recuperar su contraseña"
-                    : "Ingrese con sus datos"}
-                </p>
+                <p className="text-center fw-bold mx-3 mb-0">Ingrese
+                  con sus datos</p>
               </div>
 
-              {/* Mostrar el formulario de login solo si showRecoveryForm es false */}
-              {!showRecoveryForm && (
-                <form onSubmit={handleSubmit} className='h-100'>
+              <form onSubmit={handleSubmit} className='h-100'>
 
-                  <div data-mdb-input-init className="form-outline mb-4">
-                    <label className="form-label" htmlFor="form3Example3">Cédula de Identidad</label>
-                    <input type="text"
-                      id="form3Example3"
-                      className="form-control form-control-lg"
-                      placeholder="Ingrese su número de Cédula"
-                      value={rememberedNationalId}
-                      autoComplete='on'
-                      onChange={(e) => setRememberedNationalId(e.target.value)}
-                    />
-                  </div>
+                <div data-mdb-input-init className="form-outline mb-4">
+                  <label className="form-label" htmlFor="nationalID">Cédula de Identidad</label>
+                  <input type="text"
+                    id="nationalID"
+                    className="form-control form-control-lg text-dark"
+                    placeholder="Ingrese su número de Cédula"
+                    value={rememberedNationalId}
+                    autoComplete='on'
+                    onChange={(e) => setRememberedNationalId(e.target.value)}
+                  />
+                </div>
 
-                  <div data-mdb-input-init className="form-outline mb-3">
-                    <label className="form-label" htmlFor="form3Example4">Contraseña</label>
+                <div data-mdb-input-init className="form-outline mb-3">
+                  <label className="form-label" htmlFor="password">Contraseña</label>
+                  <div className="input-group">
                     <input
-                      type="password"
-                      id="form3Example4"
+                      type={showPassword ? "text" : "password"}
+                      id="password"
                       className="form-control form-control-lg"
                       placeholder="Enter password"
                       value={rememberedPassword}
                       autoComplete='current-password'
                       onChange={(e) => setRememberedPassword(e.target.value)}
                     />
-                  </div>
-
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="form-check mb-0">
-                      <input
-                        className="form-check-input me-2"
-                        type="checkbox"
-                        value=""
-                        id="form2Example3"
-
-                        checked={rememberMee}
-                        onChange={handleRememberMeChange}
-                      />
-                      <label className="form-check-label" htmlFor="form2Example3">
-                        Recuerdame
-                      </label>
-                    </div>
-
-                    <a href="#!" className="icon-link icon-link-hover" onClick={handleToggleRecoveryForm}>¿Olvidó su contraseña?
-
-                      <i className="bi bi-arrow-right"></i>
-                    </a>
-
-                  </div>
-
-                  <div className="text-center text-lg-start mt-4 pt-2">
-                    <button type="submit"
-                      data-mdb-ripple="true"
-                      data-mdb-button-init data-mdb-ripple-init
-                      className="btn btn-primary btn-md buttonLogin">
-                      Entrar
+                    <button
+                      className="btn btn-outline-secondary"
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      <i className={`bi ${showPassword ? "bi-eye-fill" : "bi-eye-slash-fill"} text-primary`}></i>
                     </button>
                   </div>
+                </div>
 
-                </form>
-              )}
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="form-check mb-0">
+                    <input
+                      className="form-check-input me-2"
+                      type="checkbox"
+                      value=""
 
-              {/* Formulario de recuperación de contraseña */}
-              {showRecoveryForm && (
-                <form onSubmit={handlePasswordRecovery} className='h-100'>
-                  <div className="form-outline mb-4">
-                    <label className="form-label" htmlFor="form3Example3">Correo</label>
-                    <input type="email"
-                      id="form3Example3"
-                      className="form-control form-control-lg"
-                      placeholder="Ingrese su correo"
-                      value={email}
-                      onChange={handleEmailChange}
+                      id="rememberUser"
+
+                      checked={rememberMee}
+                      onChange={handleRememberMeChange}
                     />
-
+                    <label className="form-check-label" htmlFor="rememberUser">
+                      Recuerdame
+                    </label>
                   </div>
-                  <div className="text-center text-lg-start mt-4 pt-2">
 
+                  <Button variant="link" onClick={handleOpenRecoveryModal}>
+                    ¿Olvidó su contraseña?
+                  </Button>
+
+                </div>
+
+                <div className="text-center text-lg-start mt-4 pt-2">
                   <button type="submit"
-                    className="btn btn-primary btn-md"
-                  >
-                    Enviar
+                    data-mdb-ripple="true"
+                    data-mdb-button-init data-mdb-ripple-init
+                    className="btn btn-primary btn-md buttonLogin">
+                    Entrar
                   </button>
-                  </div>
-                  <div className="text-center text-lg-start mt-4 pt-2">
+                </div>
 
-                  <a href="/login" className="icon-link icon-link-hover mt-2 align-items-center"> 
-                      <i className="bi bi-arrow-left"></i>
-                      Volver al login
-                    </a>
-                  </div>
-                </form>
-              )}
+              </form>
+
+              {/* Modal de recuperación de contraseña */}
+              <Modal show={showRecoveryModal} onHide={handleCloseRecoveryModal} centered>
+                <Modal.Header closeButton>
+                  <Modal.Title>Recuperar Contraseña</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Form onSubmit={handlePasswordRecovery}>
+                    <Form.Group>
+                      <Form.Label htmlFor="recoveryEmail" className="fw-bold">
+                        Correo electrónico de recuperación
+                      </Form.Label>
+                      <Form.Control
+                        type="email"
+                        placeholder="Ingrese su correo electrónico"
+                        id="recoveryEmail"
+                        value={email}
+                        onChange={handleEmailChange}
+                      />
+                      <Form.Text style={{ color: '#950000' }}>
+                        *Ingrese el correo electrónico asociado a su cuenta
+                      </Form.Text>
+                    </Form.Group>
+                    <Button variant="primary" type="submit" className='mt-4'>
+                      Enviar
+                    </Button>
+                  </Form>
+                </Modal.Body>
+              </Modal>
 
             </div>
           </div>

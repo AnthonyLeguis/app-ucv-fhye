@@ -83,7 +83,7 @@ export const UserProfile = () => {
                     ) : (
                         <div className="col container-fluid mt-5 col-12 col-md-10 d-flex flex-column justify-content-center align-items-center">
 
-                            <div className="container-fluid d-flex flex-column flex-lg-row mx-auto">
+                            <div className="container-fluid d-flex flex-column flex-md-row mx-auto">
                                 <div className='container profile_image col-4 mb-4 m-2 mx-auto my-md-auto'>
                                     <img className='profile_image text-center my-auto' src={userData.users.image} alt="Imagen de perfil" />
                                     <ChangeImagen setReload={setReload}/>

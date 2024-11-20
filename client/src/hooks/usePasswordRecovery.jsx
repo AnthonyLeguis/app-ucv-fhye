@@ -9,7 +9,8 @@ export const usePasswordRecovery = () => {
         setEmail(event.target.value);
     };
 
-    const handlePasswordRecovery = async () => {
+    const handlePasswordRecovery = async (e) => {
+        e.preventDefault();
         try {
             const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/recover-password`, {
                 method: 'POST',
@@ -20,15 +21,19 @@ export const usePasswordRecovery = () => {
             });
 
             //console.log(response);
-            
 
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Error al solicitar recuperación de contraseña');
             }
 
-            // Mostrar notificación de éxito
-            showNotification('Se ha enviado un correo electrónico con las instrucciones para restablecer la contraseña', 'success');
+            // Obtener la respuesta del servidor
+            const data = await response.json();
+
+            // Mostrar notificación de éxito usando el mensaje del servidor
+            showNotification(data.message, 'success');
+            console.log(data.message);
+            
 
             // Opcional: Limpiar el campo de email
             setEmail('');

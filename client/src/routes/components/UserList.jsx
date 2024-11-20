@@ -1,15 +1,64 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useUserListHook } from "../../hooks/useUserListHook";
 import { useDeleteUser } from "../../hooks/useDeleteUser";
+import { useUpdateUser } from "../../hooks/useUpdateUser";
 import { Spinner } from "./Spinner";
-import { Pagination } from "react-bootstrap";
+import { Pagination, Button, Modal, Form } from "react-bootstrap";
 import '../../CSS/userlist.css';
 
 export const UserList = () => {
   const { users, loading, error, page, totalPages, handlePageChange } = useUserListHook();
   const { deleteUser } = useDeleteUser();
+  const { updateUser } = useUpdateUser();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    password: "",
+    phone: "",
+    email: "",
+    confirmPassword: ""
+  });
 
-  useEffect(() => { console.log(`Fetching users for page: ${page}`); }, [page]);
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setEditFormData({
+      password: "",
+      phone: "",
+      email: "",
+      confirmPassword: ""
+    });
+  }
+
+  const handleShowEditModal = (user) => {
+    setEditingUser(user);
+    setShowEditModal(true);
+  };
+
+  const handleEditFormChange = (e) => {
+    setEditFormData({
+      ...editFormData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleEditFormSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validar que las contraseñas coincidan (opcional)
+    if (editFormData.password && editFormData.password !== editFormData.confirmPassword) {
+      alert("Las contraseñas no coinciden.");
+      return;
+    }
+
+    await updateUser(editingUser.id, editFormData);
+
+    handleCloseEditModal();
+    updateUser();
+  }
+
+  //useEffect(() => { console.log(`Fetching users for page: ${page}`); }, [page]);
 
   if (loading) {
     return (<div> <Spinner /> </div>);
@@ -61,7 +110,7 @@ export const UserList = () => {
                       </span>
                     </td>
                     <td className="text-center align-middle">
-                      <button className="btn btn-sm btn-primary mx-auto">
+                      <button className="btn btn-sm btn-primary mx-auto" onClick={() => handleShowEditModal(user)}>
                         <i className="bi bi-pencil-fill mx-auto"></i>
                       </button>
                     </td>
@@ -74,6 +123,82 @@ export const UserList = () => {
                 ))}
               </tbody>
             </table>
+            {/* Modal de edición */}
+            <Modal show={showEditModal} onHide={handleCloseEditModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>Editar el Usuario: {editingUser ? `${editingUser.names.split(" ")[0]} ${editingUser.surnames.split(" ")[0]}` : ""} </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form onSubmit={handleEditFormSubmit}>
+                  <Form.Group controlId="formBasicEmail">
+                    <Form.Label className="fw-bold">Correo electrónico</Form.Label>
+                    <Form.Control
+                      type="email"
+                      placeholder="Ingresa el correo electrónico"
+                      name="email"
+                      value=""
+                      onChange={handleEditFormChange}
+                    />
+                  </Form.Group>
+
+                  <Form.Group controlId="formBasicPhone">
+                    <Form.Label className="fw-bold mt-3">Teléfono</Form.Label>
+                    <Form.Control
+                      type="tel"
+                      placeholder="Ingresa el teléfono"
+                      name="phone"
+                      value=""
+                      onChange={handleEditFormChange}
+                    />
+                  </Form.Group>
+
+                  <Form.Group controlId="formBasicPassword">
+                    <Form.Label className="fw-bold mt-3">Nueva contraseña</Form.Label>
+                    <div className="input-group"> {/* <-- Contenedor para el input y el botón */}
+                      <Form.Control
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Ingresa la nueva contraseña"
+                        name="password"
+                        value={editFormData.password}
+                        onChange={handleEditFormChange}
+                      />
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        <i className={`bi ${showPassword ? "bi-eye-fill" : "bi-eye-slash-fill"} text-primary`}></i>
+                      </button>
+                    </div>
+                  </Form.Group>
+
+                  <Form.Group controlId="formBasicConfirmPassword">
+                    <Form.Label className="fw-bold mt-3">Confirmar nueva contraseña</Form.Label>
+                    <div className="input-group"> {/* <-- Contenedor para el input y el botón */}
+                      <Form.Control
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirma la nueva contraseña"
+                        name="confirmPassword"
+                        value={editFormData.confirmPassword}
+                        onChange={handleEditFormChange}
+                      />
+                      <button
+                        className="btn btn-outline-secondary"
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        <i className={`bi ${showConfirmPassword ? "bi-eye-fill" : "bi-eye-slash-fill"} text-primary`}></i>
+                      </button>
+                    </div>
+                  </Form.Group>
+
+                  <Button variant="primary" type="submit" className="align-center mt-3">
+                    Confirmar Actualización
+                  </Button>
+                </Form>
+              </Modal.Body>
+            </Modal>
+
             {/* Paginación */}
             <Pagination>
               <Pagination.Prev

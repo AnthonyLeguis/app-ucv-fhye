@@ -15,13 +15,12 @@ import sheetRouter from "./server/routes/sheet.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-if (process.env.NODE_ENV !== "production") {
-  try {
-    dotenv.config({ path: path.join(__dirname, '.env') });
-  } catch (error) {
-    console.error('Error al cargar variables de entorno:', error);
-    process.exit(1);
-  }
+// Cargar variables de entorno
+try {
+  dotenv.config({ path: path.join(__dirname, '.env') });
+} catch (error) {
+  console.error('Error al cargar variables de entorno:', error);
+  process.exit(1);
 }
 
 // 3. Conexión a la base de datos
@@ -40,22 +39,12 @@ const port = process.env.PORT;
 
 app.use(morgan("dev"));
 app.use(cors({
-  origin: function (origin, callback) {
-    const allowedOrigins = [
-      process.env.ORIGIN_FRONTEND_LOCAL, // Origen de desarrollo local
-      process.env.ORIGIN_FRONTEND_DEPLOYMENT, // Origen de producción
-    ];
-    if (allowedOrigins.includes(origin) || !origin) { // Permitir origen nulo (para solicitudes desde el mismo origen)
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: process.env.ORIGIN_FRONTEND_LOCAL, // Usar la variable de entorno
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));          
-app.use(express.json());  
-app.use(express.urlencoded({ extended: true })); 
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // 5. Rutas de la API
 const API_ROUTES = {

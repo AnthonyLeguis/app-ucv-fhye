@@ -37,7 +37,7 @@ export const UserForm = () => {
 
   useEffect(() => {
     let timeoutId;
-    if (success && formRef.current) {
+    if (success) {
       timeoutId = setTimeout(() => {
 
         // Limpiar el estado del formulario después de restablecer

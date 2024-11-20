@@ -66,6 +66,7 @@ export const useUserRegistration = () => {
                     authorization: `${localStorage.getItem('token')}`,
                 },
                 body: JSON.stringify(formData),
+
             });
 
             if (!response.ok) {
@@ -76,13 +77,10 @@ export const useUserRegistration = () => {
             // Procesar la respuesta exitosa
             const data = await response.json();
             // Obtener la primera palabra del nombre
-            const firstName = data.names.split(" ")[0];
-            // Obtener la primera palabra del apellido
-            const firstSurname = data.surnames.split(" ")[0];
-            const area = data.area;
+            console.log(data);
 
             // Mostrar la notificación con la primera palabra del nombre y apellido
-            showNotification(`Se ha registrado el usuario: ${firstName} ${firstSurname} en el area: ${area}`, "success");
+            showNotification(`Usuario registrado con exito`, "success");
             setSuccess(true);
 
         } catch (error) {
