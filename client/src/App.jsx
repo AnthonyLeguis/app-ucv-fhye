@@ -101,8 +101,8 @@ export const App = () => {
                     {/* Redirección condicional en la ruta /app */}
                     <Route index element={<Navigate to={userId ? "profile" : "/"} />} />
 
-                    {/* Aquí van todas tus rutas protegidas, envueltas por ProtectedRoute */}
-                    <Route element={<ProtectedRoute />}> {/* <-- Envolver en un componente Route */}
+                    {/* Aquí van todas tus rutas protegidas, envueltas por Route => ProtectedRoute */}
+                    <Route element={<ProtectedRoute />}>
                         <Route path="profile" element={<UserProfile />} />
                         <Route path="users" element={<Users />} />
                         <Route path="users/register" element={<UserForm />} />
