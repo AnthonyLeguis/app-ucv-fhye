@@ -45,6 +45,30 @@ export const App = () => {
         }
     }, [isAuthenticated, isExpired, logout, navigate]);
 
+    // Define el componente PrivateRoute
+    const PrivateRoute = () => {
+        if (!isAuthenticated) {
+            return <Navigate to="/login" />;
+        }
+        return (
+            <div className="d-flex flex-nowrap vh-100 content-scroll">
+                <div className="col-auto">
+                    {isAuthenticated && <SideBar isAuthenticated={isAuthenticated} />}
+                </div>
+                <div className="col mx-auto d-flex flex-column align-content-center">
+                    <Outlet />
+                </div>
+            </div>
+        );
+    };
+
+    // Define el componente ProtectedRoute
+    const ProtectedRoute = ({ children }) => {
+        if (!isAuthenticated) {
+            return <Navigate to="/login" />;
+        }
+        return children;
+    };
 
     return (
         <>
@@ -72,46 +96,22 @@ export const App = () => {
                 <Route path="/reset-password" element={<PassRecovery />} />
 
                 {/* Rutas privadas (con SideBar) */}
-                <Route
-                    path="/app"
-                    element={
-                        isAuthenticated ? (
-                            <div className="d-flex flex-nowrap vh-100 content-scroll">
-                                <div className="col-auto">
-                                    {isAuthenticated ? (
-                                        <SideBar isAuthenticated={isAuthenticated} />
-                                    ) : null}
-                                </div>
-                                <div className="col mx-auto d-flex flex-column align-content-center">
-                                    <Outlet />
-                                </div>
-                            </div>
-                        ) : (
-                            <Navigate to="/login" />
-                        )
-                    }
-                >
+                <Route path="/app" element={<PrivateRoute />}>
+
                     {/* Redirección condicional en la ruta /app */}
-                    <Route
-                        index // Ruta por defecto para /app
-                        element={
-                            userId ? <Navigate to="profile" /> : <Navigate to="/" />
-                        }
-                    />
+                    <Route index element={<Navigate to={userId ? "profile" : "/"} />} />
 
                     {/* Aquí van todas tus rutas protegidas, envueltas por ProtectedRoute */}
-                    {isAuthenticated && (
-                        <>
-                            <Route path="profile" element={<UserProfile />} />
-                            <Route path="users" element={<Users />} />
-                            <Route path="users/register" element={<UserForm />} />
-                            <Route path="dashboard" element={<Dashboard />} />
-                            <Route path="data" element={<Data />} />
-                            <Route path="sheets" element={<Sheets />} />
-                            <Route path="sheets/register" element={<SheetsForm />} />
-                            <Route path="setup-user" element={<SetupUser />} />
-                        </>
-                    )}
+                    <ProtectedRoute> {/* Usar ProtectedRoute */}
+                        <Route path="profile" element={<UserProfile />} />
+                        <Route path="users" element={<Users />} />
+                        <Route path="users/register" element={<UserForm />} />
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="data" element={<Data />} />
+                        <Route path="sheets" element={<Sheets />} />
+                        <Route path="sheets/register" element={<SheetsForm />} />
+                        <Route path="setup-user" element={<SetupUser />} />
+                    </ProtectedRoute>
                 </Route>
 
                 {/* Ruta catch-all */}
