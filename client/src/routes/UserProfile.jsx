@@ -53,7 +53,9 @@ export const UserProfile = () => {
 
 
                 const data = await response.json();
-                setUserData(data); // Actualiza el estado userData en el AuthContext
+                console.log(data);
+                
+                setUserData(data); 
                 setIsLoading(false);
                 setFetched(true);
             } catch (error) {
