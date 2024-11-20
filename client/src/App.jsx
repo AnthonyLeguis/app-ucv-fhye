@@ -102,7 +102,7 @@ export const App = () => {
                     <Route index element={<Navigate to={userId ? "profile" : "/"} />} />
 
                     {/* Aquí van todas tus rutas protegidas, envueltas por ProtectedRoute */}
-                    <ProtectedRoute> {/* Usar ProtectedRoute */}
+                    <Route element={<ProtectedRoute />}> {/* <-- Envolver en un componente Route */}
                         <Route path="profile" element={<UserProfile />} />
                         <Route path="users" element={<Users />} />
                         <Route path="users/register" element={<UserForm />} />
@@ -111,7 +111,7 @@ export const App = () => {
                         <Route path="sheets" element={<Sheets />} />
                         <Route path="sheets/register" element={<SheetsForm />} />
                         <Route path="setup-user" element={<SetupUser />} />
-                    </ProtectedRoute>
+                    </Route>
                 </Route>
 
                 {/* Ruta catch-all */}
