@@ -88,7 +88,7 @@ export const App = () => {
                 <Route path="/reset-password" element={<PassRecovery />} />
 
                 {/* Rutas privadas (con SideBar) */}
-                <Route path="/app" element={<PrivateRoute />}>
+                <Route path="/app/profile" element={<PrivateRoute />}>
 
                     {/* Aquí van todas tus rutas protegidas, envueltas por Route => ProtectedRoute */}
                     <Route path="profile" element={<UserProfile />} />

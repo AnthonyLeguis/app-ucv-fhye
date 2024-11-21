@@ -39,7 +39,7 @@ const port = process.env.PORT || 3900;
 
 app.use(morgan("dev"));
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? process.env.CORS_ALLOWED_ORIGINS : process.env.ORIGIN_FRONTEND_LOCAL,
+  origin: process.env.NODE_ENV === 'production' ? process.env.CORS_ALLOWED_ORIGINS : [process.env.ORIGIN_FRONTEND_LOCAL, process.env.CORS_ALLOWED_ORIGINS],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
