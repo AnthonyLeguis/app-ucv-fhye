@@ -87,7 +87,7 @@ export const App = () => {
                         isLoading
                             ? null
                             : isAuthenticated ? (
-                                <Navigate to="/app" />
+                                <Navigate to={"/app"} />
                             ) : (
                                 <Home />
                             )
@@ -100,16 +100,14 @@ export const App = () => {
                 <Route path="/app" element={<PrivateRoute />}>
 
                     {/* Aquí van todas tus rutas protegidas, envueltas por Route => ProtectedRoute */}
-                    <Route element={<ProtectedRoute />}>
-                        <Route path="profile" element={<UserProfile />} />
-                        <Route path="users" element={<Users />} />
-                        <Route path="users/register" element={<UserForm />} />
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="data" element={<Data />} />
-                        <Route path="sheets" element={<Sheets />} />
-                        <Route path="sheets/register" element={<SheetsForm />} />
-                        <Route path="setup-user" element={<SetupUser />} />
-                    </Route>
+                    <Route path="profile" element={<UserProfile />} />
+                    <Route path="users" element={<Users />} />
+                    <Route path="users/register" element={<UserForm />} />
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="data" element={<Data />} />
+                    <Route path="sheets" element={<Sheets />} />
+                    <Route path="sheets/register" element={<SheetsForm />} />
+                    <Route path="setup-user" element={<SetupUser />} />
                 </Route>
 
                 {/* Ruta catch-all */}

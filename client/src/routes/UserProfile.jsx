@@ -26,9 +26,7 @@ export const UserProfile = () => {
         }
 
         const fetchData = async () => {
-
             try {
-
                 const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/profile`,
                     {
                         method: 'POST',
@@ -54,8 +52,6 @@ export const UserProfile = () => {
 
                 const data = await response.json();
                 console.log(data);
-                
-
                 setUserData(data);
                 setIsLoading(false);
                 setFetched(true);
@@ -67,7 +63,9 @@ export const UserProfile = () => {
             }
         };
 
-        fetchData();
+        if (isAuthenticated) { 
+            fetchData();
+        }
     }, [authLoading, logout, reload, isAuthenticated]);
 
     return (
