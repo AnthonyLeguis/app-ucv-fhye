@@ -8,7 +8,7 @@ import '../CSS/userprofile.css'
 
 
 export const UserProfile = () => {
-    const { userData, setUserData, isLoading: authLoading, logout, token } = useContext(AuthContext);
+    const { userData, setUserData, isLoading: authLoading, logout } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [fetched, setFetched] = useState(false);
@@ -21,18 +21,19 @@ export const UserProfile = () => {
             return;
         }
 
-        if (!token) {
-            return;
-        }
-
         const fetchData = async () => {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                return;
+            }
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/profile`,
                     {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            "Authorization": `${token}`,
+                            'Authorization': `${token}`,
                         },
 
                     }
