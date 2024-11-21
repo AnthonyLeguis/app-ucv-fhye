@@ -62,15 +62,6 @@ export const App = () => {
         );
     };
 
-    // Define el componente ProtectedRoute
-    const ProtectedRoute = ({ children }) => {
-
-        if (!isAuthenticated) {
-            return <Navigate to="/login" />;
-        }
-        return children;
-    };
-
     return (
         <>
             {tokenExpired}

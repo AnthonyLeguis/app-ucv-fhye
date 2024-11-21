@@ -78,6 +78,19 @@ app.get("/ruta-prueba", (req, res) => {
   });
 });
 
+// Manejador de errores
+app.use((req, res, next) => {
+  const error = new Error("Ruta no encontrada");
+  error.status = 404;
+  next(error);
+});
+
+app.use((error, req, res, next) => {
+  res.status(error.status || 500).json({
+    status: "error",
+    message: error.message,
+  });
+});
 
 // 7. Inicio del servidor
 app.listen(port, () => {

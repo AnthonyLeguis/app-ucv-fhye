@@ -471,7 +471,6 @@ const profileUsers = (req, res) => {
 
     try {
         const id = req.users.id;
-        // console.log(id);//
 
         User.findById(id)
             .select({ password: 0 })
