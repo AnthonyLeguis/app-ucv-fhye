@@ -91,7 +91,7 @@ export const App = () => {
                 <Route path="/app" element={<PrivateRoute />}>
 
                     {/* Aquí van todas tus rutas protegidas, envueltas por Route => ProtectedRoute */}
-                    <Route path="{`profile`}" element={<UserProfile />} />
+                    <Route path="profile" element={<UserProfile />} />
                     <Route path="users" element={<Users />} />
                     <Route path="users/register" element={<UserForm />} />
                     <Route path="dashboard" element={<Dashboard />} />
