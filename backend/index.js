@@ -14,6 +14,9 @@ import sheetRouter from "./server/routes/sheet.js";
 // 2. Configuración de variables de entorno
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? process.env.CORS_ALLOWED_ORIGINS
+  : process.env.ORIGIN_FRONTEND_LOCAL; 
 
 // Cargar variables de entorno
 try {
@@ -38,9 +41,8 @@ app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT;
 
 app.use(morgan("dev"));
-
 app.use(cors({
-  origin: process.env.CORS_ALLOWED_ORIGINS, 
+  origin: allowedOrigins, 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));

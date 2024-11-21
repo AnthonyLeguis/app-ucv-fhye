@@ -55,8 +55,7 @@ export const Login = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nationalId: rememberedNationalId, password: rememberedPassword }),
-        credentials: 'include'
+        body: JSON.stringify({ nationalId: rememberedNationalId, password: rememberedPassword })
       });
 
       if (!response.ok) {
