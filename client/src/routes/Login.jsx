@@ -56,7 +56,7 @@ export const Login = () => {
       formData.append('password', rememberedPassword);
 
       // Realiza la solicitud POST
-      const response = await fetch(`https://app-ucv-fhye-backend.onrender.com/api/user/login`, {
+      const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/login`, {
         method: 'POST',
         body: formData
       });
@@ -122,7 +122,7 @@ export const Login = () => {
                       type={showPassword ? "text" : "password"}
                       id="password"
                       className="form-control form-control-lg"
-                      placeholder="Enter password"
+                      placeholder="Ingrese su contraseña"
                       value={rememberedPassword}
                       autoComplete='current-password'
                       onChange={(e) => setRememberedPassword(e.target.value)}
