@@ -43,7 +43,6 @@ app.use(cors({
   origin: process.env.CORS_ALLOWED_ORIGINS, 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -75,15 +74,6 @@ app.get("/ruta-prueba", (req, res) => {
     nombre: "Anthony",
     apellido: "Leguisamo Gascon"
   });
-});
-
-app.options('*', (req, res) => {
-  res.set('Access-Control-Allow-Origin', process.env.ORIGIN_FRONTEND_LOCAL);
-  res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.set('Access-Control-Allow-Credentials', 'true');   
- // Asegúrate de que esta línea esté presente
-  res.status(200).end();
 });
 
 
