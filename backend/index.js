@@ -42,7 +42,7 @@ const port = process.env.PORT || 3900;
 
 app.use(morgan("dev"));
 app.use(cors({
-  origin: allowedOrigins, 
+  origin: 'https://fhye-gmp.onrender.com', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
