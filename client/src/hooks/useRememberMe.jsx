@@ -3,16 +3,16 @@ import { useState, useEffect } from 'react';
 export const useRememberMe = () => {
     const [nationalId, setNationalId] = useState('');
     const [password, setPassword] = useState('');
-    const [rememberMee, setrememberMee] = useState(false);
+    const [rememberMee, setRememberMee] = useState(false);
 
     useEffect(() => {
-        const savedNationalId = localStorage.getItem('nationalId');
-        const savedPassword = localStorage.getItem('password');
+        const savedNationalId = localStorage.getItem('rememberedNationalId');
+        const savedPassword = localStorage.getItem('rememberedPassword');
         const rememberMe = localStorage.getItem('rememberMe') === 'true';
         
         if (savedNationalId && rememberMe) {
             setNationalId(savedNationalId);
-            setrememberMee(true);
+            setRememberMee(true);
         }
 
         if (savedPassword && rememberMe) {
@@ -21,18 +21,22 @@ export const useRememberMe = () => {
 
     }, []);
 
-    const handleRememberMeChange = (event) => {
-        setrememberMee(event.target.checked);
+    useEffect(() => {
+      if (rememberMee) {
+        localStorage.setItem('rememberedNationalId', nationalId);
+        localStorage.setItem('rememberedPassword', password);
+        localStorage.setItem('rememberMe', 'true');
+      } else {
+        localStorage.removeItem('rememberedNationalId');
+        localStorage.removeItem('rememberedPassword');  
+        localStorage.removeItem('rememberMe');
+      }
+    
+    }, [nationalId, password, rememberMee]);
+    
 
-        if (event.target.checked) {
-            localStorage.setItem('nationalId', nationalId);
-            localStorage.setItem('password', password);
-            localStorage.setItem('rememberMe', 'true');
-        } else {
-            localStorage.removeItem('nationalId');
-            localStorage.removeItem('password');
-            localStorage.removeItem('rememberMe');
-        }
+    const handleRememberMeChange = (event) => {
+        setRememberMee(event.target.checked);
     };
 
     return { nationalId, setNationalId, password, setPassword, rememberMee, handleRememberMeChange };

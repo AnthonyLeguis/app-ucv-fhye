@@ -125,19 +125,17 @@ const loginUsers = async (req, res) => {
     try {
         let { nationalId, password } = req.body;
 
-        // limpiar datos
-        nationalId = (nationalId || '').trim();
-        nationalId = parseInt(nationalId); 
-        password = password.trim();
-
-        console.log(nationalId, password);
-
         if (!nationalId || !password) {
             return res.status(400).json({
                 status: "error",
                 message: "Faltan datos por enviar"
             });
         }
+
+        //Limpiar los datos
+        nationalId = (nationalId || '').trim();
+        nationalId = parseInt(nationalId);
+        password = password.trim();
 
         // Buscar el usuario en la base de datos por su identificación
         const user = await User.findOne({ nationalId });

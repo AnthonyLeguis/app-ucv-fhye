@@ -38,6 +38,7 @@ function AuthProvider({ children }) {
     }, []);
 
     const login = (token, userId) => {
+        console.log('Logging in:', token, userId);
         localStorage.setItem('token', token);
         setUserId(userId);
         setIsAuthenticated(true);

@@ -16,7 +16,8 @@ export const Login = () => {
   const handleCloseRecoveryModal = () => setShowRecoveryModal(false);
 
   // hook de autentificación
-  const { nationalId: rememberedNationalId,
+  const { 
+    nationalId: rememberedNationalId,
     setNationalId: setRememberedNationalId,
     password: rememberedPassword,
     setPassword: setRememberedPassword,
@@ -60,6 +61,8 @@ export const Login = () => {
         method: 'POST',
         body: formData
       });
+      console.log('Response status: ',response.status);
+      
 
       if (!response.ok) {
         const errorData = await response.json();
