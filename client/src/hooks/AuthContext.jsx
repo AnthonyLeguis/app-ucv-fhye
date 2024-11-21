@@ -42,8 +42,6 @@ function AuthProvider({ children }) {
         localStorage.setItem('token', token);
         setUserId(userId);
         setIsAuthenticated(true);
-        // Redirigir a /app después del login
-        navigate('/app');
     };
 
     const logout = () => {

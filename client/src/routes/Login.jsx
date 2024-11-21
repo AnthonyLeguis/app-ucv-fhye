@@ -1,5 +1,6 @@
 import { useEffect, useState, useContext } from 'react'
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useNotification } from './components/Notifications';
 import { AuthContext } from '../hooks/AuthContext';
 import { useRememberMe } from '../hooks/useRememberMe';
@@ -14,6 +15,7 @@ export const Login = () => {
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
   const handleOpenRecoveryModal = () => setShowRecoveryModal(true);
   const handleCloseRecoveryModal = () => setShowRecoveryModal(false);
+  const navigate = useNavigate();
 
   // hook de autentificación
   const { 
@@ -59,9 +61,11 @@ export const Login = () => {
       // Realiza la solicitud POST
       const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/login`, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nationalId: rememberedNationalId, password: rememberedPassword }),
       });
-      console.log('Response status: ',response.status);
       
 
       if (!response.ok) {
@@ -75,6 +79,7 @@ export const Login = () => {
         localStorage.setItem('token', data.token);
         login(data.token, data.user.id);
 
+        navigate('/app/');
       }
 
     } catch (error) {
