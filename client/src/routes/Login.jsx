@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
-import {  useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useNotification } from './components/Notifications';
 import { AuthContext } from '../hooks/AuthContext';
 import { useRememberMe } from '../hooks/useRememberMe';
@@ -50,12 +50,16 @@ export const Login = () => {
     setError(null);
 
     try {
+      // Crea un objeto FormData
+      const formData = new FormData();
+      formData.append('nationalId', rememberedNationalId);
+      formData.append('password', rememberedPassword);
+
+      // Realiza la solicitud POST
       const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nationalId: rememberedNationalId, password: rememberedPassword })
+        body: formData, // Envía el objeto FormData
+        credentials: 'include'
       });
 
       if (!response.ok) {
