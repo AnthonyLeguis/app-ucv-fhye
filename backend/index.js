@@ -78,6 +78,10 @@ app.get("/ruta-prueba", (req, res) => {
   });
 });
 
+app.get("/", (req, res) => {
+  res.redirect(process.env.CORS_ALLOWED_ORIGINS.split(',')[0]); // Redirige a la URL de tu frontend
+});
+
 // Manejador de errores
 app.use((req, res, next) => {
   const error = new Error("Ruta no encontrada");
