@@ -38,8 +38,9 @@ app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT;
 
 app.use(morgan("dev"));
+
 app.use(cors({
-  origin: process.env.ORIGIN_FRONTEND_LOCAL, 
+  origin: process.env.CORS_ALLOWED_ORIGINS, 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
