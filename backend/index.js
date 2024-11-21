@@ -75,9 +75,7 @@ app.get("/ruta-prueba", (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.redirect(process.env.CORS_ALLOWED_ORIGINS.split(',')[0]); // Redirige a la URL de tu frontend
-});
+app.get("/", (req, res) => { res.status(200).json({ message: "Bienvenido a la API de UCV FHYE" }); });
 
 // Manejador de errores
 app.use((req, res, next) => {
