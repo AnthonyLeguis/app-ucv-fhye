@@ -126,7 +126,8 @@ const loginUsers = async (req, res) => {
         let { nationalId, password } = req.body;
 
         // limpiar datos
-        nationalId = parseInt(nationalId.trim());
+        nationalId = (nationalId || '').trim();
+        nationalId = parseInt(nationalId); 
         password = password.trim();
 
         console.log(nationalId, password);
