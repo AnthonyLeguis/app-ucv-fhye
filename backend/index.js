@@ -38,7 +38,7 @@ connection()
 // 4. Configuración del servidor Express
 const app = express();
 app.use(express.urlencoded({ extended: true }));
-const port = process.env.PORT;
+const port = process.env.PORT || 3900;
 
 app.use(morgan("dev"));
 app.use(cors({
@@ -81,5 +81,5 @@ app.get("/ruta-prueba", (req, res) => {
 
 // 7. Inicio del servidor
 app.listen(port, () => {
-  console.log("Servidor corriendo en el puerto:", port);
+  console.log(`"Servidor corriendo en el puerto:", ${port}`);
 });
