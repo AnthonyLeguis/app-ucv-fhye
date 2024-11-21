@@ -56,10 +56,9 @@ export const Login = () => {
       formData.append('password', rememberedPassword);
 
       // Realiza la solicitud POST
-      const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/login`, {
+      const response = await fetch(`https://app-ucv-fhye-backend.onrender.com/api/user/login`, {
         method: 'POST',
-        body: formData, // Envía el objeto FormData
-        credentials: 'include'
+        body: formData
       });
 
       if (!response.ok) {
