@@ -6,27 +6,30 @@ import { useUserRole } from '../hooks/useUserRole';
 import { useNotification } from './components/Notifications';
 import '../CSS/userprofile.css'
 
-
 export const UserProfile = () => {
-    const { userData, setUserData, isLoading: authLoading, logout } = useContext(AuthContext);
+    const { userData, setUserData, isLoading: authLoading, isAuthenticated, logout } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [fetched, setFetched] = useState(false);
+    const [dataFetched, setDataFetched] = useState(false);
     const [reload, setReload] = useState(false);
     const { showNotification } = useNotification();
     const mapUserRole = useUserRole();
 
     useEffect(() => {
-        if (authLoading || fetched) {
+        if (authLoading || dataFetched) {
             return;
         }
 
         const fetchData = async () => {
+            console.log('fetchData called');
+            setIsLoading(true);
             const token = localStorage.getItem('token');
 
             if (!token) {
+                console.log('No se encuentra el token en localStorage');
                 return;
             }
+
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/profile`,
                     {
@@ -40,34 +43,32 @@ export const UserProfile = () => {
                 );
 
                 if (!response.ok) {
-                    // Verifica si el error es debido a un token expirado
                     const errorData = await response.json();
-
                     if (errorData.message === 'Token inválido' || response.status === 401) {
-                        logout(); // Cierra la sesión si el token es inválido
-                        return; // Sale de la función
+                        logout();
+                        return;
                     }
                     throw new Error("Error al obtener los datos del usuario");
                 }
 
-
                 const data = await response.json();
-                console.log(data);
-                setUserData(data);
+
+                setUserData(prevUserData => ({ ...prevUserData, ...data }));
                 setIsLoading(false);
-                setFetched(true);
+                setDataFetched(true);;
             } catch (error) {
                 console.error("Error fetching user data:", error);
-                setError(error.message); // Almacena el mensaje de error
+                setError(error.message);
                 showNotification("NO se logra obtener la data", "error")
-                setIsLoading(false); // Desactiva el spinner incluso en caso de error
+                setIsLoading(false);
             }
         };
 
-        if (isAuthenticated) { 
+        if (isAuthenticated) {
             fetchData();
         }
-    }, [authLoading, logout, reload, isAuthenticated]);
+        
+    }, [authLoading, isAuthenticated, logout, reload]);
 
     return (
         <>
@@ -76,7 +77,6 @@ export const UserProfile = () => {
                     <div className="col mt-4 mb-2 rounded-1 col-md-8 mx-auto d-flex flex-row justify-content-center justify-content-md-right">
                         <h1 className="SchoolName text-center text-center m-0">Escuela: {userData?.users?.area}</h1>
                     </div>
-                    {console.log('userData:', userData)}
 
                     {error ? (
                         <div className="alert alert-danger col-6 mx-auto">{error}</div>

@@ -45,6 +45,12 @@ export const App = () => {
         }
     }, [isAuthenticated, isExpired, logout, navigate]);
 
+    useEffect(() => {
+        if (isAuthenticated && location.pathname !== '/app/profile') {
+            navigate('/app/profile', { replace: true });
+        }
+    }, [isAuthenticated, navigate, location.pathname]);
+
     // Define el componente PrivateRoute
     const PrivateRoute = () => {
         if (!isAuthenticated) {
@@ -78,7 +84,7 @@ export const App = () => {
                         isLoading
                             ? null
                             : isAuthenticated ? (
-                                <Navigate to={"/app"} />
+                                <Navigate to="/app/profile" replace />
                             ) : (
                                 <Home />
                             )

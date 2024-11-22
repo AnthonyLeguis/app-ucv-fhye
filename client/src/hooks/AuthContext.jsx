@@ -1,6 +1,5 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext({});
 
@@ -11,7 +10,6 @@ function AuthProvider({ children }) {
     const [isLoading, setIsLoading] = useState(true);
     const [userData, setUserData] = useState(null);
     const [token, setToken] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
@@ -37,18 +35,17 @@ function AuthProvider({ children }) {
         setIsLoading(false);
     }, []);
 
-    const login = (token, userId) => {
-        console.log('Logging in:', token, userId);
+    const login = useCallback((token, userId) => {
         localStorage.setItem('token', token);
         setUserId(userId);
         setIsAuthenticated(true);
-    };
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         localStorage.removeItem('token');
         setUserId(null);
         setIsAuthenticated(false);
-    };
+    }, []);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, userId, userData, tokenVerified, isLoading, token, login, logout, setUserData }}>
