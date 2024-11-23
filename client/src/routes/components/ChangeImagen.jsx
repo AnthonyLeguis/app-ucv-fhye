@@ -82,14 +82,18 @@ export const ChangeImagen = ({ buttonClassName = 'btn btn-primary m-auto bi bi-p
             if (response.ok) {
                 const data = await response.json();
                 console.log('Response data:', data);
+
                 setUserData(prevUserData => ({
                     ...prevUserData,
                     users: {
                         ...data.user
                     }
-                }))
+                }));
+
                 showNotification('Imagen cambiada correctamente', 'success');
+
                 setReload(prevReload => !prevReload);
+                
                 setShowPopup(false);
                 setIsLoading(false);
             } else {

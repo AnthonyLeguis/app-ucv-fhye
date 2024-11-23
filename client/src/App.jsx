@@ -20,38 +20,16 @@ import './CSS/App.css'
 import Swal from "sweetalert2"
 
 export const App = () => {
-    const { isAuthenticated, userId, isLoading, logout } = useContext(AuthContext);
-    const [tokenExpired, setTokenExpired] = useState(false);
+    const { isAuthenticated } = useContext(AuthContext); // Elimina isLoading
     const location = useLocation();
-    const isExpired = useCheckTokenExp();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isExpired && isAuthenticated) {
-
-            Swal.fire({
-                icon: "error",
-                title: "Por favor ingrese nuevamente",
-                text: "Su sesión ha expirado",
-                showCancelButton: false,
-                confirmButtonText: 'Aceptar',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    logout();
-                    navigate("/login");
-                    setTokenExpired(false);
-                }
-            });
-        }
-    }, [isAuthenticated, isExpired, logout, navigate]);
-
-    useEffect(() => {
-        if (isAuthenticated && location.pathname !== '/app/profile') {
+        if (isAuthenticated && location.pathname === '/') {
             navigate('/app/profile', { replace: true });
         }
-    }, [isAuthenticated, navigate, location.pathname]);
+    }, [isAuthenticated, location.pathname, navigate]);
 
-    // Define el componente PrivateRoute
     const PrivateRoute = () => {
         if (!isAuthenticated) {
             return <Navigate to="/login" />;
@@ -70,24 +48,20 @@ export const App = () => {
 
     return (
         <>
-            {tokenExpired}
-
             {/* Renderiza NavBar solo si la ruta es / o /login */}
             {location.pathname === '/' || location.pathname === '/login' ? (
                 <NavBar isAuthenticated={isAuthenticated} />
             ) : null}
 
-            <Routes> {/* Mueve Routes aquí, antes de todas las rutas */}
+            <Routes>
                 <Route
                     path="/"
                     element={
-                        isLoading
-                            ? null
-                            : isAuthenticated ? (
-                                <Navigate to="/app/profile" replace />
-                            ) : (
-                                <Home />
-                            )
+                        isAuthenticated ? (
+                            <Navigate to="/app/" replace />
+                        ) : (
+                            <Home />
+                        )
                     }
                 />
                 <Route path="/login" element={<Login />} />
@@ -95,8 +69,6 @@ export const App = () => {
 
                 {/* Rutas privadas (con SideBar) */}
                 <Route path="/app/" element={<PrivateRoute />}>
-
-                    {/* Aquí van todas tus rutas protegidas, envueltas por Route => ProtectedRoute */}
                     <Route path="profile" element={<UserProfile />} />
                     <Route path="users" element={<Users />} />
                     <Route path="users/register" element={<UserForm />} />

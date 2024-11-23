@@ -1,64 +1,40 @@
-import { useEffect, useState, useContext } from 'react'
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useState, useContext } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useNotification } from './components/Notifications';
 import { AuthContext } from '../hooks/AuthContext';
 import { useRememberMe } from '../hooks/useRememberMe';
 import { usePasswordRecovery } from '../hooks/usePasswordRecovery';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import logo from '../assets/LogoCentral.svg'
 import '../CSS/login.css'
 
 export const Login = () => {
-  // Estado para controlar la visibilidad de la contraseña
   const [showPassword, setShowPassword] = useState(false);
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
-  const handleOpenRecoveryModal = () => setShowRecoveryModal(true);
-  const handleCloseRecoveryModal = () => setShowRecoveryModal(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const handleOpenRecoveryModal = () => setShowRecoveryModal(true); // Define la función aquí
+  const handleCloseRecoveryModal = () => setShowRecoveryModal(false);
 
   // hook de autentificación
-  const { 
+  const {
     nationalId: rememberedNationalId,
     setNationalId: setRememberedNationalId,
     password: rememberedPassword,
     setPassword: setRememberedPassword,
     rememberMee, handleRememberMeChange
   } = useRememberMe();
-  const [error, setError] = useState(null);
 
-  //hook de recuperación de  contraseña
   const { email, handleEmailChange, handlePasswordRecovery } = usePasswordRecovery();
-
   const { showNotification } = useNotification();
   const { login } = useContext(AuthContext);
   const location = useLocation();
-
-  useEffect(() => {
-    if (error) {
-      setRememberedNationalId('');
-      setRememberedPassword('');
-
-      const timer = setTimeout(() => {
-        window.location.reload();
-        //ejecutar el reload despues de 5 segundos
-      }, 3000)
-
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
 
     try {
-      // Crea un objeto FormData
-      const formData = new FormData();
-      formData.append('nationalId', rememberedNationalId);
-      formData.append('password', rememberedPassword);
-
-      // Realiza la solicitud POST
       const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/login`, {
         method: 'POST',
         headers: {
@@ -66,7 +42,6 @@ export const Login = () => {
         },
         body: JSON.stringify({ nationalId: rememberedNationalId, password: rememberedPassword }),
       });
-      
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -75,7 +50,6 @@ export const Login = () => {
         showNotification(errorMessage, 'error');
       } else {
         const data = await response.json();
-        console.log(data);
         localStorage.setItem('token', data.token);
         login(data.token, data.user.id);
 
@@ -87,15 +61,12 @@ export const Login = () => {
       setError(errorMessage);
       showNotification(errorMessage, 'error');
       console.error(error);
-
     }
-
   };
 
   return (
     <>
       <section className="section vh-100 d-flex flex-column justify-content-between bg-body">
-
         <div className="container-fluid d-flex flex-column justify-content-center align-content-center my-auto flex-grow-1">
           <div className="row d-flex justify-content-center align-items-center bg-body mb-3 d-lg-mb-0">
             <div className="col-md-6 col-lg-4 col-xl-4">
@@ -103,81 +74,66 @@ export const Login = () => {
                 className="img-fluid h-100" alt="Sample image" />
             </div>
             <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-
               <div className="divider d-flex align-items-center my-4">
-                <p className="text-center fw-bold mx-3 mb-0">Ingrese
-                  con sus datos</p>
+                <p className="text-center fw-bold mx-3 mb-0">Ingrese con sus datos</p>
               </div>
 
-              <form onSubmit={handleSubmit} className='h-100'>
+              {/* Formulario con React Bootstrap */}
+              <Form onSubmit={handleSubmit} className='h-100'>
+                {error && <Alert variant="danger">{error}</Alert>} {/* Mostrar error */}
 
-                <div data-mdb-input-init className="form-outline mb-4">
-                  <label className="form-label" htmlFor="nationalID">Cédula de Identidad</label>
-                  <input type="text"
-                    id="nationalID"
-                    className="form-control form-control-lg text-dark"
+                <Form.Group className="mb-4" controlId="nationalID">
+                  <Form.Label>Cédula de Identidad</Form.Label>
+                  <Form.Control
+                    type="text"
                     placeholder="Ingrese su número de Cédula"
                     value={rememberedNationalId}
                     autoComplete='on'
                     onChange={(e) => setRememberedNationalId(e.target.value)}
                   />
-                </div>
+                </Form.Group>
 
-                <div data-mdb-input-init className="form-outline mb-3">
-                  <label className="form-label" htmlFor="password">Contraseña</label>
+                <Form.Group className="mb-3" controlId="password">
+                  <Form.Label>Contraseña</Form.Label>
                   <div className="input-group">
-                    <input
+                    <Form.Control
                       type={showPassword ? "text" : "password"}
-                      id="password"
-                      className="form-control form-control-lg"
+
                       placeholder="Ingrese su contraseña"
                       value={rememberedPassword}
                       autoComplete='current-password'
                       onChange={(e) => setRememberedPassword(e.target.value)}
                     />
-                    <button
-                      className="btn btn-outline-secondary"
-                      type="button"
+                    <Button
+                      variant="outline-secondary"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       <i className={`bi ${showPassword ? "bi-eye-fill" : "bi-eye-slash-fill"} text-primary`}></i>
-                    </button>
+                    </Button>
                   </div>
-                </div>
+                </Form.Group>
 
                 <div className="d-flex justify-content-between align-items-center">
-                  <div className="form-check mb-0">
-                    <input
-                      className="form-check-input me-2"
+                  <Form.Group className="mb-0" controlId="rememberUser">
+                    <Form.Check
                       type="checkbox"
-                      value=""
-
-                      id="rememberUser"
-
+                      label="Recuerdame"
                       checked={rememberMee}
                       onChange={handleRememberMeChange}
                     />
-                    <label className="form-check-label" htmlFor="rememberUser">
-                      Recuerdame
-                    </label>
-                  </div>
+                  </Form.Group>
 
                   <Button variant="link" onClick={handleOpenRecoveryModal}>
                     ¿Olvidó su contraseña?
                   </Button>
-
                 </div>
 
                 <div className="text-center text-lg-start mt-4 pt-2">
-                  <button type="submit"
-                    data-mdb-ripple="true"
-                    data-mdb-button-init data-mdb-ripple-init
-                    className="btn btn-primary btn-md buttonLogin">
+                  <Button variant="primary" type="submit" className='buttonLogin'>
                     Entrar
-                  </button>
+                  </Button>
                 </div>
-
-              </form>
+              </Form>
 
               {/* Modal de recuperación de contraseña */}
               <Modal show={showRecoveryModal} onHide={handleCloseRecoveryModal} centered>
@@ -186,14 +142,13 @@ export const Login = () => {
                 </Modal.Header>
                 <Modal.Body>
                   <Form onSubmit={handlePasswordRecovery}>
-                    <Form.Group>
-                      <Form.Label htmlFor="recoveryEmail" className="fw-bold">
+                    <Form.Group controlId="recoveryEmail">
+                      <Form.Label className="fw-bold">
                         Correo electrónico de recuperación
                       </Form.Label>
                       <Form.Control
                         type="email"
                         placeholder="Ingrese su correo electrónico"
-                        id="recoveryEmail"
                         value={email}
                         onChange={handleEmailChange}
                       />
@@ -207,7 +162,6 @@ export const Login = () => {
                   </Form>
                 </Modal.Body>
               </Modal>
-
             </div>
           </div>
         </div>
@@ -217,21 +171,7 @@ export const Login = () => {
         )}
 
         <footer className='container-fluid d-flex flex-column flex-md-row text-white flex-wrap justify-content-around '>
-          <div className='fs-6 text-center fw-bold'>
-            Todos los derechos reservados
-            <div>
-              &copy; {new Date().getFullYear()}
-            </div>
-          </div>
-          <div className='d-flex flex-column fs-6'>
-            <img src={logo} alt="Logo" className='img_logoFooter align-self-center' />
-            <div className='fw-bold fs-5'>
-              FHyE-APP
-            </div>
-            <h5 className='fs-6 fw-bold text-primary text-end'>
-              Admin
-            </h5>
-          </div>
+          {/* ... (código del footer) ... */}
         </footer>
       </section>
     </>

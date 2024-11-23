@@ -67,7 +67,7 @@ export const SideBar = () => {
                                 {/* Opciones del SideBar */}
                                 <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
                                     <NavLink
-                                        to="/app/"
+                                        to="/app/profile"
                                         end
                                         className={({ isActive }) =>
                                             `nav-link text-white fs-5 ${isActive ? "active" : ""}`
