@@ -1,37 +1,50 @@
-import { Route, Routes, Navigate, useLocation, Outlet, useNavigate } from "react-router-dom"
-import { useContext, useEffect, useState } from "react"
-import { NavBar } from "./routes/components/NavBar"
-import { Home } from "./routes/Home"
-import { Login } from "./routes/Login"
-import { SideBar } from "./routes/components/SideBar"
-import { UserProfile } from "./routes/UserProfile"
-import { Users } from "./routes/Users"
-import { UserForm } from "./routes/components/UserForm"
-import { Dashboard } from "./routes/Dashboard"
-import { Data } from "./routes/Data"
-import { Sheets } from "./routes/Sheets"
-import { SheetsForm } from "./routes/components/SheetsForm"
-import { SetupUser } from "./routes/SetupUser"
-import { AuthContext } from "./hooks/AuthContext"
-import { NotFound } from "./routes/components/NotFound"
-import { useCheckTokenExp } from "./hooks/useCheckTokenExp"
-import { PassRecovery } from "./routes/PassRecovery"
-import './CSS/App.css'
-import Swal from "sweetalert2"
+import { Route, Routes, Navigate, useLocation, Outlet, useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { NavBar } from "./routes/components/NavBar";
+import { Home } from "./routes/Home";
+import { Login } from "./routes/Login";
+import { SideBar } from "./routes/components/SideBar";
+import { UserProfile } from "./routes/UserProfile";
+import { Users } from "./routes/Users";
+import { UserForm } from "./routes/components/UserForm";
+import { Dashboard } from "./routes/Dashboard";
+import { Data } from "./routes/Data";
+import { Sheets } from "./routes/Sheets";
+import { SheetsForm } from "./routes/components/SheetsForm";
+import { SetupUser } from "./routes/SetupUser";
+import { AuthContext } from "./hooks/AuthContext";
+import { NotFound } from "./routes/components/NotFound";
+import { PassRecovery } from "./routes/PassRecovery";
+import Swal from "sweetalert2";
+import './CSS/App.css';
 
 export const App = () => {
-    const { isAuthenticated } = useContext(AuthContext); // Elimina isLoading
+    const { isAuthenticated, isLoading, logout, isInitialLoading } = useContext(AuthContext);
+    const [tokenExpired, setTokenExpired] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isAuthenticated && location.pathname === '/') {
-            navigate('/app/profile', { replace: true });
+        if (tokenExpired && isAuthenticated) {
+            Swal.fire({
+                icon: "error",
+                title: "Por favor ingrese nuevamente",
+                text: "Su sesión ha expirado",
+                showCancelButton: false,
+                confirmButtonText: 'Aceptar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    logout();
+                    navigate("/login");
+                    setTokenExpired(false);
+                }
+            });
         }
-    }, [isAuthenticated, location.pathname, navigate]);
+    }, [isAuthenticated, tokenExpired, logout, navigate]);
 
+    // Define el componente PrivateRoute
     const PrivateRoute = () => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated && !isInitialLoading) {
             return <Navigate to="/login" />;
         }
         return (
@@ -48,8 +61,10 @@ export const App = () => {
 
     return (
         <>
-            {/* Renderiza NavBar solo si la ruta es / o /login */}
-            {location.pathname === '/' || location.pathname === '/login' ? (
+            {tokenExpired}
+
+            {/* Condicionar la renderización de NavBar */}
+            {location.pathname === '/' || location.pathname === '/login' || location.pathname === '/reset-password' ? (
                 <NavBar isAuthenticated={isAuthenticated} />
             ) : null}
 
@@ -57,18 +72,20 @@ export const App = () => {
                 <Route
                     path="/"
                     element={
-                        isAuthenticated ? (
-                            <Navigate to="/app/" replace />
-                        ) : (
-                            <Home />
-                        )
+                        isLoading
+                            ? null
+                            : isAuthenticated ? (
+                                <Navigate to="/app/" />
+                            ) : (
+                                <Home />
+                            )
                     }
                 />
                 <Route path="/login" element={<Login />} />
                 <Route path="/reset-password" element={<PassRecovery />} />
 
                 {/* Rutas privadas (con SideBar) */}
-                <Route path="/app/" element={<PrivateRoute />}>
+                <Route path="/app" element={<PrivateRoute />}>
                     <Route path="profile" element={<UserProfile />} />
                     <Route path="users" element={<Users />} />
                     <Route path="users/register" element={<UserForm />} />
@@ -79,7 +96,6 @@ export const App = () => {
                     <Route path="setup-user" element={<SetupUser />} />
                 </Route>
 
-                {/* Ruta catch-all */}
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </>

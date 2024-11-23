@@ -9,7 +9,6 @@ import '../CSS/userprofile.css';
 export const UserProfile = () => {
     const { userData, setUserData, isAuthenticated, logout } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(false);
-    const [reload, setReload] = useState(false);
     const [error, setError] = useState(null);
     const { showNotification } = useNotification();
     const mapUserRole = useUserRole();
@@ -64,10 +63,14 @@ export const UserProfile = () => {
     };
 
     useEffect(() => {
-        if (!userData) {
+        if (isAuthenticated && !userData) {
             fetchData();
         }
-    }, []);
+    }, [isAuthenticated, userData]);
+
+    const handleImageChange = () => {
+        fetchData();
+    }
 
     return (
         <div className="container-fluid contain overflow-auto">
@@ -84,7 +87,7 @@ export const UserProfile = () => {
                         <div className="container-fluid d-flex flex-column flex-md-row mx-auto">
                             <div className='container profile_image col-4 mb-4 m-2 mx-auto my-md-auto'>
                                 <img className='profile_image text-center my-auto' src={userData.users.image} alt="Imagen de perfil" />
-                                <ChangeImagen setReload={setReload} />
+                                <ChangeImagen onImageChange={handleImageChange} />
                             </div>
                             <div className='container-fluid col-8'>
                                 <table className='container-fluid table table-responsive table-striped table-hover mx-auto'>

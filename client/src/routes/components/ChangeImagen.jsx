@@ -2,9 +2,9 @@ import { useState, useContext } from 'react';
 import { AuthContext } from '../../hooks/AuthContext';
 import { useNotification } from './Notifications';
 import '../../CSS/imageForm.css'
-export const ChangeImagen = ({ buttonClassName = 'btn btn-primary m-auto bi bi-pencil-square', setReload }) => {
 
-    const { userData, setUserData } = useContext(AuthContext);
+export const ChangeImagen = ({ buttonClassName = 'btn btn-primary m-auto bi bi-pencil-square', onImageChange }) => {
+    const { setUserData } = useContext(AuthContext);
     const [file, setFile] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const { showNotification } = useNotification();
@@ -92,8 +92,10 @@ export const ChangeImagen = ({ buttonClassName = 'btn btn-primary m-auto bi bi-p
 
                 showNotification('Imagen cambiada correctamente', 'success');
 
-                setReload(prevReload => !prevReload);
-                
+                if (onImageChange) {
+                    onImageChange(); // Llamar a la función después de cambiar la imagen
+                }
+
                 setShowPopup(false);
                 setIsLoading(false);
             } else {
@@ -108,7 +110,6 @@ export const ChangeImagen = ({ buttonClassName = 'btn btn-primary m-auto bi bi-p
         } finally {
             setIsLoading(false);
         }
-
     };
 
     return (
@@ -155,6 +156,5 @@ export const ChangeImagen = ({ buttonClassName = 'btn btn-primary m-auto bi bi-p
                 </div>
             )}
         </div>
-
     );
-}
+};

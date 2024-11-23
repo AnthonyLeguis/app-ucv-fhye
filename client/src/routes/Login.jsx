@@ -53,7 +53,7 @@ export const Login = () => {
         localStorage.setItem('token', data.token);
         login(data.token, data.user.id);
 
-        navigate('/app/');
+        navigate('/app/profile');
       }
 
     } catch (error) {
