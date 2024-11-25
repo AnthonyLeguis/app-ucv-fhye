@@ -713,7 +713,7 @@ const uploadProfileImage = async (req, res) => {
         console.log('Respuesta de ImgBB:', imgbbResponse.delete_url);
 
         // Eliminar la imagen anterior de ImgBB (si existe)
-        if (previousImageUrl && previousImageUrl !== 'default.png') { // Verificar si la imagen anterior no es la default
+        if (previousImageUrl && previousImageUrl !== 'https://i.ibb.co/SDSSdq7/user-avatar.png') { // Verificar si la imagen anterior no es la default
             try {
                 const deleteResponse = await axios.delete(imgbbResponse.delete_url);
                 console.log('Imagen anterior eliminada de ImgBB:', deleteResponse.data);

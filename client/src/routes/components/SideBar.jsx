@@ -96,6 +96,7 @@ export const SideBar = () => {
                                 </NavLink>
                             </li>
                         )}
+                        {userRole === 'role_master' && (
                         <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
                             <NavLink
                                 to="/app/data"
@@ -108,6 +109,7 @@ export const SideBar = () => {
                                 <span className="ms-3 d-none d-sm-inline">Datos</span>
                             </NavLink>
                         </li>
+                        )}
                         <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
                             <Button
                                 onClick={() => setOpenPlanillas(!openPlanillas)}
@@ -122,16 +124,6 @@ export const SideBar = () => {
                             </Button>
                             <Collapse in={openPlanillas}>
                                 <ul id="planillas-collapse-text" className="list-unstyled ps-4 mt-1">
-                                    <li >
-                                        <NavLink
-                                            className={({ isActive }) =>
-                                                `dropdown-item ${isActive ? 'active' : ''}  py-2`
-                                            }
-                                            to="/app/sheets"
-                                        >
-                                        Ingreso de prorrogas
-                                        </NavLink>
-                                    </li>
                                     {userRole === 'role_analyst' && (
                                         <li>
                                             <NavLink
@@ -140,7 +132,7 @@ export const SideBar = () => {
                                                 }
                                                 to="/app/sheets/register"
                                             >
-                                                Planilla de Ingreso
+                                                Crear Nueva Planilla
                                             </NavLink>
                                         </li>
                                         
@@ -153,7 +145,7 @@ export const SideBar = () => {
                                                 }
                                                 to="/app/sheets/register"
                                             >
-                                                Planilla de Prórroga
+                                                Planillas Aprobadas
                                             </NavLink>
                                         </li>
                                         
@@ -166,12 +158,12 @@ export const SideBar = () => {
                                                 }
                                                 to="/app/sheets/register"
                                             >
-                                                PNR - Permiso no Remunerado
+                                                PLanillas Rechazadas
                                             </NavLink>
                                         </li>
                                         
                                     )}
-                                    {userRole === 'role_analyst' && (
+                                    {userRole === 'role_budget' || userRole === 'role_rrhh' && (
                                         <li>
                                             <NavLink
                                                 className={({ isActive }) =>
@@ -179,15 +171,14 @@ export const SideBar = () => {
                                                 }
                                                 to="/app/sheets/register"
                                             >
-                                                Cambio de dedicación
+                                                PLanillas por Aprobar
                                             </NavLink>
-                                        </li>
-                                        
+                                        </li> 
                                     )}
                                 </ul>
                             </Collapse>
                         </li>
-                        {userRole === 'role_master' && (
+                        {userRole === 'role_master' || userRole === 'role_rrhh'&& (
                             <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
                                 <Button
                                     onClick={() => setOpenUsuarios(!openUsuarios)}

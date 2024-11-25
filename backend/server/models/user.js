@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
     },
     image: {
         type: String,
-        default: "default.png"
+        default: "https://i.ibb.co/SDSSdq7/user-avatar.png"
     },
     phone: { 
         type: String,
