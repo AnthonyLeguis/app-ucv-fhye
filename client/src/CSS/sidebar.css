@@ -35,34 +35,34 @@
     height: 30px;
     align-items: center;
     cursor: pointer;
-    background-color: var(--primary-color);
+    background-color: var(--quinary-color);
     color: var(--secundary-color);
     transition: all 0.3s ease;
     position: absolute;
+    border-radius: 100%;
     right: -15px;
     top: 10px;
 }
 
 .toggle-btn i {
-    font-size: 0.8rem; /* Ajuste del tamaño del icono */
-    font-weight: bold;
+    font-size: .8rem; /* Ajuste del tamaño del icono */
     color: var(--secundary-color);
 }
 
 .nav-link span, .dropdown-toggle span, .dropdown-item span {
     display: inline-block;
     opacity: 1;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s ease;
 }
 
 .collapsed .nav-link span, .collapsed .dropdown-toggle span, .collapsed .dropdown-item span {
     opacity: 0;
-    transition: opacity 0.3s ease 0.1s;
+    transition: opacity 0.2s ease 0.1s;
 }
 
 .expanded .nav-link span, .expanded .dropdown-toggle span, .expanded .dropdown-item span {
     opacity: 1;
-    transition: opacity 0.5s ease 0.5s;
+    transition: opacity 0.3s ease 0.3s;
 }
 
 .expanded .sidebar {
@@ -132,6 +132,12 @@
     color: var(--secundary-color) !important;
     padding-left: 1.5rem;
     transition: all 0.3s ease;
+    margin-top: 2px;
+}
+
+.dropdown-item:hover {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
 }
 
 .dropdown-item::before {
@@ -139,6 +145,7 @@
     font-size: 1rem;
     margin-right: 0.5rem;
     transition: all 0.3s ease;
+    border-radius: 5px !important;
 }
 
 .dropdown-item:hover::before {
@@ -169,6 +176,34 @@ a.dropdown-item:hover {
     border-top-right-radius: -0% !important;
     border-bottom-right-radius: -0% !important;
     position: relative;
+}
+
+.itemOption {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    font-size: .5rem;
+}
+
+.itemOption:hover {
+    color: var(--primary-color) !important;
+}
+
+.dropdown-menu.show {
+    width: 200px;
+    transition: all 0.3s ease-out;
+}
+
+.fontColor {
+    color: var(--primary-color) !important;
+}
+
+.fontColor:hover {
+    font-weight: bold !important;
+    background-color: var(--secundary-color);
+    color: var(--primary-color) !important;
 }
 
 .activeF:hover::after {

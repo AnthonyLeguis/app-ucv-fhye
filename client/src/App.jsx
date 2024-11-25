@@ -49,11 +49,9 @@ export const App = () => {
         }
         return (
             <div className="d-flex flex-nowrap vh-100 content-scroll">
-                <div className="col-auto">
-                    <SideBar isAuthenticated={isAuthenticated} />
-                </div>
+                <SideBar isAuthenticated={isAuthenticated} /> {/* SideBar fuera de Outlet */}
                 <div className="col mx-auto d-flex flex-column align-content-center">
-                    <Outlet />
+                    <Outlet /> 
                 </div>
             </div>
         );

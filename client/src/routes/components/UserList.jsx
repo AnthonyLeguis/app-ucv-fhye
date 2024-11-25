@@ -82,7 +82,7 @@ export const UserList = () => {
 
         </div>
 
-        <div className="row d-flex align-items-top justify-content-top">
+        <div className="row d-flex align-items-top justify-content-top fs-6">
           <div className="table-responsive col-12 col-md-10 col-lg-8 mx-auto p-2 shadow rounded-4">
             <table className="table table-striped table-hover table-responsive-sm">
               <thead>

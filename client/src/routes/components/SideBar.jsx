@@ -113,19 +113,19 @@ export const SideBar = () => {
                                 onClick={() => setOpenPlanillas(!openPlanillas)}
                                 aria-controls="planillas-collapse-text"
                                 aria-expanded={openPlanillas}
-                                className="nav-link text-white fs-5 w-100 text-start"
+                                className="nav-link text-white fs-5 w-100 text-start "
                                 variant="link"
                             >
                                 <i className="bi bi-file-earmark-spreadsheet"></i>
-                                <span className="ms-3 d-none d-sm-inline pointer">Planillas de movimiento</span>
-                                <i className={`bi bi-chevron-${openPlanillas ? 'up' : 'down'} ms-1 fs-5 text-white align-self-center`}></i>
+                                <span className="ms-3 d-none d-sm-inline pointer">Planillas</span>
+                                <i className={`bi bi-chevron-${openPlanillas ? 'up' : 'down'} ms-1 fs-5 text-white align-self-center itemOption`}></i>
                             </Button>
                             <Collapse in={openPlanillas}>
-                                <ul id="planillas-collapse-text" className="list-unstyled ps-4">
+                                <ul id="planillas-collapse-text" className="list-unstyled ps-4 mt-1">
                                     <li >
                                         <NavLink
                                             className={({ isActive }) =>
-                                                `dropdown-item ${isActive ? 'active' : ''}`
+                                                `dropdown-item ${isActive ? 'active' : ''}  py-2`
                                             }
                                             to="/app/sheets"
                                         >
@@ -136,13 +136,53 @@ export const SideBar = () => {
                                         <li>
                                             <NavLink
                                                 className={({ isActive }) =>
-                                                    `dropdown-item ${isActive ? 'active' : ''}`
+                                                    `dropdown-item ${isActive ? 'active' : ''}  py-2`
                                                 }
                                                 to="/app/sheets/register"
                                             >
-                                                Crear Planilla
+                                                Planilla de Ingreso
                                             </NavLink>
                                         </li>
+                                        
+                                    )}
+                                    {userRole === 'role_analyst' && (
+                                        <li>
+                                            <NavLink
+                                                className={({ isActive }) =>
+                                                    `dropdown-item ${isActive ? 'active' : ''}  py-2`
+                                                }
+                                                to="/app/sheets/register"
+                                            >
+                                                Planilla de Prórroga
+                                            </NavLink>
+                                        </li>
+                                        
+                                    )}
+                                    {userRole === 'role_analyst' && (
+                                        <li>
+                                            <NavLink
+                                                className={({ isActive }) =>
+                                                    `dropdown-item ${isActive ? 'active' : ''}  py-2`
+                                                }
+                                                to="/app/sheets/register"
+                                            >
+                                                PNR - Permiso no Remunerado
+                                            </NavLink>
+                                        </li>
+                                        
+                                    )}
+                                    {userRole === 'role_analyst' && (
+                                        <li>
+                                            <NavLink
+                                                className={({ isActive }) =>
+                                                    `dropdown-item ${isActive ? 'active' : ''}  py-2`
+                                                }
+                                                to="/app/sheets/register"
+                                            >
+                                                Cambio de dedicación
+                                            </NavLink>
+                                        </li>
+                                        
                                     )}
                                 </ul>
                             </Collapse>
@@ -158,17 +198,17 @@ export const SideBar = () => {
                                 >
                                     <i className="bi bi-people-fill"></i>
                                     <span className="ms-3 d-none d-sm-inline pointer">Usuarios</span>
-                                    <i className={`bi bi-chevron-${openUsuarios ? 'up' : 'down'} ms-1 fs-5 text-white align-self-center`}></i>
+                                    <i className={`bi bi-chevron-${openUsuarios ? 'up' : 'down'} ms-1 fs-5 text-white align-self-center itemOption`}></i>
                                 </Button>
                                 <Collapse in={openUsuarios}>
-                                    <ul id="usuarios-collapse-text" className="list-unstyled ps-4">
+                                    <ul id="usuarios-collapse-text" className="list-unstyled ps-4 mt-1">
                                         <li>
-                                            <NavLink className="dropdown-item" to="/app/users">
+                                            <NavLink className="dropdown-item py-2" to="/app/users">
                                                 Lista de Usuarios
                                             </NavLink>
                                         </li>
                                         <li>
-                                            <NavLink className="dropdown-item" to="/app/users/register">
+                                            <NavLink className="dropdown-item py-2" to="/app/users/register">
                                                 Registrar Usuarios
                                             </NavLink>
                                         </li>
@@ -180,7 +220,7 @@ export const SideBar = () => {
                 </div>
                 <div className="dropup open mb-5">
                     <a
-                        className="text-decoration-none dropdown-toggle text-white p-3"
+                        className="text-decoration-none dropdown-toggle text-white p-3 d-block d-sm-flex align-items-center"
                         type="button"
                         id="triggerId"
                         data-bs-toggle="dropdown"
@@ -188,26 +228,26 @@ export const SideBar = () => {
                         aria-expanded="false"
                     >
                         <i className="bi bi-person-circle fs-2 d-sm-fs-3"></i>
-                        <span className="ms-2 fw-bold letter d-none d-sm-inline me-1">{userName} {userLastNameInitial}.</span>
+                        <span className="ms-2 fw-bold letter d-none d-sm-inline me-1 ms-1">{userName} {userLastNameInitial}.</span>
                     </a>
                     <div className="dropdown-menu ms-3" aria-labelledby="triggerId">
                         <NavLink className="dropdown-item" to="/app/setup-user">
-                            <i className="bi bi-gear">
-                                <span> Configuración</span>
+                            <i className="bi bi-gear ms-2 fontColor">
+                                <span className="pointer ms-1"> Configuración</span>
                             </i>
                         </NavLink>
                         <a className="dropdown-item pointer-event" onClick={() =>
                             showConfirmNotification("¿Seguro que quieres cerrar la sesión?", "warning", () => handleLogout())
                         }>
-                            <i className="bi bi-box-arrow-right">
-                                <span className="pointer"> Cerrar sesión</span>
+                            <i className="bi bi-box-arrow-right ms-2 fontColor">
+                                <span className="pointer ms-1"> Cerrar sesión</span>
                             </i>
                         </a>
                     </div>
                 </div>
             </div>
             <div className="toggle-btn" onClick={toggleSideBar}>
-                <i className={`bi bi-chevron-${isExpanded ? 'left' : 'right'}`}></i>
+                <i className={`bi bi-chevron-${isExpanded ? 'left' : 'right'} fs-6 text-white align-self-center fw-bold`}></i>
             </div>
         </div>
     );
