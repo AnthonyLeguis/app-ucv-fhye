@@ -125,17 +125,20 @@ export const SideBar = () => {
                             </Button>
                             <Collapse in={openEmpleados}>
                                 <ul id="empleados-collapse-text" className="list-unstyled ps-4 mt-1">
-                                    <li>
-                                        <NavLink
-                                            className={({ isActive }) =>
-                                                `dropdown-item ${isActive ? 'active' : ''}  py-2`
-                                            }
-                                            to="/app/employees/register"
-                                        >
+                                    {userRole === 'role_master' || userRole === 'role_rrhh' && (
 
-                                            Registrar Personal
-                                        </NavLink>
-                                    </li>
+                                        <li>
+                                            <NavLink
+                                                className={({ isActive }) =>
+                                                    `dropdown-item ${isActive ? 'active' : ''}  py-2`
+                                                }
+                                                to="/app/employees/register"
+                                            >
+
+                                                Registrar Personal
+                                            </NavLink>
+                                        </li>
+                                    )}
                                     <li>
                                         <NavLink
                                             className={({ isActive }) =>

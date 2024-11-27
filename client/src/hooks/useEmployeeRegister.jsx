@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNotification } from '../routes/components/Notifications';
+import { Country, State } from 'country-state-city';
 import * as ExcelJS from 'exceljs';
 
 export const useEmployeeRegister = () => {
@@ -8,6 +9,9 @@ export const useEmployeeRegister = () => {
     const [searchText, setSearchText] = useState('');
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [countries, setCountries] = useState([]); // Estado para los países
+    const [cities, setCities] = useState([]); // Estado para las ciudades
+    const [selectedCountry, setSelectedCountry] = useState('');
     const [formData, setFormData] = useState({
         area: '',
         names: '',
@@ -45,6 +49,8 @@ export const useEmployeeRegister = () => {
 
         setIsLoading(true);
         try {
+            console.log("Enviando datos al servidor:", formData);
+
             const response = await fetch(`${import.meta.env.VITE_API_EMPLOYEE_URL}/register-employee`, {
                 method: 'POST',
                 headers: {
@@ -54,7 +60,7 @@ export const useEmployeeRegister = () => {
                 body: JSON.stringify(formData),
             });
 
-            setIsLoading(false);
+            setIsLoading(true);
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -115,24 +121,6 @@ export const useEmployeeRegister = () => {
         return true;
     }
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        let newValue = value;
-
-        if (name === 'names' || name === 'surnames' || name === 'address') {
-            newValue = value.toUpperCase();
-        } else if (name === 'email') {
-            newValue = value.toLowerCase();
-        } else if (name === "nationalId") {
-            newValue = value.replace(/[^0-9]/g, '');
-        }
-
-        setFormData({
-            ...formData,
-            [name]: newValue,  // <-- Usar newValue en lugar de e.target.value
-        });
-    };
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -174,6 +162,50 @@ export const useEmployeeRegister = () => {
         }
     }, [searchText, areaOptions]);
 
+    useEffect(() => {
+        setCountries(Country.getAllCountries());
+    }, []);
+
+    const handleCountryChange = (event) => {
+        const countryCode = event.target.value;
+        setSelectedCountry(countryCode);
+
+        setCities(State.getStatesOfCountry(countryCode));
+
+        setFormData({
+            ...formData,
+            countryOfBirth: countryCode // Actualizar el estado formData con el código del país
+        });
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        let newValue = value;
+
+        if (name === 'names' || name === 'surnames' || name === 'address') {
+            newValue = value.toUpperCase();
+        } else if (name === 'email') {
+            newValue = value.toLowerCase();
+        } else if (name === "nationalId") {
+            newValue = value.replace(/[^0-9]/g, '');
+            if (newValue.length > 8) {
+                newValue = newValue.slice(0, 8); // Truncar a 8 dígitos
+
+            }
+        } else if (name === "payrollAccount") {
+            newValue = value.replace(/[^0-9]/g, '');
+            if (newValue.length > 20) {
+                newValue = newValue.slice(0, 20); // Trunca a 20 dígitos
+
+            }
+        }
+
+        setFormData({
+            ...formData,
+            [name]: newValue,  // <-- Usar newValue en lugar de e.target.value
+        });
+    };
+
     return {
         areaOptions,
         setSearchText,
@@ -182,6 +214,10 @@ export const useEmployeeRegister = () => {
         isLoading,
         formData,
         handleChange,
-        handleSubmit
+        handleSubmit,
+        handleCountryChange,
+        countries,
+        cities,
+        selectedCountry
     }
 };

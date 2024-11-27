@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
 import { useEmployeeRegister } from '../hooks/useEmployeeRegister';
-import { Country, State } from 'country-state-city';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import {
     VenezuelanBanks,
@@ -20,24 +18,12 @@ export const EmployeesPerArea = () => {
         isLoading,
         searchText,
         filteredOptions,
-        setSearchText
+        setSearchText,
+        handleCountryChange, 
+        countries, 
+        cities, 
+        selectedCountry 
     } = useEmployeeRegister();
-
-    const [countries, setCountries] = useState([]);
-    const [cities, setCities] = useState([]);
-    const [selectedCountry, setSelectedCountry] = useState('');
-
-
-    useEffect(() => {
-        setCountries(Country.getAllCountries());
-    }, []);
-
-    const handleCountryChange = (event) => {
-        const countryCode = event.target.value;
-        setSelectedCountry(countryCode);
-
-        setCities(State.getStatesOfCountry(countryCode));
-    };
 
     return (
         <>
@@ -54,7 +40,7 @@ export const EmployeesPerArea = () => {
                                 {/* Filtro para area */}
                                 <Col md={4} className='my-2 text-start h6'>
                                     <Form.Group controlId="areaSearchInput">
-                                        <Form.Label>Filtrar por Área:</Form.Label>
+                                        <Form.Label>Filtrar Área:</Form.Label>
                                         <Form.Select
                                             name='areaSearchInput'
                                             value={searchText}
