@@ -12,6 +12,8 @@ import { Data } from "./routes/Data";
 import { Sheets } from "./routes/Sheets";
 import { SheetsForm } from "./routes/components/SheetsForm";
 import { SetupUser } from "./routes/SetupUser";
+import { EmployeesPerArea } from "./routes/EmployeesPerArea";
+import { EmployeesList } from "./routes/EmployeesList";
 import { AuthContext } from "./hooks/AuthContext";
 import { NotFound } from "./routes/components/NotFound";
 import { PassRecovery } from "./routes/PassRecovery";
@@ -91,6 +93,8 @@ export const App = () => {
                     <Route path="data" element={<Data />} />
                     <Route path="sheets" element={<Sheets />} />
                     <Route path="sheets/register" element={<SheetsForm />} />
+                    <Route path="employees/register" element={<EmployeesPerArea />} />
+                    <Route path="employees/list" element={<EmployeesList />} />
                     <Route path="setup-user" element={<SetupUser />} />
                 </Route>
 

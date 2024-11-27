@@ -5,7 +5,6 @@ import { AuthContext } from '../hooks/AuthContext';
 import { useRememberMe } from '../hooks/useRememberMe';
 import { usePasswordRecovery } from '../hooks/usePasswordRecovery';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
-import logo from '../assets/LogoCentral.svg'
 import '../CSS/login.css'
 
 export const Login = () => {

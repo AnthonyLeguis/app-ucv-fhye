@@ -7,10 +7,12 @@ export const useSheetsRegister = () => {
     const [formData, setFormData] = useState({
         seccionA: {
             sheetNumber: '',
+            movementType: '',
             area: '',
             introducedDate: '',
             sentDate: '',
             observations_general: '',
+
         },
         seccionB: {
             facultyOrDependency: '',
@@ -20,7 +22,6 @@ export const useSheetsRegister = () => {
             executingUnit: '',
             dedication: '',
             teachingCategory: '',
-            movementType: '',
             ubication: '',
             idac: '',
             position: '',

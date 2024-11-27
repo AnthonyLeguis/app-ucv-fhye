@@ -13,6 +13,7 @@ export const SideBar = () => {
     const [isExpanded, setIsExpanded] = useState(true); // Estado para controlar el tamaño del SideBar
     const [openPlanillas, setOpenPlanillas] = useState(false); // Estado para controlar el dropdown de Planillas
     const [openUsuarios, setOpenUsuarios] = useState(false); // Estado para controlar el dropdown de Usuarios
+    const [openEmpleados, setOpenEmpleados] = useState(false); // Estado para controlar el dropdown de Empleados
     const navigate = useNavigate();
     const location = useLocation();
     const { logout } = useContext(AuthContext);
@@ -97,19 +98,58 @@ export const SideBar = () => {
                             </li>
                         )}
                         {userRole === 'role_master' && (
-                        <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
-                            <NavLink
-                                to="/app/data"
-                                className={({ isActive }) =>
-                                    `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
-                                }
-                                aria-current="page"
-                            >
-                                <i className="bi bi-person-vcard-fill"></i>
-                                <span className="ms-3 d-none d-sm-inline">Datos</span>
-                            </NavLink>
-                        </li>
+                            <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
+                                <NavLink
+                                    to="/app/data"
+                                    className={({ isActive }) =>
+                                        `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
+                                    }
+                                    aria-current="page"
+                                >
+                                    <i className="bi bi-person-vcard-fill"></i>
+                                    <span className="ms-3 d-none d-sm-inline">Datos</span>
+                                </NavLink>
+                            </li>
                         )}
+                        <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
+                            <Button
+                                onClick={() => setOpenEmpleados(!openEmpleados)}
+                                aria-controls="empleados-collapse-text"
+                                aria-expanded={openEmpleados}
+                                className="nav-link text-white fs-5 w-100 text-start "
+                                variant="link"
+                            >
+                                <i className="bi bi-person-rolodex"></i>
+                                <span className="ms-3 d-none d-sm-inline pointer">Personal</span>
+                                <i className={`bi bi-chevron-${openEmpleados ? 'up' : 'down'} ms-1 fs-5 text-white align-self-center itemOption`}></i>
+                            </Button>
+                            <Collapse in={openEmpleados}>
+                                <ul id="empleados-collapse-text" className="list-unstyled ps-4 mt-1">
+                                    <li>
+                                        <NavLink
+                                            className={({ isActive }) =>
+                                                `dropdown-item ${isActive ? 'active' : ''}  py-2`
+                                            }
+                                            to="/app/employees/register"
+                                        >
+
+                                            Registrar Personal
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <NavLink
+                                            className={({ isActive }) =>
+                                                `dropdown-item ${isActive ? 'active' : ''}  py-2`
+                                            }
+                                            to="/app/employees/list"
+                                        >
+
+                                            Listado de Personal
+                                        </NavLink>
+                                    </li>
+                                </ul>
+                            </Collapse>
+                        </li>
                         <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
                             <Button
                                 onClick={() => setOpenPlanillas(!openPlanillas)}
@@ -135,7 +175,7 @@ export const SideBar = () => {
                                                 Crear Nueva Planilla
                                             </NavLink>
                                         </li>
-                                        
+
                                     )}
                                     {userRole === 'role_analyst' && (
                                         <li>
@@ -148,7 +188,7 @@ export const SideBar = () => {
                                                 Planillas Aprobadas
                                             </NavLink>
                                         </li>
-                                        
+
                                     )}
                                     {userRole === 'role_analyst' && (
                                         <li>
@@ -161,7 +201,7 @@ export const SideBar = () => {
                                                 PLanillas Rechazadas
                                             </NavLink>
                                         </li>
-                                        
+
                                     )}
                                     {userRole === 'role_budget' || userRole === 'role_rrhh' && (
                                         <li>
@@ -173,12 +213,12 @@ export const SideBar = () => {
                                             >
                                                 PLanillas por Aprobar
                                             </NavLink>
-                                        </li> 
+                                        </li>
                                     )}
                                 </ul>
                             </Collapse>
                         </li>
-                        {userRole === 'role_master' || userRole === 'role_rrhh'&& (
+                        {userRole === 'role_master' || userRole === 'role_rrhh' && (
                             <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
                                 <Button
                                     onClick={() => setOpenUsuarios(!openUsuarios)}

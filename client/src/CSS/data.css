@@ -1,6 +1,14 @@
+:root {
+    --primary-color: rgb(78, 152, 255);
+    --secundary-c: rgb(0, 14, 205);
+    --tertiary-color: rgb(8, 0, 62);
+}
+
 .TitleName {
-    background-color: var(--primary-color);
-    color: #fff;
-    border-radius: 8px;
-    border: 5px solid var(--primary-color);
+    color: var(--tertiary-color);
+    font-weight: bolder;
+    text-align: center;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    background-color: transparent;
 }

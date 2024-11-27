@@ -1,6 +1,5 @@
 import Employee from "../models/employee.js";
 import Activity from "../models/userActivity.js";
-import mongoose from "mongoose";
 
 const pruebaEmployees = (req, res) => {
     return res.status(200).send({
