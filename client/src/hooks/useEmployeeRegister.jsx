@@ -47,7 +47,7 @@ export const useEmployeeRegister = () => {
             return;
         }
 
-        setIsLoading(true);
+        setIsLoading(false);
         try {
             console.log("Enviando datos al servidor:", formData);
 
