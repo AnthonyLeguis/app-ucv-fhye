@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { useNotification } from "../routes/components/Notifications";
+import { useUserListHook } from './useUserListHook';
 
 export const useUpdateUser = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const { showNotification } = useNotification();
+    const { updateUsers } = useUserListHook();
 
-    const updateUser = async (userId, updatedData) => {
+    const updateUser = async ( updatedData) => {
         setIsLoading(true);
         setError(null);
 
@@ -28,8 +30,7 @@ export const useUpdateUser = () => {
 
             showNotification('El usuario ha sido actualizado de manera exitosa', 'success');
 
-            // Actualizar la lista de usuarios recargando la página
-            window.location.reload();
+            updateUsers();
         } catch (error) {
             showNotification(error.message, 'error');
             setError(error.message);

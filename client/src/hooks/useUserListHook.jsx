@@ -9,40 +9,42 @@ export const useUserListHook = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem('token');
 
-        const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/list?page=${page}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `${token}`,
-          },
-        });
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Error al obtener la lista de usuarios');
-        }
+      const response = await fetch(`${import.meta.env.VITE_API_USER_URL}/list?page=${page}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${token}`,
+        },
+      });
 
-        const data = await response.json();
-        console.log(data);
-        
-        setUsers(data.users);
-        setTotalPages(data.pages);
-
-      } catch (error) {
-        setError(error.message);
-        showNotification(error.message, 'error');
-
-      } finally {
-        setLoading(false);
-
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al obtener la lista de usuarios');
       }
-    };
+
+      const data = await response.json();
+      //console.log(data);
+
+      setUsers(data.users);
+      setTotalPages(data.pages);
+
+    } catch (error) {
+      setError(error.message);
+      showNotification(error.message, 'error');
+
+    } finally {
+      setLoading(false);
+
+    }
+  };
+
+  useEffect(() => {
 
     fetchUsers();
   }, [page]);
@@ -52,7 +54,6 @@ export const useUserListHook = () => {
   };
 
   const updateUsers = () => {
-    // Lógica para actualizar la lista de usuarios
     fetchUsers();
   }
 
@@ -62,7 +63,8 @@ export const useUserListHook = () => {
     error,
     page,
     totalPages,
-    handlePageChange
+    handlePageChange,
+    updateUsers
   };
 
 };

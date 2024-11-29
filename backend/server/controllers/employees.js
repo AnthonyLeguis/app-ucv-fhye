@@ -9,13 +9,11 @@ const pruebaEmployees = (req, res) => {
 
 // Accion de registrar empleados
 const registerEmployee = async (req, res) => {
-
     try {
-
-        //Obtener los datos del empleado del cuerpo de la peticion
+        // Obtener los datos del empleado del cuerpo de la petición
         const employeeData = req.body;
 
-        //Obtener el nombre del usuario autenticado
+        // Obtener el nombre del usuario autenticado
         const userName = req.users.names + ' ' + req.users.surnames
 
         // Asignar el valor de userName a createdBy en employeeData
@@ -24,35 +22,24 @@ const registerEmployee = async (req, res) => {
             name: userName
         };
 
-        //Validar los campos requeridos del empleado
-        if (
-            !employeeData.names ||
-            !employeeData.surnames ||
-            !employeeData.idType ||
-            !employeeData.nationalId ||
-            !employeeData.rif ||
-            !employeeData.birthdate ||
-            !employeeData.countryOfBirth ||
-            !employeeData.cityOfBirth ||
-            !employeeData.maritalStatus ||
-            !employeeData.area ||
-            !employeeData.gender ||
-            !employeeData.familyDependents ||
-            !employeeData.educationLevel ||
-            !employeeData.email ||
-            !employeeData.phoneNumber ||
-            !employeeData.address ||
-            !employeeData.bank ||
-            !employeeData.payrollAccount ||
-            !employeeData.createdBy
-        ) {
+        // Validar los campos requeridos del empleado
+        const requiredFields = [
+            'names', 'surnames', 'idType', 'nationalId', 'rif', 'birthdate',
+            'countryOfBirth', 'cityOfBirth', 'maritalStatus', 'area', 'gender',
+            'familyDependents', 'educationLevel', 'email', 'phoneNumber',
+            'address', 'bank', 'payrollAccount'
+        ];
+
+        const missingFields = requiredFields.filter(field => !employeeData[field]);
+
+        if (missingFields.length > 0) {
             return res.status(400).json({
                 status: "error",
-                message: 'Faltan datos del empleado por agregar al registro',
+                message: `Faltan los siguientes datos: ${missingFields.join(', ')}`,
             });
         }
 
-        //Verificar si el usuario autenticado tiene el permiso para registrar un empleado
+        // Verificar si el usuario autenticado tiene el permiso para registrar un empleado
         const allowedRoles = ['role_master', 'role_rrhh'];
         if (!allowedRoles.includes(req.users.role)) {
             return res.status(403).json({

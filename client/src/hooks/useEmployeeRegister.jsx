@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNotification } from '../routes/components/Notifications';
-import { Country, State } from 'country-state-city';
+import { Country, City } from 'country-state-city';
 import * as ExcelJS from 'exceljs';
 
 export const useEmployeeRegister = () => {
@@ -42,6 +42,8 @@ export const useEmployeeRegister = () => {
     const handleSubmit = async (e) => {  // Define handleSubmit aquí
         e.preventDefault();
 
+        setIsLoading(true);
+
         if (!validateForm()) {
             showNotification('Por favor, complete todos los campos obligatorios', 'warning');
             return;
@@ -49,7 +51,12 @@ export const useEmployeeRegister = () => {
 
         setIsLoading(false);
         try {
-            console.log("Enviando datos al servidor:", formData);
+            const countryName = Country.getCountryByCode(formData.countryOfBirth)?.name;
+            const formDataToSend = {
+                ...formData,
+                countryOfBirth: countryName, // Reemplazar el código con el nombre
+            };
+            console.log("Enviando datos al servidor:", formDataToSend);
 
             const response = await fetch(`${import.meta.env.VITE_API_EMPLOYEE_URL}/register-employee`, {
                 method: 'POST',
@@ -57,7 +64,7 @@ export const useEmployeeRegister = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `${token}` // Asegúrate de que el token sea válido
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(formDataToSend),
             });
 
             setIsLoading(true);
@@ -95,6 +102,8 @@ export const useEmployeeRegister = () => {
         } catch (error) {
             console.error('Error al registrar el empleado:', error);
             showNotification('Error al registrar el empleado', 'error');
+            setIsLoading(false);
+        } finally {
             setIsLoading(false);
         }
     };
@@ -170,7 +179,7 @@ export const useEmployeeRegister = () => {
         const countryCode = event.target.value;
         setSelectedCountry(countryCode);
 
-        setCities(State.getStatesOfCountry(countryCode));
+        setCities(City.getCitiesOfCountry(countryCode));
 
         setFormData({
             ...formData,
@@ -180,29 +189,21 @@ export const useEmployeeRegister = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        let newValue = value;
-
-        if (name === 'names' || name === 'surnames' || name === 'address') {
-            newValue = value.toUpperCase();
-        } else if (name === 'email') {
-            newValue = value.toLowerCase();
-        } else if (name === "nationalId") {
-            newValue = value.replace(/[^0-9]/g, '');
-            if (newValue.length > 8) {
-                newValue = newValue.slice(0, 8); // Truncar a 8 dígitos
-
-            }
-        } else if (name === "payrollAccount") {
-            newValue = value.replace(/[^0-9]/g, '');
-            if (newValue.length > 20) {
-                newValue = newValue.slice(0, 20); // Trunca a 20 dígitos
-
-            }
-        }
 
         setFormData({
             ...formData,
-            [name]: newValue,  // <-- Usar newValue en lugar de e.target.value
+            [name]:
+                name === 'names' || name === 'surnames' || name === 'address'
+                    ? value.toUpperCase()
+                    : name === 'email'
+                        ? value.toLowerCase()
+                        : name === "nationalId"
+                            ? value.replace(/[^0-9]/g, '').slice(0, 8)
+                            : name === "payrollAccount"
+                                ? value.replace(/[^0-9]/g, '').slice(0, 20)
+                                : name === 'familyDependents'
+                                    ? parseInt(value.replace(/[^0-9]/g, ''), 10)
+                                    : value,
         });
     };
 

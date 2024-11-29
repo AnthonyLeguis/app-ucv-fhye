@@ -1,4 +1,5 @@
 export const VenezuelanBanks = [
+    "Venezuela",
     "100% Banco",
     "Activo",
     "Banco Agrícola de Venezuela",
