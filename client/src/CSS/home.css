@@ -1,5 +1,29 @@
-section{
-    min-height: 800px;
+.mark {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.mark p {
+    display: inline-block;
+    padding-left: 100%;
+    animation: mark 10s linear infinite;
+    margin: auto 0;
+}
+
+@keyframes mark {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.carousel-container {
+    max-width: 90%;
+    margin: 0 auto;
 }
 
 .carousel-item::before {
@@ -9,23 +33,26 @@ section{
     top: 0;
     left: 0;
     width: 100%;
-    height: 850px;
-    min-height: 400px;
+    height: 100%;
+    min-height: 0;
     background-color: rgba(0, 0, 0, 0.400);
     /* Capa oscura semi-transparente */
 }
 
 .carousel-item img {
-    height: 750px;
-    min-height: 400px;
-    max-width: 1000px;
+    width: 100%;
+    /* Ajusta la imagen al ancho del contenedor */
+    height: 500px;
+    /* Define una altura fija */
     object-fit: cover;
+    /* Recorta la imagen para que cubra el área */
 }
 
 .carousel-caption {
     top: 150px;
     bottom: auto;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .carousel-caption h5 {
@@ -50,9 +77,6 @@ section{
     color: rgb(255, 222, 170);
 }
 
-
-
-
 @media (min-width: 1200px) {
 
     .carousel-item::before {
@@ -63,15 +87,13 @@ section{
     /* Breakpoint para xl en Bootstrap 5 */
     .carousel-item img {
         max-width: 100%;
-        /* Ancho máximo de 1080px en pantallas xl */
         margin: 0 auto;
-        /* Centrar horizontalmente */
     }
 
     .carousel-caption h5 {
         font-size: 3.5rem;
     }
-    
+
     .carousel-caption h6 {
         font-size: 1.5rem;
     }

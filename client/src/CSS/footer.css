@@ -6,7 +6,7 @@
 
 footer {
     background-image: linear-gradient(to bottom, var(--primary-color), rgb(78, 152, 255, 0.855));
-    height: 118px;
+    height: 90px;
     align-items: center;
     font-family: 'Arial', sans-serif;
 

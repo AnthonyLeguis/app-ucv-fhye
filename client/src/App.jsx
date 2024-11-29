@@ -1,6 +1,7 @@
 import { Route, Routes, Navigate, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { NavBar } from "./routes/components/NavBar";
+import { Footer } from "./routes/components/Footer";
 import { Home } from "./routes/Home";
 import { Login } from "./routes/Login";
 import { SideBar } from "./routes/components/SideBar";
@@ -53,7 +54,7 @@ export const App = () => {
             <div className="d-flex flex-nowrap vh-100 content-scroll">
                 <SideBar isAuthenticated={isAuthenticated} /> {/* SideBar fuera de Outlet */}
                 <div className="col mx-auto d-flex flex-column align-content-center">
-                    <Outlet /> 
+                    <Outlet />
                 </div>
             </div>
         );
@@ -100,6 +101,10 @@ export const App = () => {
 
                 <Route path="*" element={<NotFound />} />
             </Routes>
+            {/* Renderiza el Footer condicionalmente */}
+            {location.pathname === '/' || location.pathname === '/login' || location.pathname === '/reset-password' ? (
+                <Footer />
+            ) : null}
         </>
     );
 };
