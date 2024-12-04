@@ -18,7 +18,7 @@
     flex-direction: column;
     background-color: var(--primary-color);
     color: var(--secundary-color);
-    width: 250px; /* Tamaño máximo del SideBar */
+    width: 280px; /* Tamaño máximo del SideBar */
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden; 
@@ -66,7 +66,7 @@
 }
 
 .expanded .sidebar {
-    width: 240px; /* Tamaño máximo del SideBar */
+    width: 260px; /* Tamaño máximo del SideBar */
 }
 
 .collapsed .sidebar {

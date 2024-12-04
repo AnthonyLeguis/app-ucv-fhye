@@ -5,51 +5,65 @@ export const useSheetsRegister = () => {
     const { showNotification } = useNotification();
 
     const [formData, setFormData] = useState({
-        seccionGeneralInformation: { 
+        seccionGeneralInformation: {
             sheetNumber: 0, // O "" si prefieres que inicie vacío
-            movementType: '', 
-            ubication: '', 
+            movementType: '',
+            ubication: '',
         },
-        seccionA: { 
-            introducedDate: '', 
-            sentDate: '', 
-            observations_general: '', 
+        seccionA: {
+            introducedDate: '',
+            sentDate: '',
+            observations_general: '',
+            employeeId: '',
             employeeNames: '', // Si necesitas estos campos para mostrar datos del empleado
             employeeSurnames: '',
+            employeeEmail: '',
             employeeNationalId: '',
         },
-        seccionB: { 
-            facultyOrDependency: '', 
-            executingUnit: '', 
-            entryDate: '', 
-            effectiveDate: '', 
-            contractEndDate: '', 
-            // ... otros campos de la sección B ...
+        seccionB: {
+            TypeOfPayroll: '',
+            facultyOrDependency: '',
+            entryDate: '',
+            effectiveDate: '',
+            contractEndDate: '',
+            executingUnit: '',
+            dedication: '',
+            teachingCategory: '',
+            position: '',
+            currentPosition: '',
+            grade: '',
+            opsuTable: '',
+            personnelType: '',
+            workingDay: '',
+            typeContract: '',
+            valueSalary: 0,
+            mounthlySalary: 0,
+            ReasonForMovement: ''
         },
-        seccionC: { 
-            employee: {}, // Objeto vacío para evitar el error
-            nationalId: '', 
-            recognitionDate: '', 
+        seccionC: {
+            employee: {},
+            nationalId: '',
+            recognitionDate: '',
             // ... otros campos de la sección C ...
         },
-        seccionD: { 
-            salaryCompensationDiff: 0, 
-            representationExpenses: 0, 
-            typePrimaA: '', 
-            amountPrimaA: 0, 
-            typePrimaB: '', 
-            amountPrimaB: 0, 
-            primaRangoV: 0, 
-            otherCompensation: 0, 
+        seccionD: {
+            salaryCompensationDiff: 0,
+            representationExpenses: 0,
+            typePrimaA: '',
+            amountPrimaA: 0,
+            typePrimaB: '',
+            amountPrimaB: 0,
+            primaRangoV: 0,
+            otherCompensation: 0,
         },
-        seccionE: { 
-            budgetCode: '', 
-            accountingCode: 0, 
-            executingUnit_E: 0, 
-            personnelType_E: '', 
+        seccionE: {
+            budgetCode: '',
+            accountingCode: 0,
+            executingUnit_E: 0,
+            personnelType_E: '',
         },
-        seccionObservations: { 
-            observations: '', 
+        seccionObservations: {
+            observations: '',
         },
     });
 
@@ -68,7 +82,7 @@ export const useSheetsRegister = () => {
     const validateForm = () => {
         return formData.seccionGeneralInformation.sheetNumber
             && formData.seccionGeneralInformation.movementType
-            && formData.seccionC.employee;
+            && formData.seccionC.employee._id;
     };
 
     const handleSubmit = async (e) => {
@@ -93,16 +107,24 @@ export const useSheetsRegister = () => {
 
             if (response.ok) {
                 const data = await response.json();
+                console.log('Data recibida:', data);
+                
                 showNotification('Planilla creada con éxito', 'success');
-                setFormData({
-                    seccionGeneralInformation: { /* valores iniciales */ },
-                    seccionA: { /* valores iniciales */ },
-                    seccionB: { /* valores iniciales */ },
-                    seccionC: { employee:{}, nationalId: '' },
-                    seccionD: { /* valores iniciales */ },
-                    seccionE: { /* valores iniciales */ },
-                    seccionObservations: { /* valores iniciales */ },
-                });
+                // Actualiza el estado con el employeeId y los demás datos del empleado
+                setFormData(prevData => ({
+                    ...prevData,
+                    seccionC: {
+                        ...prevData.seccionC,
+                        employee: data.employee
+                    },
+                    seccionA: {
+                        ...prevData.seccionA,
+                        employeeId: data.employee._id,
+                        employeeNames: data.employee.names,
+                        employeeSurnames: data.employee.surnames,
+                        employeeNationalId: data.employee.nationalId,
+                    }
+                }));
             } else {
                 const errorData = await response.json();
                 showNotification(errorData.message, 'error');

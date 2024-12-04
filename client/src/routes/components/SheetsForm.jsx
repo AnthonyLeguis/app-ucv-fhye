@@ -3,7 +3,7 @@ import { Button, Form, Row, Col, InputGroup, Spinner } from 'react-bootstrap';
 import { useSheetsRegister } from '../../hooks/useSheetsRegister';
 import { useNotification } from '../components/Notifications';
 import { movimentType } from '../../helpers/listFormSheet';
-import  ExecutingUnitSelect  from './ExecutingUnitSelect';
+import ExecutingUnitSelect from './ExecutingUnitSelect';
 import '../../CSS/SheetsForm.css';
 
 export const SheetsForm = () => {
@@ -30,7 +30,7 @@ export const SheetsForm = () => {
           <h1 className="TitleNameSheetsForm text-center">Formulario de planilla</h1>
         </Row>
 
-        <Form onSubmit={handleSubmit} className="col-11 col-md-10 mx-auto p-2 shadow rounded-4">
+        <Form onSubmit={handleSubmit} className="col-11 col-md-10 mx-auto p-2 shadow rounded-4 mb-4">
           {/* Sección para buscar al empleado */}
           <Row className="my-3 d-flex justify-content-center ">
             <Col md={6}>
@@ -230,22 +230,20 @@ export const SheetsForm = () => {
             </Col>
           </Row>
           <Row>
-          <Col md={12} className='my-md-2'>
-              <ExecutingUnitSelect handleChange={handleChange}>
-
-              </ExecutingUnitSelect>
+            <Col md={12} className='my-md-2'>
+              <ExecutingUnitSelect handleChange={handleChange}></ExecutingUnitSelect>
             </Col>
             <Col md={6}>
               <Form.Group controlId="facultyOrDependency">
                 <Form.Label>Facultad o Dependencia:</Form.Label>
                 <Form.Control
                   type="text"
-                  value={formData.seccionB.facultyOrDependency}
+                  value="07 - FACULTAD DE HUMANIDADES Y EDUCACIÓN"
+                  disabled
                   onChange={e => handleChange('seccionB', 'facultyOrDependency', e.target.value)}
                 />
               </Form.Group>
             </Col>
-
           </Row>
           <Row>
             <Col md={4} className="my-md-2">
@@ -279,7 +277,138 @@ export const SheetsForm = () => {
               </Form.Group>
             </Col>
           </Row>
-          {/* Añadir otros campos de la sección B según sea necesario */}
+          <Row>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="dedication">
+                <Form.Label>Dedicación:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.dedication}
+                  onChange={e => handleChange('seccionB', 'dedication', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="teachingCategory">
+                <Form.Label>Categoría Docente:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.teachingCategory}
+                  onChange={e => handleChange('seccionB', 'teachingCategory', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="position">
+                <Form.Label>Cargo:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.position}
+                  onChange={e => handleChange('seccionB', 'position', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="currentPosition">
+                <Form.Label>Cargo Actual:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.currentPosition}
+                  onChange={e => handleChange('seccionB', 'currentPosition', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="grade">
+                <Form.Label>Grado:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.grade}
+                  onChange={e => handleChange('seccionB', 'grade', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="opsuTable">
+                <Form.Label>Tabla OPSU:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.opsuTable}
+                  onChange={e => handleChange('seccionB', 'opsuTable', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="personnelType">
+                <Form.Label>Tipo de Personal:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.personnelType}
+                  onChange={e => handleChange('seccionB', 'personnelType', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="workingDay">
+                <Form.Label>Jornada:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.workingDay}
+                  onChange={e => handleChange('seccionB', 'workingDay', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="typeContract">
+                <Form.Label>Tipo de Contrato:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.typeContract}
+                  onChange={e => handleChange('seccionB', 'typeContract', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="valueSalary">
+                <Form.Label>Salario Valor:</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={formData.seccionB.valueSalary}
+                  onChange={e => handleChange('seccionB', 'valueSalary', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="mounthlySalary">
+                <Form.Label>Salario Mensual:</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={formData.seccionB.mounthlySalary}
+                  onChange={e => handleChange('seccionB', 'mounthlySalary', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6} className="my-md-2">
+              <Form.Group controlId="ReasonForMovement">
+                <Form.Label>Razón del Movimiento:</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.seccionB.ReasonForMovement}
+                  onChange={e => handleChange('seccionB', 'ReasonForMovement', e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
           {/* Sección C */}
           <Row className="my-3">
@@ -468,9 +597,12 @@ export const SheetsForm = () => {
           </Row>
 
           {/* Botón para enviar */}
-          <Button variant="primary" type="submit" disabled={loading}>
-            {loading ? <Spinner as="span" animation="border" size="sm" /> : 'Crear Planilla'}
-          </Button>
+          <div className='d-flex my-4 justify-content-center'>
+
+            <Button variant="primary" type="submit" disabled={loading}>
+              {loading ? <Spinner as="span" animation="border" size="sm" /> : 'Enviar a Presupuesto'}
+            </Button>
+          </div>
         </Form>
       </div>
     </>
