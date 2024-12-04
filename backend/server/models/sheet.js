@@ -2,31 +2,52 @@ import { Schema, model } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
 const sheetSchema = new Schema({
-  // Información general de la planilla
-  sheetNumber: { type: Number, required: true, unique: true }, // Número único de la planilla
-  area: { type: String, required: true, index: true }, // Área a la que pertenece la planilla (con índice)
-  status: { 
-    created: { type: Boolean, default: true }, 
-    pending: { type: Boolean, default: true }, 
-    approvedRRHH: { type: Boolean, default: false }, 
-    approvedBudget: { type: Boolean, default: false }, 
-    rejectedRRHH: { type: Boolean, default: false }, 
-    rejectedBudget: { type: Boolean, default: false }
+  // Para la logica de la planilla segun el usuario autenticado
+  // Permitira mostrar los listados de planillas segun su status a los distintos empleados,
+  //quienes podran realizar acciones en ellas si cumplen los estatus
+  area: { // El área es la que une la logica entre los usuarios, empleados y planillas
+    type: String,
+    required: true,
+    index: true
   },
-  printPermission: { type: Boolean, default: false, index: true }, // Indica si la planilla se puede imprimir (con índice)
-  idac: { type: Number, required: true, unique: true, index: true }, // Número único de identificación del cargo (con índice)
+  // Saber cual es la planilla actual
+  isCurrent: {
+    type: Boolean,
+    default: true,
+    index: true
+  },
+  // Saber cuales son las planillas pendientes para el usuario autenticado
+  status: {
+    created: { type: Boolean, default: true, index: true }, // Índice individual para created
+    pending: { type: Boolean, default: true, index: true }, // Índice individual para pending
+    approvedRRHH: { type: Boolean, default: false, index: true }, // Índice individual para approvedRRHH
+    approvedBudget: { type: Boolean, default: false, index: true }, // Índice individual para approvedBudget
+    rejectedRRHH: { type: Boolean, default: false, index: true }, // Índice individual para rejectedRRHH
+    rejectedBudget: { type: Boolean, default: false, index: true }, // Índice individual para rejectedBudget
+    printPermission: { type: Boolean, default: false, index: true }, // Índice individual para printPermission
+  },
+  // Usuarios que han intervenido en la planilla
+  createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // Usuario que creó la planilla
+  approvedBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Usuario que aprobó la planilla (opcional)
+  rejectedBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Usuario que rechazó la planilla (opcional)
 
-  // Sección Datos del Empleado
-  employeeId: {
-    type: Object,
-    ref: 'Employee',
-    required: true
+  //Motivos en caso de rechazo
+  rejectedReasonInBudget: {
+    type: String
+  },
+  rejectedReasonInRRHH: {
+    type: String
   },
 
-  // Sección General
+  // Sección de información general de la planilla
   movementType: {
     type: String,
     required: true
+  },
+  sheetNumber: {
+    type: Number,
+    required: true,
+    unique: true
   },
   ubication: {
     type: String,
@@ -61,7 +82,18 @@ const sheetSchema = new Schema({
   },
 
 
-  // Sección Datos del Cargo o Puesto de Trabajo
+  // Sección A de la información del empleado
+  employeeId: {
+    type: Object,
+    ref: 'Employee',
+    required: true
+  },
+
+  // Sección B
+  TypeOfPayroll: {
+    type: String,
+    required: true
+  },
   facultyOrDependency: {
     type: String
   },
@@ -113,11 +145,11 @@ const sheetSchema = new Schema({
   ReasonForMovement: {
     type: String
   },
+
+  // Sección C Modificaciones (Verificar si cambia algun valor de la seccion A y B para registrarlo en la seccion C)
   recognitionDate: {
     type: Date
   },
-
-  // Historial de modificaciones
   modificaciones: [
     {
       campo: String,
@@ -128,21 +160,7 @@ const sheetSchema = new Schema({
     }
   ],
 
-  // Usuarios que han intervenido en la planilla
-  createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // Usuario que creó la planilla
-  approvedBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Usuario que aprobó la planilla (opcional)
-  rejectedBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Usuario que rechazó la planilla (opcional)
-
-  //Motivos en caso de rechazo
-  rejectedReasonInBudget: {
-    type: String
-  },
-  rejectedReasonInRRHH: {
-    type: String
-  },
-
-
-  // Sección Datos de Remuneraciones adicionales al salario básico del empleado
+  // Sección D 
   salaryCompensationDiff: {
     type: Number
   },
@@ -169,26 +187,34 @@ const sheetSchema = new Schema({
     type: Number
   },
 
-  // Sección Datos presupuestarios del cargo o puesto
+  // Sección E
   budgetCode: {
     type: String
   },
   accountingCode: {
     type: Number
   },
-  executingUnit: {
+  executingUnit_E: {
     type: Number
   },
-  personnelType: {
+  personnelType_E: {
     type: String
   },
+
+  idac: { //(Idac es un número único por planilla y tambien se usa para el indice de búsqueda)
+    type: Number,
+    required: true,
+    unique: true,
+    index: true
+  },
+
 
   // Sección Observaciones
   observations: {
     type: String
   },
 
-  // Sección Historial de Actividades
+  //Historial de Actividades
   history: [
     {
       modifiedField: String,  // Campo modificado
@@ -199,28 +225,21 @@ const sheetSchema = new Schema({
     }
   ],
 
-  // Historial de cambios de estado
+  // Seccion de Historiales
   statusHistory: [
-    { status: { 
-      created: { type: Boolean, default: false }, 
-      pending: { type: Boolean, default: false }, 
-      approvedRRHH: { type: Boolean, default: false }, 
-      approvedBudget: { type: Boolean, default: false }, 
-      rejectedRRHH: { type: Boolean, default: false }, 
-      rejectedBudget: { type: Boolean, default: false }, 
-    }, 
-      timestamp: { type: Date, default: Date.now }, 
+    {
+      status: {
+        created: { type: Boolean, default: false },
+        pending: { type: Boolean, default: false },
+        approvedRRHH: { type: Boolean, default: false },
+        approvedBudget: { type: Boolean, default: false },
+        rejectedRRHH: { type: Boolean, default: false },
+        rejectedBudget: { type: Boolean, default: false },
+      },
+      timestamp: { type: Date, default: Date.now },
       user: { type: Schema.Types.ObjectId, ref: 'User' }
     }
   ],
-  area: {
-    type: String,
-    required: true
-  },
-  printPermission: {
-    type: Boolean,
-    default: false
-  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -235,8 +254,8 @@ sheetSchema.plugin(mongoosePaginate);
 
 // Indice de búsqueda por (area)
 sheetSchema.index({ area: 1 });
-sheetSchema.index({ status: 1 });
+sheetSchema.index({ 'status.created': 1, 'status.pending': 1, 'status.approvedRRHH': 1, 'status.approvedBudget': 1, 'status.rejectedRRHH': 1, 'status.rejectedBudget': 1, 'status.printPermission': 1 });
 sheetSchema.index({ idac: 1 });
-sheetSchema.index({ printPermission: 1 });
+sheetSchema.index({ isCurrent: 1 });
 
 export default model('Sheet', sheetSchema, "sheets");

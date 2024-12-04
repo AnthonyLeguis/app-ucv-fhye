@@ -10,5 +10,7 @@ router.get("/update-employee/:id", auth, EmployeeController.updateEmployee);
 router.put("/update-employee/:id", auth, EmployeeController.updateEmployee);
 router.delete("/delete-employee/:id", auth, EmployeeController.deleteEmployee);
 router.get("/list-employees/:page?", auth, EmployeeController.listEmployees);
+router.get("/find-employee", auth, EmployeeController.findEmployee);
+
 
 export default router

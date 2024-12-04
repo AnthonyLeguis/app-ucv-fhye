@@ -17,36 +17,31 @@ const pruebaSheets = (req, res) => {
 //accion de crear una planilla
 const registerSheet = async (req, res) => {
     try {
-
-        //Obtener los datos de la planilla del cuerpo de la solicitud
         const sheetData = req.body;
-        //Obtener el Id del usuario del cuerpo del token
         const userId = req.users.id;
-        //Obtener el rol del usuario del cuerpo del token
         const userRole = req.users.role;
-        //Obtener el area del usuario del cuerpo del token
         const userArea = req.users.area;
-        const userName = req.users.names + ' ' + req.users.surnames;
+        const userName = `${req.users.names} ${req.users.surnames}`;
 
-        // Verificar si el usuario tiene el permiso para crear una planilla
+        // Verificar permisos del usuario
         if (userRole !== 'role_analyst') {
             return res.status(403).json({
                 status: "error",
-                message: 'No posee la permisologia para crear una planilla'
+                message: 'No posee la permisología para crear una planilla'
             });
         }
 
-        //Verificar si el area de la planilla coincide con el area del usuario
+        // Verificar área del usuario
         if (sheetData.area !== userArea) {
             return res.status(403).json({
                 status: "error",
-                message: 'No puede crear una planilla para un area diferente a la suya'
+                message: 'No puede crear una planilla para un área diferente a la suya'
             });
         }
 
-        //Obtener el Id del empleado de la planilla
+        // Buscar el ID del empleado
         const findEmployeeId = async (nationalId) => {
-            const employee = await Employee.findOne({ nationalId: nationalId });
+            const employee = await Employee.findOne({ nationalId });
             if (employee) {
                 return {
                     _id: employee._id,
@@ -69,96 +64,75 @@ const registerSheet = async (req, res) => {
                     bank: employee.bank,
                     payrollAccount: employee.payrollAccount
                 };
-            } else {
-                return null;
             }
-        }
+            return null;
+        };
 
-        //Asignar el valor del documento completo del empleado al campo employeeId a la planilla
+        // Asignar el valor del documento completo del empleado al campo employeeId de la planilla
         sheetData.employeeId = await findEmployeeId(sheetData.nationalId);
 
-        //Validar los datos de la planilla
-        if (
-            !sheetData.sheetNumber ||
-            !sheetData.area ||
-            !sheetData.introducedDate ||
-            !sheetData.sentDate ||
-            !sheetData.observations_general ||
-            !sheetData.facultyOrDependency ||
-            !sheetData.entryDate ||
-            !sheetData.effectiveDate ||
-            !sheetData.contractEndDate ||
-            !sheetData.executingUnit ||
-            !sheetData.dedication ||
-            !sheetData.teachingCategory ||
-            !sheetData.movementType ||
-            !sheetData.sheetNumber ||
-            !sheetData.ubication ||
-            !sheetData.employeeId ||
-            !sheetData.idac ||
-            !sheetData.position ||
-            !sheetData.currentPosition ||
-            !sheetData.grade ||
-            !sheetData.opsuTable ||
-            !sheetData.personnelType ||
-            !sheetData.workingDay ||
-            !sheetData.typeContract ||
-            !sheetData.typeContract ||
-            !sheetData.valueSalary ||
-            !sheetData.mounthlySalary ||
-            !sheetData.ReasonForMovement
-        ) {
+        // Validar los datos de la planilla
+        const requiredFields = [
+            'sheetNumber', 'area', 'introducedDate', 'sentDate', 'observations_general',
+            'facultyOrDependency', 'entryDate', 'effectiveDate', 'contractEndDate',
+            'executingUnit', 'dedication', 'teachingCategory', 'movementType',
+            'sheetNumber', 'ubication', 'employeeId', 'idac', 'position',
+            'currentPosition', 'grade', 'opsuTable', 'personnelType',
+            'workingDay', 'typeContract', 'valueSalary', 'mounthlySalary',
+            'ReasonForMovement'
+        ];
+
+        const missingFields = requiredFields.filter(field => !sheetData[field]);
+
+        if (missingFields.length > 0) {
             return res.status(400).json({
                 status: "error",
-                message: 'Faltan datos por registrar en la planilla'
+                message: `Faltan datos por registrar en la planilla: ${missingFields.join(', ')}`
             });
         }
 
-        //Crear una nueva planilla
-        const newsheet = new Sheet({
+        // Crear una nueva planilla
+        const newSheet = new Sheet({
             ...sheetData,
             createdBy: userId,
             user: [userId],
         });
 
-        //Guardar planilla en la bd
-        const sheetStored = await newsheet.save();
+        // Guardar planilla en la base de datos
+        const sheetStored = await newSheet.save();
 
-        //Registrar la actividad del usuario en la bd
+        // Registrar la actividad del usuario en la base de datos
         const newActivity = new Activity({
             user: userId,
-            action: "Planilla creada por: " + userName + " del area: " + userArea,
+            action: `Planilla creada por: ${userName} del área: ${userArea}`,
             details: `Se ha creado una nueva planilla con ID: ${sheetStored._id}`
         });
         await newActivity.save();
 
-        res.status(201).json({
+        return res.status(201).json({
             status: "success",
             message: 'Planilla creada correctamente',
             sheet: sheetStored
-        })
-
+        });
 
     } catch (error) {
         console.error("Error al registrar la planilla:", error);
 
         if (error.name === 'MongoServerError' && error.code === 11000) {
             // Error de clave duplicada (sheetNumber o idac)
-            let duplicateField = Object.keys(error.keyPattern)[0];
-            let message = `El valor de ${duplicateField} ya está en uso.`;
+            const duplicateField = Object.keys(error.keyPattern)[0];
+            const message = `El valor de ${duplicateField} ya está en uso.`;
             return res.status(400).json({
                 status: "error",
-                message: message
+                message
             });
         }
 
         return res.status(500).json({
             status: "error",
-            message: 'Error al registrar la planilla: ' + error.message,
+            message: `Error al registrar la planilla: ${error.message}`,
         });
-
     }
-
 };
 
 //accion de editar una planilla
@@ -282,52 +256,51 @@ const listSheets = async (req, res) => {
 
         if (role === 'role_budget') {
             query = {
-                // Puede ver planillas creadas, pendientes o aprobadas por RRHH
-                status: { $in: ['created', 'pending', 'approvedRRHH'] }
+                created: true,
+                pending: true
             };
             if (req.query.area) {
-                // Filtrar por área si se proporciona en la solicitud
                 query.area = req.query.area;
             }
         } else if (role === 'role_rrhh') {
             query = {
-                // Puede ver planillas creadas, pendientes o aprobadas por Budget
-                status: { $in: ['created', 'pending', 'approvedBudget'] }
+                created: true,
+                pending: true,
+                approvedBudget: true
             };
             if (req.query.area) {
-                // Filtrar por área si se proporciona en la solicitud
                 query.area = req.query.area;
             }
         } else if (role === 'role_master') {
             query = {
-                // Puede ver planillas creadas, pendientes o aprobadas por Budget
-                status: { $in: ['created', 'pending', 'approvedRRHH', 'approvedBudget', 'rejectedRRHH', 'rejectedBudget'] }
+                created: true,
+                pending: true,
+                approvedRRHH: true,
+                approvedBudget: true,
+                rejectedRRHH: true,
+                rejectedBudget: true
             };
             if (req.query.area) {
-                // Filtrar por área si se proporciona en la solicitud
                 query.area = req.query.area;
             }
-        }
-        else if (role === 'role_analyst') {
-            // Mostrar planillas según el tipo de listado solicitado
-            const listType = req.query.status; // 'approved', 'rejected_budget' o 'rejected_rrhh'
-            // Solo listar planillas de su área
+        } else if (role === 'role_analyst') {
+            const listType = req.query.status;
             query.area = area;
             if (listType === 'approved') {
                 query = {
-                    area: area, // Solo planillas de su área
-                    status: 'approved', // Solo planillas aprobadas
-                    printPermission: true // Con permiso de impresión
+                    area: area,
+                    approved: true,
+                    printPermission: true
                 };
             } else if (listType === 'rejectedBudget') {
                 query = {
-                    area: area, // Solo planillas de su área
-                    status: 'rejectedBudget' // Solo planillas rechazadas por Budget
+                    area: area,
+                    rejectedBudget: true
                 };
             } else if (listType === 'rejectedRRHH') {
                 query = {
-                    area: area, // Solo planillas de su área
-                    status: 'rejectedRRHH' // Solo planillas rechazadas por RRHH
+                    area: area,
+                    rejectedRRHH: true
                 };
             } else {
                 return res.status(400).json({ message: 'Tipo de listado inválido' });
@@ -336,18 +309,22 @@ const listSheets = async (req, res) => {
             return res.status(403).json({ message: 'No tienes permiso para listar planillas' });
         }
 
-        // Obtener el listado de planillas con paginación
+        // Añadir logs para verificar el query
+        console.log('Query:', query);
+
         const options = {
             page: page,
             limit: limit,
-            sort: { _id: -1 }, // Ordenar por ID descendente
+            sort: { _id: -1 },
             collation: {
                 locale: "es",
             },
         };
         const sheets = await Sheet.paginate(query, options);
 
-        // Devolver el listado de planillas
+        // Añadir logs para verificar la respuesta
+        console.log('Sheets:', sheets.docs);
+
         return res.status(200).send({
             status: 'success',
             sheets: sheets.docs,
@@ -407,7 +384,7 @@ const exportsSheets = async (req, res) => {
         const sheet = await Sheet.findOne(query)
             .populate('employeeId')
             .lean();
-            //console.log(sheet.employeeId)//
+        //console.log(sheet.employeeId)//
 
         if (!sheet) {
             return res.status(404).send({
@@ -446,6 +423,70 @@ const exportsSheets = async (req, res) => {
 
 }
 
+const getAlerts = async (req, res) => {
+    try {
+        const role = req.users.role;
+        const area = req.users.area;
+
+        // Validar el rol del usuario
+        const validRoles = ['role_budget', 'role_rrhh', 'role_master', 'role_analyst'];
+        if (!validRoles.includes(role)) {
+            return res.status(403).json({
+                status: 'error',
+                message: 'No tienes permiso para acceder a las alertas'
+            });
+        }
+
+        let query = { area }; // Filtra por área del usuario
+
+        // Consulta personalizada según el rol del usuario
+        if (role === 'role_budget') {
+            query.status = { $in: ['created', 'pending'] };
+        } else if (role === 'role_rrhh') {
+            query.status = { $in: ['created', 'pending', 'approvedBudget'] };
+        } else if (role === 'role_master') {
+            query.status = { $in: ['created', 'pending', 'approvedRRHH', 'approvedBudget', 'rejectedRRHH', 'rejectedBudget'] };
+        } else if (role === 'role_analyst') {
+            query.$or = [
+                { status: 'approved', printPermission: true },
+                { status: { $in: ['rejectedBudget', 'rejectedRRHH'] } }
+            ];
+        }
+
+        // Obtener los conteos de alertas con una sola consulta
+        const alerts = await Sheet.aggregate([
+            { $match: query }, // Filtrar por la consulta principal
+            {
+                $group: {
+                    _id: null,
+                    pendingSheets: { $sum: { $cond: [{ $in: ['$status', ['created', 'pending']] }, 1, 0] } },
+                    rejectedSheets: { $sum: { $cond: [{ $in: ['$status', ['rejectedBudget', 'rejectedRRHH']] }, 1, 0] } },
+                    approvedSheets: { $sum: { $cond: [{ $and: [{ $eq: ['$status', 'approved'] }, { $eq: ['$printPermission', true] }] }, 1, 0] } },
+                },
+            },
+        ]);
+
+        // Devolver los resultados en la respuesta
+        return res.status(200).json({
+            pendingSheets: alerts[0]?.pendingSheets || 0,
+            rejectedSheets: alerts[0]?.rejectedSheets || 0,
+            approvedSheets: alerts[0]?.approvedSheets || 0
+        });
+    } catch (error) {
+        console.error('Error al obtener las alertas:', error);
+        // Manejo de errores más específico
+        if (error.name === 'MongoNetworkError') {
+            return res.status(500).json({
+                status: 'error',
+                message: 'Error de conexión a la base de datos'
+            });
+        }
+        return res.status(500).json({
+            status: 'error',
+            message: 'Error al obtener las alertas'
+        });
+    }
+};
 
 //Exportar acciones
 export default {
@@ -454,5 +495,6 @@ export default {
     deleteSheet,
     listSheets,
     updateSheet,
-    exportsSheets
+    exportsSheets,
+    getAlerts
 }

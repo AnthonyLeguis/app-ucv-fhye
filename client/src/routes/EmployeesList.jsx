@@ -94,7 +94,7 @@ export const EmployeesList = () => {
   }
 
   if (error) {
-    return <p>Error al obtener la lista de empleados: {error}</p>;
+    return <p>Error al obtener la lista del personal: {error}</p>;
   }
 
   return (
@@ -102,13 +102,13 @@ export const EmployeesList = () => {
       <div className="container-fluid contain overflow-auto h-100">
         <div className='my-4'>
           <h1 className="TitleName text-center text-center m-0">
-            Lista de empleados
+            Listado del Personal
           </h1>
         </div>
 
         {/* Tabla del personal */}
         <div className="row d-flex align-items-top justify-content-top fs-6">
-          <div className="table-responsive col-12 col-md-10 col-lg-8 mx-auto p-2 shadow rounded-4">
+          <div className="table-responsive col-12 col-md-10 col-xl-9 mx-auto p-2 shadow rounded-4">
             <table className="table table-striped table-hover table-responsive-sm">
               <thead>
                 <tr>

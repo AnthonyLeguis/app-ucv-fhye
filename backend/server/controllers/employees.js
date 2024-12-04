@@ -285,10 +285,49 @@ const listEmployees = async (req, res) => {
 
 }
 
+const findEmployee = async (req, res) => {
+    try {
+        const { nationalId } = req.query;
+        const userArea = req.users.area; // Obtener el área del usuario autenticado
+
+        // Verificar si se proporcionó el nationalId
+        if (!nationalId) {
+            return res.status(400).json({
+                status: "error",
+                message: "Se requiere el nationalId para la búsqueda",
+            });
+        }
+
+        // Buscar el empleado por nationalId y área
+        const employee = await Employee.findOne({ nationalId: nationalId, area: userArea });
+
+        if (!employee) {
+            return res.status(404).json({
+                status: "error",
+                message: "Empleado no encontrado",
+            });
+        }
+
+        // Devolver la información del empleado
+        return res.status(200).json({
+            status: "success",
+            employee: employee,
+        });
+
+    } catch (error) {
+        console.error("Error al buscar el empleado:", error);
+        return res.status(500).json({
+            status: "error",
+            message: "Error al buscar el empleado",
+        });
+    }
+};
+
 export default {
     pruebaEmployees,
     registerEmployee,
     updateEmployee,
     deleteEmployee,
-    listEmployees
+    listEmployees,
+    findEmployee
 }

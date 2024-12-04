@@ -6,18 +6,20 @@ import { useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../hooks/AuthContext';
 import { useContext, useEffect, useState } from 'react';
 import { useNotification } from '../components/Notifications';
-import { Collapse, Button } from 'react-bootstrap';
+import { Collapse, Button, Badge } from 'react-bootstrap';
+import { useAlerts } from '../../hooks/useAlerts'; // Importar el hook de alertas
 
 export const SideBar = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(true);
-    const [isExpanded, setIsExpanded] = useState(true); // Estado para controlar el tamaño del SideBar
-    const [openPlanillas, setOpenPlanillas] = useState(false); // Estado para controlar el dropdown de Planillas
-    const [openUsuarios, setOpenUsuarios] = useState(false); // Estado para controlar el dropdown de Usuarios
-    const [openEmpleados, setOpenEmpleados] = useState(false); // Estado para controlar el dropdown de Empleados
+    const [isExpanded, setIsExpanded] = useState(true);
+    const [openPlanillas, setOpenPlanillas] = useState(false);
+    const [openUsuarios, setOpenUsuarios] = useState(false);
+    const [openEmpleados, setOpenEmpleados] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const { logout } = useContext(AuthContext);
     const { showConfirmNotification } = useNotification();
+    const { pendingSheets, rejectedSheets, approvedSheets } = useAlerts();
 
     const token = localStorage.getItem('token');
     let userName = 'Cargando...';
@@ -63,7 +65,7 @@ export const SideBar = () => {
         <div className={`sidebar-container ${isExpanded ? 'expanded' : 'collapsed'}`}>
             <div className='sidebar d-flex flex-column justify-content-between'>
                 <div className='my-3 mx-0'>
-                    <NavLink to="/app/profile" className='text-decoration-none text-white d-flex my-2 d-flex flex-row'>
+                    <NavLink to="/app/profile" className='text-decoration-none text-white d-flex my-2 flex-row'>
                         <img className='logo_SideBar' src={logo} alt="logo" />
                         <span className='ms-2 fs-5 text-center align-content-center d-none d-sm-block position-relative'>FHyE</span>
                         <span className='ms-2 fs-5 text-center align-content-center d-none d-sm-block text-danger position-absolute app_2'>APP</span>
@@ -84,32 +86,32 @@ export const SideBar = () => {
                             </NavLink>
                         </li>
                         {userRole === 'role_master' && (
-                            <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
-                                <NavLink
-                                    to="/app/dashboard"
-                                    className={({ isActive }) =>
-                                        `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
-                                    }
-                                    aria-current="page"
-                                >
-                                    <i className="bi bi-speedometer2"></i>
-                                    <span className="ms-3 d-none d-sm-inline">Estadísticas</span>
-                                </NavLink>
-                            </li>
-                        )}
-                        {userRole === 'role_master' && (
-                            <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
-                                <NavLink
-                                    to="/app/data"
-                                    className={({ isActive }) =>
-                                        `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
-                                    }
-                                    aria-current="page"
-                                >
-                                    <i className="bi bi-person-vcard-fill"></i>
-                                    <span className="ms-3 d-none d-sm-inline">Datos</span>
-                                </NavLink>
-                            </li>
+                            <>
+                                <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
+                                    <NavLink
+                                        to="/app/dashboard"
+                                        className={({ isActive }) =>
+                                            `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
+                                        }
+                                        aria-current="page"
+                                    >
+                                        <i className="bi bi-speedometer2"></i>
+                                        <span className="ms-3 d-none d-sm-inline">Estadísticas</span>
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
+                                    <NavLink
+                                        to="/app/data"
+                                        className={({ isActive }) =>
+                                            `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
+                                        }
+                                        aria-current="page"
+                                    >
+                                        <i className="bi bi-person-vcard-fill"></i>
+                                        <span className="ms-3 d-none d-sm-inline">Datos</span>
+                                    </NavLink>
+                                </li>
+                            </>
                         )}
                         <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
                             <Button
@@ -125,8 +127,7 @@ export const SideBar = () => {
                             </Button>
                             <Collapse in={openEmpleados}>
                                 <ul id="empleados-collapse-text" className="list-unstyled ps-4 mt-1">
-                                    {userRole === 'role_master' || userRole === 'role_rrhh' && (
-
+                                    {(userRole === 'role_master' || userRole === 'role_rrhh') && (
                                         <li>
                                             <NavLink
                                                 className={({ isActive }) =>
@@ -134,7 +135,6 @@ export const SideBar = () => {
                                                 }
                                                 to="/app/employees/register"
                                             >
-
                                                 Registrar Personal
                                             </NavLink>
                                         </li>
@@ -146,7 +146,6 @@ export const SideBar = () => {
                                             }
                                             to="/app/employees/list"
                                         >
-
                                             Listado de Personal
                                         </NavLink>
                                     </li>
@@ -168,60 +167,83 @@ export const SideBar = () => {
                             <Collapse in={openPlanillas}>
                                 <ul id="planillas-collapse-text" className="list-unstyled ps-4 mt-1">
                                     {userRole === 'role_analyst' && (
-                                        <li>
-                                            <NavLink
-                                                className={({ isActive }) =>
-                                                    `dropdown-item ${isActive ? 'active' : ''}  py-2`
-                                                }
-                                                to="/app/sheets/register"
-                                            >
-                                                Crear Nueva Planilla
-                                            </NavLink>
-                                        </li>
-
+                                        <>
+                                            <li>
+                                                <NavLink
+                                                    className={({ isActive }) =>
+                                                        `dropdown-item ${isActive ? 'active' : ''}  py-2`
+                                                    }
+                                                    to="/app/sheets/register"
+                                                >
+                                                    Crear Nueva Planilla
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink
+                                                    className={({ isActive }) =>
+                                                        `dropdown-item ${isActive ? 'active' : ''} py-2`
+                                                    }
+                                                    to="/app/sheets/approved"
+                                                >
+                                                    Planillas Aprobadas <Badge variant="success">{approvedSheets}</Badge>
+                                                </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink
+                                                    className={({ isActive }) =>
+                                                        `dropdown-item ${isActive ? 'active' : ''} py-2`
+                                                    }
+                                                    to="/app/sheets/rejected"
+                                                >
+                                                    Planillas Rechazadas <Badge variant="danger">{rejectedSheets}</Badge>
+                                                </NavLink>
+                                            </li>
+                                        </>
                                     )}
-                                    {userRole === 'role_analyst' && (
+                                    {(userRole === 'role_budget' || userRole === 'role_rrhh') && (
                                         <li>
                                             <NavLink
                                                 className={({ isActive }) =>
-                                                    `dropdown-item ${isActive ? 'active' : ''}  py-2`
+                                                    `dropdown-item ${isActive ? 'active' : ''} py-2`
                                                 }
-                                                to="/app/sheets/register"
+                                                to="/app/sheets/tobeapproved"
                                             >
-                                                Planillas Aprobadas
-                                            </NavLink>
-                                        </li>
-
-                                    )}
-                                    {userRole === 'role_analyst' && (
-                                        <li>
-                                            <NavLink
-                                                className={({ isActive }) =>
-                                                    `dropdown-item ${isActive ? 'active' : ''}  py-2`
-                                                }
-                                                to="/app/sheets/register"
-                                            >
-                                                PLanillas Rechazadas
-                                            </NavLink>
-                                        </li>
-
-                                    )}
-                                    {userRole === 'role_budget' || userRole === 'role_rrhh' && (
-                                        <li>
-                                            <NavLink
-                                                className={({ isActive }) =>
-                                                    `dropdown-item ${isActive ? 'active' : ''}  py-2`
-                                                }
-                                                to="/app/sheets/register"
-                                            >
-                                                PLanillas por Aprobar
+                                                Planillas por Aprobar <Badge variant="warning">{pendingSheets}</Badge>
                                             </NavLink>
                                         </li>
                                     )}
                                 </ul>
                             </Collapse>
                         </li>
-                        {userRole === 'role_master' || userRole === 'role_rrhh' && (
+                        {userRole === 'role_master' && (
+                            <>
+                                <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
+                                    <NavLink
+                                        to="/app/sheet-status"
+                                        className={({ isActive }) =>
+                                            `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
+                                        }
+                                        aria-current="page"
+                                    >
+                                        <i className="bi bi-eye-fill"></i>
+                                        <span className="ms-3 d-none d-sm-inline">Ver Estado de Planillas</span>
+                                    </NavLink>
+                                </li>
+                                <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
+                                    <NavLink
+                                        to="/app/sheet-details"
+                                        className={({ isActive }) =>
+                                            `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
+                                        }
+                                        aria-current="page"
+                                    >
+                                        <i className="bi bi-info-circle-fill"></i>
+                                        <span className="ms-3 d-none d-sm-inline">Ver Detalles de Planillas</span>
+                                    </NavLink>
+                                </li>
+                            </>
+                        )}
+                        {(userRole === 'role_master' || userRole === 'role_rrhh') && (
                             <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
                                 <Button
                                     onClick={() => setOpenUsuarios(!openUsuarios)}

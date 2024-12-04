@@ -18,6 +18,9 @@ import { EmployeesList } from "./routes/EmployeesList";
 import { AuthContext } from "./hooks/AuthContext";
 import { NotFound } from "./routes/components/NotFound";
 import { PassRecovery } from "./routes/PassRecovery";
+import { SheetsRejected } from "./routes/components/SheetsRejected";
+import { SheetsApproved } from "./routes/components/SheetsApproved";
+import { SheetsToBeApproved } from "./routes/components/SheetsToBeApproved";
 import Swal from "sweetalert2";
 import './CSS/App.css';
 
@@ -94,6 +97,9 @@ export const App = () => {
                     <Route path="data" element={<Data />} />
                     <Route path="sheets" element={<Sheets />} />
                     <Route path="sheets/register" element={<SheetsForm />} />
+                    <Route path="sheets/rejected" element={<SheetsRejected />} />
+                    <Route path="sheets/approved" element={<SheetsApproved />} />
+                    <Route path="sheets/tobeapproved" element={<SheetsToBeApproved />} />
                     <Route path="employees/register" element={<EmployeesPerArea />} />
                     <Route path="employees/list" element={<EmployeesList />} />
                     <Route path="setup-user" element={<SetupUser />} />

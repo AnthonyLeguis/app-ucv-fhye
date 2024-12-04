@@ -5,43 +5,55 @@ export const useSheetsRegister = () => {
     const { showNotification } = useNotification();
 
     const [formData, setFormData] = useState({
-        seccionA: {
-            sheetNumber: '',
-            movementType: '',
-            area: '',
-            introducedDate: '',
-            sentDate: '',
-            observations_general: '',
-
+        seccionGeneralInformation: { 
+            sheetNumber: 0, // O "" si prefieres que inicie vacío
+            movementType: '', 
+            ubication: '', 
         },
-        seccionB: {
-            facultyOrDependency: '',
-            entryDate: '',
-            effectiveDate: '',
-            contractEndDate: '',
-            executingUnit: '',
-            dedication: '',
-            teachingCategory: '',
-            ubication: '',
-            idac: '',
-            position: '',
-            currentPosition: '',
-            grade: '',
-            opsuTable: '',
-            personnelType: '',
-            workingDay: '',
-            typeContract: '',
-            valueSalary: '',
-            mounthlySalary: '',
-            ReasonForMovement: '',
+        seccionA: { 
+            introducedDate: '', 
+            sentDate: '', 
+            observations_general: '', 
+            employeeNames: '', // Si necesitas estos campos para mostrar datos del empleado
+            employeeSurnames: '',
+            employeeNationalId: '',
         },
-        seccionC: {
-            nationalId: '',
-            employee: null, // Datos del empleado seleccionado
+        seccionB: { 
+            facultyOrDependency: '', 
+            executingUnit: '', 
+            entryDate: '', 
+            effectiveDate: '', 
+            contractEndDate: '', 
+            // ... otros campos de la sección B ...
+        },
+        seccionC: { 
+            employee: {}, // Objeto vacío para evitar el error
+            nationalId: '', 
+            recognitionDate: '', 
+            // ... otros campos de la sección C ...
+        },
+        seccionD: { 
+            salaryCompensationDiff: 0, 
+            representationExpenses: 0, 
+            typePrimaA: '', 
+            amountPrimaA: 0, 
+            typePrimaB: '', 
+            amountPrimaB: 0, 
+            primaRangoV: 0, 
+            otherCompensation: 0, 
+        },
+        seccionE: { 
+            budgetCode: '', 
+            accountingCode: 0, 
+            executingUnit_E: 0, 
+            personnelType_E: '', 
+        },
+        seccionObservations: { 
+            observations: '', 
         },
     });
 
-    const [employees, setEmployees] = useState([]); // Estado para manejar los empleados encontrados
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (seccion, field, value) => {
         setFormData(prevData => ({
@@ -49,76 +61,85 @@ export const useSheetsRegister = () => {
             [seccion]: {
                 ...prevData[seccion],
                 [field]: value,
-            }
+            },
         }));
     };
 
     const validateForm = () => {
-        if (!formData.seccionA.sheetNumber || !formData.seccionB.facultyOrDependency) {
-            return false; // Formulario inválido
-        }
-        return true; // Formulario válido
+        return formData.seccionGeneralInformation.sheetNumber
+            && formData.seccionGeneralInformation.movementType
+            && formData.seccionC.employee;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!validateForm()) {
-            showNotification('Por favor, complete todos los campos obligatorios', 'warning');
+            showNotification('Por favor, complete todos los campos obligatorios y seleccione un empleado', 'warning');
             return;
         }
 
+        setLoading(true);
         try {
-            const token = localStorage.getItem('token'); // Obtener el token de autenticación del localStorage
+            const token = localStorage.getItem('token');
             const response = await fetch(`${import.meta.env.VITE_API_SHEET_URL}/create-sheet`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // Incluir el token de autenticación en los encabezados
+                    'Authorization': ` ${token}`,
                 },
-                body: JSON.stringify({
-                    ...formData.seccionA,
-                    ...formData.seccionB,
-                    ...formData.seccionC
-                }),
+                body: JSON.stringify(formData),
             });
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('Respuesta del servidor:', data);
                 showNotification('Planilla creada con éxito', 'success');
-            } else {
-                const errorData = await response.json();
-                console.error('Error al crear la planilla:', errorData);
-                showNotification('Error al crear la planilla', 'error');
-            }
-        } catch (error) {
-            console.error('Error al crear la planilla:', error);
-            showNotification('Error al crear la planilla', 'error');
-        }
-    };
-
-    const findEmployees = async (query) => {
-        try {
-            const token = localStorage.getItem('token'); // Obtener el token de autenticación del localStorage
-            const response = await fetch(`${import.meta.env.VITE_API_EMPLOYEE_URL}/list-employees?${new URLSearchParams(query)}`, {
-                headers: {
-                    'Authorization': `${token}` // Incluir el token de autenticación en los encabezados
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setEmployees(data.employess); // Actualiza el estado con los empleados encontrados
-                console.log(data);
+                setFormData({
+                    seccionGeneralInformation: { /* valores iniciales */ },
+                    seccionA: { /* valores iniciales */ },
+                    seccionB: { /* valores iniciales */ },
+                    seccionC: { employee:{}, nationalId: '' },
+                    seccionD: { /* valores iniciales */ },
+                    seccionE: { /* valores iniciales */ },
+                    seccionObservations: { /* valores iniciales */ },
+                });
             } else {
                 const errorData = await response.json();
                 showNotification(errorData.message, 'error');
             }
         } catch (error) {
-            console.error('Error al buscar empleados:', error);
-            showNotification('Error al buscar empleados', 'error');
+            showNotification('Error al crear la planilla', 'error');
+        } finally {
+            setLoading(false);
         }
     };
 
-    return { formData, handleChange, handleSubmit, findEmployees, employees };
+    const findEmployee = async (nationalId) => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${import.meta.env.VITE_API_EMPLOYEE_URL}/find-employee?nationalId=${nationalId}`, {
+                headers: {
+                    'Authorization': ` ${token}`,
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Empleado encontrado:", data);
+                handleChange('seccionC', 'employee', data.employee);
+                handleChange('seccionA', 'employeeNames', data.employee.names);
+                handleChange('seccionA', 'employeeSurnames', data.employee.surnames);
+                handleChange('seccionA', 'employeeNationalId', data.employee.nationalId);
+            } else {
+                const errorData = await response.json();
+                showNotification(errorData.message, 'error');
+            }
+        } catch (error) {
+            showNotification('Error al buscar el empleado', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { formData, handleChange, handleSubmit, findEmployee, loading };
 };

@@ -11,6 +11,7 @@ router.post("/create-sheet",auth, SheetController.registerSheet );
 router.delete("/delete-sheet/:id",auth, SheetController.deleteSheet);
 router.get("/list-sheets/:page?", auth, SheetController.listSheets);
 router.put("/update-sheet/:id", auth, SheetController.updateSheet);
+router.get("/alerts", auth, SheetController.getAlerts);
 router.post("/exports", auth, SheetController.exportsSheets);
 
 export default router
