@@ -126,7 +126,7 @@ export const Login = () => {
                 </Button>
               </div>
 
-              <div className="text-center text-lg-start mt-4 pt-2">
+              <div className="text-center my-3">
                 <Button variant="primary" type="submit" className='buttonLogin'>
                   Entrar
                 </Button>

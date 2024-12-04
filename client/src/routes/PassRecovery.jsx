@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotification } from './components/Notifications';
+import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 
 export const PassRecovery = () => {
     const [newPassword, setNewPassword] = useState('');
@@ -77,49 +78,63 @@ export const PassRecovery = () => {
     };
 
     return (
-        <>
-            <div>
-                <h1>Restablecer contraseña</h1>
+        <Container className="mt-5 vh-100">
+            <Row className="justify-content-md-center my-auto">
+                <Col xs={12} md={6}>
+                    <h1 className="text-center mb-4">Restablecer contraseña</h1>
 
-                {success ? (
-                    <div>
-                        <p>Contraseña restablecida correctamente.</p>
-                        <p>Serás redirigido a la página de inicio de sesión en 3 segundos.</p>
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="newPassword">Nueva contraseña:</label>
-                            <input
-                                type={showPassword ? 'text' : 'password'}
-                                id="newPassword"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                            />
-                            <i
-                                className={`bi ${showPassword ? 'bi-eye' : 'bi-eye-slash'}`} // Cambiar el icono según el estado
-                                onClick={toggleShowPassword} // Llamar a la función para cambiar el estado
-                            ></i>
-                        </div>
-                        <div>
-                            <label htmlFor="confirmPassword">Confirmar contraseña:</label>
-                            <input
-                                type={showPassword ? 'text' : 'password'}
-                                id="confirmPassword"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            />
-                            <i
-                                className={`bi ${showPassword ? 'bi-eye' : 'bi-eye-slash'}`} // Cambiar el icono según el estado
-                                onClick={toggleShowPassword} // Llamar a la función para cambiar el estado
-                            ></i>
-                        </div>
-                        {error && <p className="error">{error}</p>}
-                        <button type="submit">Restablecer
-                            contraseña</button>
-                    </form>
-                )}
-            </div>
-        </>
-    )
-}
+                    {success ? (
+                        <Alert variant="success">
+                            <p>Contraseña restablecida correctamente.</p>
+                            <p>Serás redirigido a la página de inicio de sesión en 5 segundos.</p>
+                        </Alert>
+                    ) : (
+                        <Form onSubmit={handleSubmit}>
+                            <Form.Group className="mb-3" controlId="formNewPassword">
+                                <Form.Label>Nueva contraseña:</Form.Label>
+                                <div className="input-group">
+                                    <Form.Control
+                                        type={showPassword ? 'text' : 'password'}
+                                        placeholder="Ingrese su nueva contraseña"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                    />
+                                    <Button
+                                        variant="outline-secondary"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        <i className={`bi ${showPassword ? "bi-eye-fill" : "bi-eye-slash-fill"} text-primary`}></i>
+                                    </Button>
+                                </div>
+                            </Form.Group>
+
+                            <Form.Group className="mb-3" controlId="formConfirmPassword">
+                                <Form.Label>Confirmar contraseña:</Form.Label>
+                                <div className="input-group"> {/* Agrega input-group aquí también */}
+                                    <Form.Control
+                                        type={showPassword ? 'text' : 'password'}
+                                        placeholder="Confirme su nueva contraseña"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                    />
+                                    <Button
+                                        variant="outline-secondary"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        <i className={`bi ${showPassword ? "bi-eye-fill" : "bi-eye-slash-fill"} text-primary`}></i>
+                                    </Button>
+                                </div>
+                            </Form.Group>
+
+                            {error && <Alert variant="danger">{error}</Alert>}
+
+                            <Button variant="primary" type="submit" className="w-100">
+                                Restablecer contraseña
+                            </Button>
+                        </Form>
+                    )}
+                </Col>
+            </Row>
+        </Container>
+    );
+};
