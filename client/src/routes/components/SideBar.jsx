@@ -212,37 +212,38 @@ export const SideBar = () => {
                                             </NavLink>
                                         </li>
                                     )}
+                                    {userRole === 'role_master' && (
+                                        <>
+                                            <li>
+                                                <NavLink
+                                                    to="/app/sheets/status"
+                                                    className={({ isActive }) =>
+                                                        `nav-link text-white fs-6 ${isActive ? 'active' : ''}`
+                                                    }
+                                                    aria-current="page"
+                                                >
+                                                    <i className="bi bi-eye-fill"></i>
+                                                    <span className="ms-3 d-none d-sm-inline">Ver Estado de Planillas</span>
+                                                </NavLink>
+                                            </li>
+                                            <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
+                                                <NavLink
+                                                    to="/app/sheets/details"
+                                                    className={({ isActive }) =>
+                                                        `nav-link text-white fs-6 ${isActive ? 'active' : ''}`
+                                                    }
+                                                    aria-current="page"
+                                                >
+                                                    <i className="bi bi-info-circle-fill"></i>
+                                                    <span className="ms-3 d-none d-sm-inline">Ver Detalles de Planillas</span>
+                                                </NavLink>
+                                            </li>
+                                        </>
+                                    )}
                                 </ul>
                             </Collapse>
                         </li>
-                        {userRole === 'role_master' && (
-                            <>
-                                <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
-                                    <NavLink
-                                        to="/app/sheet-status"
-                                        className={({ isActive }) =>
-                                            `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
-                                        }
-                                        aria-current="page"
-                                    >
-                                        <i className="bi bi-eye-fill"></i>
-                                        <span className="ms-3 d-none d-sm-inline">Ver Estado de Planillas</span>
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
-                                    <NavLink
-                                        to="/app/sheet-details"
-                                        className={({ isActive }) =>
-                                            `nav-link text-white fs-5 ${isActive ? 'active' : ''}`
-                                        }
-                                        aria-current="page"
-                                    >
-                                        <i className="bi bi-info-circle-fill"></i>
-                                        <span className="ms-3 d-none d-sm-inline">Ver Detalles de Planillas</span>
-                                    </NavLink>
-                                </li>
-                            </>
-                        )}
+
                         {(userRole === 'role_master' || userRole === 'role_rrhh') && (
                             <li className="nav-item text-white fs-4 my-1 py-2 py-sm-0">
                                 <Button

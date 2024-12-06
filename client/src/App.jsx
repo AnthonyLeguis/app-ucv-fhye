@@ -11,6 +11,7 @@ import { UserForm } from "./routes/components/UserForm";
 import { Dashboard } from "./routes/Dashboard";
 import { Data } from "./routes/Data";
 import { Sheets } from "./routes/Sheets";
+import { SheetsDetails } from "./routes/SheetsDetails";
 import { SheetsForm } from "./routes/components/SheetsForm";
 import { SetupUser } from "./routes/SetupUser";
 import { EmployeesPerArea } from "./routes/EmployeesPerArea";
@@ -95,7 +96,8 @@ export const App = () => {
                     <Route path="users/register" element={<UserForm />} />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="data" element={<Data />} />
-                    <Route path="sheets" element={<Sheets />} />
+                    <Route path="sheets/status" element={<Sheets />} />
+                    <Route path="sheets/details" element={<SheetsDetails />} />
                     <Route path="sheets/register" element={<SheetsForm />} />
                     <Route path="sheets/rejected" element={<SheetsRejected />} />
                     <Route path="sheets/approved" element={<SheetsApproved />} />

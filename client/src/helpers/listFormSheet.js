@@ -1,7 +1,7 @@
 export const movimentType = [
     { value: 'INGRESO', label: 'INGRESO' },
     { value: 'PRÓRROGA', label: 'PRÓRROGA' },
-    { value: 'PERMISO NO REMUNERADO (PNF)', label: 'PNF' },
+    { value: 'PERMISO NO REMUNERADO (PNR)', label: 'PNR' },
     { value: 'CAMBIO DE DEDICACIÓN', label: 'CAMBIO DE DEDICACIÓN' },
     { value: 'CAMBIO EN EL CARGO - CARGO DIRECTIVO', label: 'CAMBIO A CARGO DIRECTIVO' },
     { value: 'CAMBIO EN EL CARGO - CARGO DE LIBRE NOMBRAMIENTO Y REMOCIÓN', label: 'CAMBIO A CARGO DE LIBRE NOMBRAMIENTO' },
